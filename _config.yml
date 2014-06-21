@@ -10,9 +10,9 @@ owner:
   bio:            "Ruby, JavaScript, and sometimes polyglot developer"
   email:          jsfairbank@gmail.com
   # Social networking links are used in author-bio sidebar. Update and remove as you like.
-  twitter: https://twitter.com/ElPapaPollo
+  twitter: ElPapaPollo
   facebook:
-  github: https://github.com/jfairbank
+  github: jfairbank
   stackoverflow:
   linkedin:
   instagram:
