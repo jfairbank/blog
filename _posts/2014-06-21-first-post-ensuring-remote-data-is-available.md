@@ -35,7 +35,7 @@ I can't really share the specific domain models used, so I will use some suitabl
 
 We have a large single-page application for ordering a highly customizable product. This application is built upon [Backbone](http://backbonejs.org/) and [Marionette](http://marionettejs.com/) with a [Ruby on Rails](http://rubyonrails.org/) back-end. Now, let's say our configurable product is a car. Certain configuration options on the car will incur various upcharges. These upcharges will not change often, so they will be constant throughout a user's session on the application. Thus, one of the JavaScript files pulls down all the possible upcharge types from an API on the back-end.
 
-~~~ javascript
+{% highlight javascript linenos %}
 // car.js
 
 var Car = Backbone.Model.extend();
@@ -51,21 +51,21 @@ var Upcharges = Backbone.Collection.extend({
 
 var availableUpcharges = new Upcharges();
 availableUpcharges.fetch();
-~~~
+{% endhighlight %}
 
 So, `car/upcharges.js` immediately fetches the upcharges as soon as the browser loads the file. In a normal user session, this is completely acceptable because by the time the user can begin to use the application, the upcharges have loaded.
 
 As the user navigates throughout the application, he/she will eventually make decisions that may require the application to add or remove different upcharges to a car. To handle this, the application uses another collection for managing which upcharges have been applied to the car based on a `key` field for each upcharge. Canonical upcharges have been seeded into the application with constant `key` names. For example, if the user wanted chrome rims, the application would add an upcharge via:
 
-~~~ javascript
+{% highlight javascript linenos %}
 // app/some/module.js
 
 car.appliedUpcharges.addUpchargeByKey('chrome_rims');
-~~~
+{% endhighlight %}
 
 The collection for applied upcharges might look something like this then:
 
-~~~ javascript
+{% highlight javascript linenos %}
 // car/upcharges.js
 
 var Upcharges = Backbone.Collection.extend({
@@ -102,13 +102,13 @@ var AppliedUpcharges = Backbone.Collection.extend({
     callback.call(this, upcharge);
   }
 });
-~~~
+{% endhighlight %}
 
 OK, so this is all fine and dandy and it works. Ehh, maybe we should move the logic for adding and removing upcharges to the back-end, but that's for another time and place to discuss. In fact, I'm more in favor of that idea, but it would defeat the purpose of this blog post.
 
 Now, it's time to set up a feature spec because we want to make sure that the upcharges display on the order totals page. Given we use RSpec, Capybara, and FactoryGirl, a very simplified version of the feature spec might look something like this:
 
-~~~ ruby
+{% highlight ruby linenos %}
 require 'spec_helper'
 require 'features/helpers'
 
@@ -147,7 +147,7 @@ feature 'Configuring a car', js: true do
     expect(totals).to have_selector('.car-upcharge', text: 'Chrome Rims')
   end
 end
-~~~
+{% endhighlight %}
 
 So, I run the spec and it *fails*. Okay... Did I not properly set up the order and car? Is there some random attribute that is still `nil` on a model that needs to have a value? After strategically (maybe a little randomly) placing `console.log`'s and `puts`'s, I discovered that my `availableUpcharges` variable was an empty collection. But, I added the chrome rims upcharge in my `background` block.
 
@@ -156,7 +156,7 @@ A couple more `console.log`'s and it begins to make sense. RSpec and Capybara lo
 ## The Solution
 What can we do then? A better solution would be to asynchronously load and use the available upcharges the first time they're needed. We could use a singleton object for managing the available upcharges like so:
 
-~~~ javascript
+{% highlight javascript linenos %}
 // car/upcharges.js
 
 var AppliedUpcharges = Backbone.Collection.extend({
@@ -189,7 +189,7 @@ var availableUpcharges = {
     })
   }
 };
-~~~
+{% endhighlight %}
 
 Now, we just call `availableUpcharges.ensured` first, passing it a callback function. We create one interface for accessing the real available upcharges, whether they're loaded yet or not. Our singleton object handles loading them the first time. Once they're loaded, it redefines it's `ensured` method to just simply pass the loaded upcharges to the callback.
 
@@ -197,7 +197,7 @@ I test it out in my application, but then I start to see multiple requests for t
 
 This presents a problem; if the application calls `_getUpchargeByKeyAndRun` multiple consecutive times and the available upcharges haven't loaded yet, then it is going to naturally create multiple requests for them because the `ensured` function has not been redefined yet. We need to tweak our singleton object to take this into account:
 
-~~~ javascript
+{% highlight javascript linenos %}
 // car/upcharges.js
 
 var availableUpcharges = {
@@ -231,7 +231,7 @@ var availableUpcharges = {
     });
   }
 };
-~~~
+{% endhighlight %}
 
 So, what's the difference? Well, until the available upcharges are loaded and the `ensured` function is redefined, we simply queue up every callback passed in and check to see if a request has already been made. Once the upcharges load, we redefine the function as before. We also clear our queue, calling the new `ensured` function definition with each queued callback. I run through the application again, and now there is only one request, and all the upcharge checks work properly. I rerun my spec and get my glorious green dot!
 
