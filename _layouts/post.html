@@ -43,7 +43,9 @@
       {% endif %}
     </div><!--/ .headline-wrap -->
     <div class="article-wrap">
+      {% if page.share %}{% include _social-share.html %}{% endif %}
       {{ content }}
+      {% if page.share %}{% include _social-share.html %}{% endif %}
       <hr />
       <footer role="contentinfo">
         <div class="article-author-bottom">
@@ -73,7 +75,7 @@
   </footer>
 </div><!-- /.footer-wrap -->
 
-{% include _scripts.html %}	        
+{% include _scripts.html %}
 
 </body>
 </html>
