@@ -7,15 +7,7 @@ tags: [javascript, ruby on rails, rspec, capybara, api, first post, programming]
 comments: true
 share: true
 ---
-<section id="table-of-contents" class="toc">
-  <header>
-    <h3>Contents</h3>
-  </header>
-<div id="drawer" markdown="1">
-*  Auto generated table of contents
-{:toc}
-</div>
-</section><!-- /#table-of-contents -->
+{% include _table-of-contents.html %}
 
 ## Greetings
 
@@ -113,7 +105,7 @@ require 'spec_helper'
 require 'features/helpers'
 
 feature 'Configuring a car', js: true do
-  given(:user)  { create(:user) }
+  given(:user)	{ create(:user) }
   given(:order) { create(:order, :incomplete) }
 
   background do
@@ -180,11 +172,11 @@ var availableUpcharges = {
 
     upcharges.fetch({
       success: function() {
-        self.ensured = function(callback) {
-          callback(upcharges);
-        };
+	self.ensured = function(callback) {
+	  callback(upcharges);
+	};
 
-        self.ensured(firstCallback);
+	self.ensured(firstCallback);
       }
     })
   }
@@ -215,18 +207,18 @@ var availableUpcharges = {
 
     this.request = upcharges.fetch({
       success: function() {
-        var currentCallback = null;
+	var currentCallback = null;
 
-        self.ensured = function(callback) {
-          callback(upcharges);
-        };
+	self.ensured = function(callback) {
+	  callback(upcharges);
+	};
 
-        while (currentCallback = self.queue.shift()) {
-          self.ensured(currentCallback);
-        }
+	while (currentCallback = self.queue.shift()) {
+	  self.ensured(currentCallback);
+	}
 
-        delete self.request;
-        delete self.queue;
+	delete self.request;
+	delete self.queue;
       }
     });
   }
