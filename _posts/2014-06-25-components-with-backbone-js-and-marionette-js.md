@@ -384,6 +384,7 @@ MyApp.module('Orders.Dashboard', function(Dashboard, MyApp, Backbone, Marionette
     },
 
     _showGridComponents: function(dashboardOrders) {
+      var self = this;
       var layout = this.layout;
 
       return function() {
