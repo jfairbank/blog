@@ -22,5 +22,5 @@ Outside of work I am a husband to my beautiful wife, and I am a father-to-be. I 
 
 Say hi to me at these places:
 
-* [Twitter]({{ site.owner.twitter }})
-* [GitHub]({{ site.owner.github }})
+* [Twitter](http://twitter.com/{{ site.owner.twitter }})
+* [GitHub](http://github.com/{{ site.owner.github }})
