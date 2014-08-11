@@ -16,7 +16,7 @@ Hi, my name is Jeremy Fairbank. I am a software developer with a primary focus o
 
 ## Non Work
 
-Outside of work I am a husband to my beautiful wife, and I am a father-to-be. I play guitar and sing at my church and believe I would be pretty messed up without the grace of God every day. I dabble in some photography and really enjoy jazz and chill electronic music.
+Outside of work I am a husband to my beautiful wife and a father to my newborn son. I play guitar and sing at my church and believe I would be pretty messed up without the grace of God every day. I dabble in some photography and really enjoy jazz and chill electronic music.
 
 ## Say Hello
 
