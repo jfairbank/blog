@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "Components with Backbone.js and Marionette.js"
-description: "Build and use reusable components in Backbone.js and Marionette.js to make clean and modular code."
+excerpt: "Build and use reusable components in Backbone.js and Marionette.js to make clean and modular code."
 categories: [javascript]
 tags: [javascript, backbone, marionette, component, modular]
 comments: true

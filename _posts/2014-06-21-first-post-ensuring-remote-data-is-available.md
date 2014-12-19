@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "First Post: Ensuring Remote Data is Available in JavaScript"
-description: "How to access remote data in JavaScript through a single interface, caching the data for future requests."
+excerpt: "How to access remote data in JavaScript through a single interface, caching the data for future requests."
 categories: [javascript]
 tags: [javascript, ruby on rails, rspec, capybara, api, first post, programming]
 comments: true

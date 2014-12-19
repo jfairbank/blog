@@ -1,18 +1,11 @@
 GEM
   remote: https://rubygems.org/
   specs:
-    activesupport (4.1.8)
-      i18n (~> 0.6, >= 0.6.9)
-      json (~> 1.7, >= 1.7.7)
-      minitest (~> 5.1)
-      thread_safe (~> 0.1)
-      tzinfo (~> 1.1)
     blankslate (2.1.2.4)
     celluloid (0.16.0)
       timers (~> 4.0.0)
     classifier-reborn (2.0.2)
       fast-stemmer (~> 1.0)
-    coderay (1.1.0)
     coffee-script (2.3.0)
       coffee-script-source
       execjs
@@ -21,8 +14,9 @@ GEM
     execjs (2.2.2)
     fast-stemmer (1.0.2)
     ffi (1.9.6)
+    ffi (1.9.6-x64-mingw32)
+    ffi (1.9.6-x86-mingw32)
     hitimes (1.2.2)
-    i18n (0.6.11)
     jekyll (2.5.1)
       classifier-reborn (~> 2.0)
       colorator (~> 0.1)
@@ -44,49 +38,59 @@ GEM
     jekyll-paginate (1.1.0)
     jekyll-sass-converter (1.2.1)
       sass (~> 3.2)
+    jekyll-sitemap (0.6.2)
     jekyll-watch (1.1.2)
       listen (~> 2.7)
-    json (1.8.1)
     kramdown (1.5.0)
     liquid (2.6.1)
-    listen (2.8.0)
+    listen (2.7.11)
       celluloid (>= 0.15.2)
       rb-fsevent (>= 0.9.3)
       rb-inotify (>= 0.9)
-    mercenary (0.3.5)
-    minitest (5.4.3)
+    mercenary (0.3.4)
+    octopress (3.0.0.rc.15)
+      jekyll (~> 2.0)
+      mercenary (~> 0.3.2)
+      octopress-deploy
+      octopress-docs
+      titlecase
+    octopress-deploy (1.0.0)
+      colorator
+      octopress-docs
+    octopress-docs (0.0.9)
+      jekyll (~> 2.0)
+      octopress-escape-code (~> 1.0)
+      octopress-hooks (~> 2.0)
+    octopress-escape-code (1.0.2)
+      octopress-hooks (~> 2.0)
+    octopress-hooks (2.2.1)
+      jekyll (~> 2.0)
     parslet (1.5.0)
       blankslate (~> 2.0)
     posix-spawn (0.3.9)
     pygments.rb (0.6.0)
       posix-spawn (~> 0.3.6)
       yajl-ruby (~> 1.1.0)
-    rake (10.3.2)
     rb-fsevent (0.9.4)
     rb-inotify (0.9.5)
       ffi (>= 0.5.0)
     redcarpet (3.2.0)
     safe_yaml (1.0.4)
-    sass (3.4.8)
-    stringex (2.5.2)
-    thor (0.19.1)
-    thread_safe (0.3.4)
+    sass (3.4.7)
     timers (4.0.1)
       hitimes
+    titlecase (0.1.1)
     toml (0.1.2)
       parslet (~> 1.5.0)
-    tzinfo (1.2.2)
-      thread_safe (~> 0.1)
     yajl-ruby (1.1.0)
+    yajl-ruby (1.1.0-x86-mingw32)
 
 PLATFORMS
   ruby
+  x64-mingw32
+  x86-mingw32
 
 DEPENDENCIES
-  activesupport
-  coderay
   jekyll
-  kramdown
-  rake
-  stringex
-  thor
+  jekyll-sitemap
+  octopress (~> 3.0.0.rc.12)
