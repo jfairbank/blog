@@ -1,6 +1,6 @@
 # Site wide configuration
 title:            Jeremy Fairbank Blog
-description:      "The software development blog of Jeremy Fairbank, a web developer."
+description:      "The JavaScript web development blog of Jeremy Fairbank."
 locale:           en_US
 url:              http://blog.jeremyfairbank.com
 
@@ -25,7 +25,7 @@ kramdown:
 owner:
   name: Jeremy Fairbank
   avatar: bio-photo-1.jpg
-  bio: "Ruby, JavaScript, and sometimes polyglot developer."
+  bio: "Making the web with JavaScript."
   email:
   disqus-shortname: jeremyfairbankblog
   twitter: ElPapaPollo
