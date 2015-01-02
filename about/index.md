@@ -21,7 +21,7 @@ I had the amazing honor to give my first talk at the inaugural <a href="http://w
 
 ## Besides Dev
 
-Outside of work I am a husband to my beautiful wife and a father to my son. I play guitar and sing at my church and believe I would be pretty messed up without the grace of God every day. I dabble in some photography and really enjoy jazz and chill electronic music.
+Outside of developing I am a husband to my beautiful wife and a father to my son. I play guitar and sing at my church and believe I would be pretty messed up without the grace of God every day. I dabble in some photography and really enjoy jazz and chill electronic music.
 
 ## Say Hello
 
