@@ -1,0 +1,54 @@
+# Site wide configuration
+title:            Jeremy Fairbank Blog
+description:      "The JavaScript web development blog of Jeremy Fairbank."
+locale:           en_US
+url:              http://localhost:4000
+
+# Jekyll configuration
+permalink:   /:categories/:title/
+markdown:    kramdown
+highlighter: pygments
+sass:
+  sass_dir: _sass
+  style: compressed
+gems:
+  - jekyll-sitemap
+
+kramdown:
+  auto_ids: true
+  footnote_nr: 1
+  entity_output: as_char
+  toc_levels: 1..6
+  use_coderay: false
+
+# Site owner
+owner:
+  name: Jeremy Fairbank
+  avatar: bio-photo-1.jpg
+  bio: "Making the web with JavaScript."
+  email:
+  disqus-shortname: jeremyfairbankblog
+  twitter: ElPapaPollo
+  facebook:
+  google:
+    plus: JeremyFairbank
+    analytics:
+    verify:
+    ad-client:
+    ad-slot:
+  bing-verify:
+  github: jfairbank
+  stackoverflow:
+  linkedin:
+  instagram: elpapapollo
+  lastfm:
+  tumblr:
+  pinterest:
+  foursquare:
+  steam:
+  dribbble:
+  youtube:
+  soundcloud:
+
+include: [".htaccess"]
+exclude: ["lib", "config.rb", "Capfile", "config", "log", "Rakefile", "Rakefile.rb", "tmp", "less", "*.sublime-project", "*.sublime-workspace", "test", "spec", "Gruntfile.js", "package.json", "node_modules", "Gemfile", "Gemfile.lock", "LICENSE", "README.md"]
