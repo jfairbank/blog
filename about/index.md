@@ -24,13 +24,14 @@ company called Push ([pushagency.io](http://pushagency.io)).
 
 ## Conferences
 
-<h3>Nodevember '14<br><small>Building Modular and Component Driven Architecture in Backbone.js and Marionette.js</small></h3>
+{% assign talk = site.data.talks.nodevember_14 %}
+<h3>{{ talk.conference }}<br><small>{{ talk.title }}</small></h3>
 
 I had the amazing honor to give my first developer talk at the inaugural
-<a href="http://www.nodevember.org/" target="_blank">Nodevember</a> conference
-in Nashville.
+{{ talk.conference_ext_link }} conference
+in {{ talk.location }}.
 
-<iframe width="420" height="315" src="//www.youtube.com/embed/PrQSpdWkN6Q" frameborder="0" allowfullscreen></iframe>
+{{ talk.video }}
 
 ## Besides Dev
 
