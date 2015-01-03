@@ -716,3 +716,10 @@ $button-size: 1.5rem;
     }
   }
 }
+
+.post {
+  iframe.twitter-tweet {
+    margin-left: auto !important;
+    margin-right: auto !important;
+  }
+}
