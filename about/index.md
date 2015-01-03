@@ -24,7 +24,7 @@ company called Push ([pushagency.io](http://pushagency.io)).
 
 ## Conferences
 
-<h3>Nodevember '14<br><small>Building Modular and Component Driven Architecture in Backbone.js and Marionete.js</small></h3>
+<h3>Nodevember '14<br><small>Building Modular and Component Driven Architecture in Backbone.js and Marionette.js</small></h3>
 
 I had the amazing honor to give my first developer talk at the inaugural
 <a href="http://www.nodevember.org/" target="_blank">Nodevember</a> conference
