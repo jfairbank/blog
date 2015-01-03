@@ -25,6 +25,9 @@ body {
 		@include suffix(12,0.5);
 		@include font-rem(16);
 	}
+  @media #{$large} {
+		@include grid(12,1.5);
+  }
 	@media #{$x-large} {
 		@include grid(12,1.5);
 		@include prefix(12,2);
@@ -374,6 +377,8 @@ $button-size: 1.5rem;
 		}
 	}
 	@media #{$large} {
+		@include grid(12,1.5);
+
 		h3,
 		.bio-photo,
 		p,
