@@ -1,0 +1,746 @@
+<!doctype html>
+<!--[if lt IE 7]><html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="en"> <![endif]-->
+<!--[if (IE 7)&!(IEMobile)]><html class="no-js lt-ie9 lt-ie8" lang="en"><![endif]-->
+<!--[if (IE 8)&!(IEMobile)]><html class="no-js lt-ie9" lang="en"><![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en"><!--<![endif]-->
+<head>
+<meta charset="utf-8">
+<title>Polymer Web Components with Marionette.js &#8211; Jeremy Fairbank Blog</title>
+<meta name="description" content="Create and utilize Polymer web components in Marionette.js applications.">
+<meta name="keywords" content="javascript, marionettejs, backbonejs, polymer, front end">
+
+
+
+<!-- Twitter Cards -->
+<meta name="twitter:title" content="Polymer Web Components with Marionette.js">
+<meta name="twitter:description" content="Create and utilize Polymer web components in Marionette.js applications.">
+<meta name="twitter:site" content="@ElPapaPollo">
+<meta name="twitter:creator" content="@ElPapaPollo">
+
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://blog.jeremyfairbank.com/images/default-thumb.png">
+
+<!-- Open Graph -->
+<meta property="og:locale" content="en_US">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Polymer Web Components with Marionette.js">
+<meta property="og:description" content="Create and utilize Polymer web components in Marionette.js applications.">
+<meta property="og:url" content="http://blog.jeremyfairbank.com/javascript/polymer-web-components-with-marionette-js/">
+<meta property="og:site_name" content="Jeremy Fairbank Blog">
+
+
+
+
+
+<link rel="canonical" href="http://blog.jeremyfairbank.com/javascript/polymer-web-components-with-marionette-js/">
+<link href="http://blog.jeremyfairbank.com/feed.xml" type="application/atom+xml" rel="alternate" title="Jeremy Fairbank Blog Feed">
+<link rel="author" href="http://plus.google.com/+JeremyFairbank?rel=author">
+
+<!-- http://t.co/dKP3o1e -->
+<meta name="HandheldFriendly" content="True">
+<meta name="MobileOptimized" content="320">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="http://blog.jeremyfairbank.com/assets/css/main.css">
+
+<meta http-equiv="cleartype" content="on">
+
+<!-- HTML5 Shiv and Media Query Support -->
+<!--[if lt IE 9]>
+	<script src="http://blog.jeremyfairbank.com/assets/js/vendor/html5shiv.min.js"></script>
+	<script src="http://blog.jeremyfairbank.com/assets/js/vendor/respond.min.js"></script>
+<![endif]-->
+
+<!-- Modernizr -->
+<script src="http://blog.jeremyfairbank.com/assets/js/vendor/modernizr-2.7.1.custom.min.js"></script>
+
+<link href='//fonts.googleapis.com/css?family=PT+Sans+Narrow:400,700%7CPT+Serif:400,700,400italic' rel='stylesheet' type='text/css'>
+
+<!-- Icons -->
+<!-- 16x16 -->
+<link rel="shortcut icon" href="http://blog.jeremyfairbank.com/favicon.ico">
+<!-- 32x32 -->
+<link rel="shortcut icon" href="http://blog.jeremyfairbank.com/favicon.png">
+<!-- 57x57 (precomposed) for iPhone 3GS, pre-2011 iPod Touch and older Android devices -->
+<link rel="apple-touch-icon-precomposed" href="http://blog.jeremyfairbank.com/images/apple-touch-icon-precomposed.png">
+<!-- 72x72 (precomposed) for 1st generation iPad, iPad 2 and iPad mini -->
+<link rel="apple-touch-icon-precomposed" sizes="72x72" href="http://blog.jeremyfairbank.com/images/apple-touch-icon-72x72-precomposed.png">
+<!-- 114x114 (precomposed) for iPhone 4, 4S, 5 and post-2011 iPod Touch -->
+<link rel="apple-touch-icon-precomposed" sizes="114x114" href="http://blog.jeremyfairbank.com/images/apple-touch-icon-114x114-precomposed.png">
+<!-- 144x144 (precomposed) for iPad 3rd and 4th generation -->
+<link rel="apple-touch-icon-precomposed" sizes="144x144" href="http://blog.jeremyfairbank.com/images/apple-touch-icon-144x144-precomposed.png">
+
+</head>
+
+<body class="post">
+
+<!--[if lt IE 9]><div class="browser-upgrade alert alert-info">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</div><![endif]-->
+
+<div class="navigation-wrapper">
+	<div class="site-name">
+		<a href="http://blog.jeremyfairbank.com/">Jeremy Fairbank Blog</a>
+	</div><!-- /.site-name -->
+	<div class="top-navigation">
+		<nav role="navigation" id="site-nav" class="nav">
+		    <ul>
+		        
+				    
+				        
+				    
+				    <li><a href="http://blog.jeremyfairbank.com/about/" >About</a></li>
+				
+				    
+				        
+				    
+				    <li><a href="http://blog.jeremyfairbank.com/posts/" >Posts</a></li>
+				
+		    </ul>
+		</nav>
+	</div><!-- /.top-navigation -->
+</div><!-- /.navigation-wrapper -->
+
+
+
+<div id="main" role="main">
+  <div class="article-author-side">
+    
+
+
+
+	<img src="http://blog.jeremyfairbank.com/images/bio-photo-1.jpg" class="bio-photo" alt="Jeremy Fairbank bio photo">
+
+<h3>Jeremy Fairbank</h3>
+<p>Making the web with JavaScript.</p>
+
+<a href="http://twitter.com/ElPapaPollo" class="author-social" target="_blank"><i class="fa fa-fw fa-twitter-square"></i> Twitter</a>
+
+<a href="http://plus.google.com/+JeremyFairbank" class="author-social" target="_blank"><i class="fa fa-fw fa-google-plus-square"></i> Google+</a>
+
+<a href="http://instagram.com/elpapapollo" class="author-social" target="_blank"><i class="fa fa-fw fa-instagram"></i> Instagram</a>
+
+<a href="http://github.com/jfairbank" class="author-social" target="_blank"><i class="fa fa-fw fa-github"></i> Github</a>
+
+
+
+
+
+
+
+
+  </div>
+  <article class="post">
+    <div class="headline-wrap">
+      
+        <h1><a href="http://blog.jeremyfairbank.com/javascript/polymer-web-components-with-marionette-js/" rel="bookmark" title="Polymer Web Components with Marionette.js">Polymer Web Components with Marionette.js</a></h1>
+      
+    </div><!--/ .headline-wrap -->
+    <div class="article-wrap">
+      <div class="social-share">
+  <ul class="inline-list">
+    <li class="facebook">
+      <a href="https://www.facebook.com/sharer/sharer.php?u=http://blog.jeremyfairbank.com/javascript/polymer-web-components-with-marionette-js/" title="Share on Facebook"><span class="count"><i class="fa fa-facebook-square"></i> Share</span></a>
+    </li>
+    <li class="twitter">
+      <a href="https://twitter.com/intent/tweet?text=http://blog.jeremyfairbank.com/javascript/polymer-web-components-with-marionette-js/" title="Share on Twitter"><span class="count"><i class="fa fa-twitter-square"></i> Tweet</span></a>
+    </li>
+    <li class="googleplus">
+      <a href="https://plus.google.com/share?url=http://blog.jeremyfairbank.com/javascript/polymer-web-components-with-marionette-js/" title="Share on Google Plus"><span class="count"><i class="fa fa-google-plus-square"></i> +1</span></a>
+    </li>
+  </ul>
+</div>
+
+      
+<section id="table-of-contents" class="toc">
+  <header>
+    <h3>Contents</h3>
+  </header>
+<div id="drawer">
+<ul id="markdown-toc">
+  <li><a href="#web-components-and-polymer">Web Components and Polymer</a></li>
+  <li><a href="#marionettejs-components">Marionette.js Components</a></li>
+  <li><a href="#building-a-name-tag-element">Building a Name Tag Element</a></li>
+  <li><a href="#working-with-marionettejs">Working with Marionette.js</a></li>
+  <li><a href="#syncing-data-with-marionettejs">Syncing Data with Marionette.js</a></li>
+  <li><a href="#all-together-now">All Together Now</a></li>
+  <li><a href="#conclusion">Conclusion</a></li>
+</ul>
+
+  </div>
+</section>
+<!-- /#table-of-contents -->
+
+<p>JavaScript is a playground. If you disagree, then I encourage you to read
+<a href="http://blog.codinghorror.com/the-principle-of-least-power/" target="_blank">Atwood’s Law</a>.
+A quick Google search will reveal the law in full force with
+<a href="http://pasm.pis.to/" target="_blank">assemblers</a>,
+<a href="http://jsmess.textfiles.com/" target="_blank">machine emulators</a>, and
+<a href="https://github.com/jashkenas/coffeescript/wiki/List-of-languages-that-compile-to-JS/" target="_blank">programming languages</a>
+all written in JavaScript. That is just a small sampling. Go peruse the
+<a href="https://www.npmjs.org/" target="_blank">npm registry</a> for plenty of build tools, frameworks, and
+servers written in JavaScript.  We are tinkerers, especially in the JavaScript community.
+Sometimes our creations are practical and sometimes they are just fun.</p>
+
+<p>With that introduction framing this post, I would like to show off some fun I had with Polymer
+and Marionette.js recently.</p>
+
+<h2 id="web-components-and-polymer">Web Components and Polymer</h2>
+
+<p>Before we dig in, here is a quick rundown of web components and Polymer if you are unsure
+what they are.</p>
+
+<p>Web Components as a standard intends to empower web applications to be modular through
+native browser technologies. Four specs comprise Web Components: Custom Elements, HTML
+Imports, Templates, and the Shadow DOM. Essentially, web components allow developers to
+create reusable components with custom HTML elements. The Shadow DOM affords developers
+encapsulation of their custom elements via a separate DOM tree that does not bleed into
+the containing document. For more information on Web Components, you can visit
+<a href="http://webcomponents.org/" target="_blank">webcomponents.org</a>.</p>
+
+<p>Developed by Google, Polymer is a project that aims to simplify defining web components.
+To the best of its ability, Polymer also polyfills any functionality not natively
+available in the browser (e.g. custom elements, HTML imports, etc.). For more information
+on Polymer, you can visit <a href="https://www.polymer-project.org/" target="_blank">www.polymer-project.org</a>.</p>
+
+<h2 id="marionettejs-components">Marionette.js Components</h2>
+
+<p>Now, back to the topic of this post. I first developed the idea of making Polymer components
+play along with Marionette.js for a talk on architecture and components I gave at the inaugural
+<a href="http://www.nodevember.org" target="_blank">Nodevember</a> conference in Nashville, TN.* If you would like to watch
+my talk, you can view it on <a href="https://www.youtube.com/watch?v=PrQSpdWkN6Q" target="_blank">YouTube</a>.</p>
+
+<p>Toward the end of my talk, I demoed creating a custom name tag element. Furthermore, I showcased
+the ability to wrap that custom element with a custom Marionette view type and keep model data
+synced with a regular Marionette <code>ItemView</code>. I would like to go into more detail the steps
+I took to create this custom Marionette view type and how I was able to keep model data synced.</p>
+
+<h2 id="building-a-name-tag-element">Building a Name Tag Element</h2>
+
+<p>Our name tag element will be pretty basic, displaying a name and job. We will also be able
+to edit the name and job. To build the name tag element, we will use this simple Polymer
+convention for creating custom elements:</p>
+
+<div id="gist-3b857598c2f7b1e12747-name-tag-1-html">
+<script src="https://gist.github.com/3b857598c2f7b1e12747.js?file=name-tag-1.html"></script>
+<noscript>
+<pre>&lt;link rel=&quot;import&quot; href=&quot;../bower_components/polymer/polymer.html&quot;&gt;
+
+&lt;polymer-element name=&quot;name-tag&quot; attributes=&quot;name job&quot;&gt;
+  &lt;template&gt;
+    &lt;div&gt;Hello, my name is {{name}}&lt;/div&gt;
+    &lt;div&gt;My job is {{job}}&lt;/div&gt;&lt;br&gt;
+    &lt;div&gt;Name: &lt;input type=&quot;text&quot; value=&quot;{{name}}&quot;&gt;&lt;/div&gt;
+    &lt;div&gt;Job: &lt;input type=&quot;text&quot; value=&quot;{{job}}&quot;&gt;&lt;/div&gt;
+  &lt;/template&gt;
+  &lt;script&gt;
+    Polymer({
+      name: &#39;Joe Schmoe&#39;,
+      job: &#39;Plumber&#39;
+    });
+  &lt;/script&gt;
+&lt;/polymer-element&gt;</pre>
+</noscript>
+</div>
+
+<p>There are few concepts to explain here. At line 1, we import our framework for defining
+a custom element via an import link relation. At line 3, we define our custom element
+by wrapping it with a <code>&lt;polymer-element&gt;</code> tag. We define the name of our custom element
+via the <code>name</code> attribute. Note that custom elements require at least one hyphen for
+their tag name. In other words, we cannot use <code>&lt;nametag&gt;</code>. We also publish attributes
+for our custom element with the <code>attributes</code>… ahem, attribute. Publishing attributes
+will allow us to set values for properties, which we will see in a second.</p>
+
+<p>At lines 4-9, we define the template for our custom template by wrapping the template
+content with a <code>&lt;template&gt;</code> tag. Note the mustache-like syntax to interpolate values for
+<code>name</code> and <code>job</code>.</p>
+
+<p>Finally at lines 11-14, we tell Polymer about the properties of our custom element. Note,
+they match the attributes we published, and we give them default values.</p>
+
+<p>Now we can use our custom element just like any other HTML element:</p>
+
+<div id="gist-3b857598c2f7b1e12747-name-tag-usage-1-html">
+<script src="https://gist.github.com/3b857598c2f7b1e12747.js?file=name-tag-usage-1.html"></script>
+<noscript>
+<pre>&lt;!-- Load js lib --&gt;
+&lt;script src=&quot;bower_components/webcomponentsjs/webcomponents.min.js&quot;&gt;&lt;/script&gt;
+
+&lt;!-- Import name tag element --&gt;
+&lt;link rel=&quot;import&quot; href=&quot;name-tag-1.html&quot;&gt;
+
+&lt;!-- Default Usage --&gt;
+&lt;name-tag&gt;&lt;/name-tag&gt;
+
+&lt;!-- Supply Attributes --&gt;
+&lt;name-tag name=&quot;Jeremy&quot; job=&quot;Web Developer&quot;&gt;&lt;/name-tag&gt;</pre>
+</noscript>
+</div>
+
+<p><a href="/demos/polymer-components-with-marionette-js/name-tag-usage-1.html" target="_blank" class="btn">DEMO</a></p>
+
+<h2 id="working-with-marionettejs">Working with Marionette.js</h2>
+
+<p>Let us take this a step further and now integrate this with Marionette.js. If you are
+unfamiliar with Marionette, it is a framework that simplifies Backbone.js application
+development. You can learn more at <a href="http://marionettejs.com/" target="_blank">marionettejs.com</a>.</p>
+
+<p>What we want to accomplish is a way to not only instantiate our custom element with
+Marionette but to also sync model data with other Marionette views. We will tackle the
+former first, allowing us to do this:</p>
+
+<div id="gist-3b857598c2f7b1e12747-name-tag-usage-marionette-1-js">
+<script src="https://gist.github.com/3b857598c2f7b1e12747.js?file=name-tag-usage-marionette-1.js"></script>
+<noscript>
+<pre>var NameTag = Marionette.PolymerView.extend({
+  tagName: &#39;name-tag&#39;
+});
+
+// Assuming we have a DOM element with id &#39;main&#39;
+var mainRegion = new Marionette.Region({
+  el: &#39;#main&#39;
+});
+
+var person = new Backbone.Model({
+  name: &#39;Jeremy Fairbank&#39;,
+  job: &#39;Web Developer&#39;
+});
+
+var nameTag = new NameTag({
+  model: person
+});
+
+mainRegion.show(nameTag);</pre>
+</noscript>
+</div>
+
+<p><a href="/demos/polymer-components-with-marionette-js/name-tag-usage-marionette-1.html" target="_blank" class="btn">DEMO</a>
+(Note: demo may not work on mobile devices.)</p>
+
+<p>As you can see above, our custom Marionette view type is called <code>Marionette.PolymerView</code>.
+I have set up a basic GitHub repo for its implementation at
+<a href="https://github.com/jfairbank/marionette.polymerview/" target="_blank">jfairbank/marionette.polymerview</a>.
+You can view the source in the below gist too:</p>
+
+<div id="gist-3b857598c2f7b1e12747-marionette-polymerview-js">
+<script src="https://gist.github.com/3b857598c2f7b1e12747.js?file=marionette.polymerview.js"></script>
+<noscript>
+<pre>/**
+ * Copyright 2014 Jeremy Fairbank &lt;elpapapollo@gmail.com&gt;
+ * License: https://github.com/jfairbank/marionette.polymerview/blob/master/LICENSE
+ */
+Marionette.PolymerView = Marionette.View.extend({
+  constructor: function(options) {
+    Marionette.View.prototype.constructor.apply(this, arguments);
+    this._setPublishedKeys();
+    this._initAttrsFromModel();
+    this._initModelEvents();
+    this._initPolymerEvents();
+  },
+
+  _setPublishedKeys: function() {
+    this._publishedKeys = _.keys(this.el.publish);
+  },
+
+  _initAttrsFromModel: function() {
+    this._setElAttrs(this.model.attributes);
+  },
+
+  _initModelEvents: function() {
+    this.listenTo(this.model, &#39;change&#39;, this._updateElAttrsFromModel);
+  },
+
+  _initPolymerEvents: function() {
+    if (!this.events) {
+      this.events = {};
+    }
+
+    _.each(this._publishedKeys, function(key) {
+      this.events[&#39;change:&#39; + key] = _.bind(this._updateAttrFromEl, this, key);
+    }, this);
+
+    this.delegateEvents();
+  },
+
+  _updateAttrFromEl: function(attributeName) {
+    var value = this.el[attributeName];
+    this.model.set(attributeName, value);
+  },
+
+  _updateElAttrsFromModel: function() {
+    this._setElAttrs(this.model.changed);
+  },
+
+  _setElAttrs: function(attributes) {
+    var attributeNames = _.intersection(_.keys(attributes), this._publishedKeys);
+    _.each(attributeNames, this._setElAttr, this);
+  },
+
+  _setElAttr: function(attributeName) {
+    this.el[attributeName] = this.model.get(attributeName);
+  }
+});</pre>
+</noscript>
+</div>
+
+<p>It is not the most foolproof implementation, but it gets the job done and highlights how easily
+we can work with a Polymer web component from Marionette. Instead of going line-by-line, I
+will highlight the key things that <code>PolymerView</code> is doing.</p>
+
+<p>At line 15, we grab the published attributes from the custom element via the <code>publish</code> property
+on the custom element. Next, starting with the call to <code>this._initAttrsFromModel()</code> at line
+9, we set the value of any published attributes on our custom element from the passed-in
+Backbone model. At lines 10-11, we initialize events that will enable us to keep model data
+and web component data in sync. In other words, whether I update my model or a property in
+the web component, the other will be updated with that information. We will go into more detail
+about that below.</p>
+
+<h2 id="syncing-data-with-marionettejs">Syncing Data with Marionette.js</h2>
+
+<p>The final piece is to get data syncing to work. We can accomplish this by setting some property
+watchers on our custom element. Unfortunately, I have not explored Polymer long enough
+to find a way around this. Therefore, you cannot grab web components defined by someone else
+and have data syncing with Marionette working out-of-the-box. Maybe a more general approach
+is possible; maybe you can help me figure it out!</p>
+
+<p>Nonetheless, we will tweak our name tag definition to include some property watchers:</p>
+
+<div id="gist-3b857598c2f7b1e12747-name-tag-2-html">
+<script src="https://gist.github.com/3b857598c2f7b1e12747.js?file=name-tag-2.html"></script>
+<noscript>
+<pre>&lt;link rel=&quot;import&quot; href=&quot;../bower_components/polymer/polymer.html&quot;&gt;
+
+&lt;polymer-element name=&quot;name-tag&quot; attributes=&quot;name job&quot;&gt;
+  &lt;template&gt;
+    &lt;div&gt;Hello, my name is {{name}}&lt;/div&gt;
+    &lt;div&gt;My job is {{job}}&lt;/div&gt;&lt;br&gt;
+    &lt;div&gt;Name: &lt;input type=&quot;text&quot; value=&quot;{{name}}&quot;&gt;&lt;/div&gt;
+    &lt;div&gt;Job: &lt;input type=&quot;text&quot; value=&quot;{{job}}&quot;&gt;&lt;/div&gt;
+  &lt;/template&gt;
+  &lt;script&gt;
+    Polymer({
+      name: &#39;Joe Schmoe&#39;,
+      job: &#39;Plumber&#39;,
+
+      nameChanged: function() {
+        this.fire(&#39;change:name&#39;);
+      },
+
+      jobChanged: function() {
+        this.fire(&#39;change:job&#39;);
+      }
+    });
+  &lt;/script&gt;
+&lt;/polymer-element&gt;</pre>
+</noscript>
+</div>
+
+<p>At lines 15 and 19, we define two functions <code>nameChanged</code> and <code>jobChanged</code>, respectively.
+These are our property watchers. Notice the syntax is property<em>Changed</em>. Whenever
+<code>name</code> changes on our custom element (not the Backbone model!), <code>nameChanged</code> will be called.
+This is automatically handled by Polymer. The same applies with <code>job</code> and <code>jobChanged</code>.
+Notice in each function’s body, we call <code>this.fire</code> with a custom event name. This is the
+part that will allow us to notify Marionette about changes inside the custom element.</p>
+
+<p>Our Marionette <code>PolymerView</code> will detect these changes by Backbone’s event delegation.
+Backbone’s event delegation (via <code>delegateEvents</code>) is what is responsible for detecting
+DOM events in your Backbone views and responding to them with your own callback.</p>
+
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="lineno">1</span> <span class="kd">var</span> <span class="nx">MyView</span> <span class="o">=</span> <span class="nx">Backbone</span><span class="p">.</span><span class="nx">View</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+<span class="lineno">2</span>   <span class="nx">events</span><span class="o">:</span> <span class="p">{</span>
+<span class="lineno">3</span>     <span class="s1">&#39;click button&#39;</span><span class="o">:</span> <span class="s1">&#39;doThatThang&#39;</span>
+<span class="lineno">4</span>   <span class="p">},</span>
+<span class="lineno">5</span> 
+<span class="lineno">6</span>   <span class="nx">doThatThang</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+<span class="lineno">7</span>     <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;hashtag yolo&#39;</span><span class="p">);</span>
+<span class="lineno">8</span>   <span class="p">}</span>
+<span class="lineno">9</span> <span class="p">});</span></code></pre></div>
+
+<p>We capitalize on this functionality to respond to those custom <code>fire</code> events we defined.
+If you look at lines 26-36 of the <code>PolymerView</code> source above, you will see where we utilize
+<code>delegateEvents</code> to listen for any attribute <code>fire</code> events. From there, we update our
+model data with the changes via the <code>_updateAttrFromEl</code> function.</p>
+
+<p>On the flip side, at lines 22-24, we listen for any changes on our model, and call
+<code>_updateElAttrsFromModel</code> to update our custom element with those changes.</p>
+
+<h2 id="all-together-now">All Together Now</h2>
+
+<p>Now we return to the original intent of this post. We want to show that the data is synced
+between a custom element instantiated with <code>PolymerView</code> and an unrelated Marionette view.
+We will define two other Marionette views, one for displaying information about a person
+(basically like the name tag) and one for updating the person’s name and job. We will
+also define a Marionette layout for organizing our views. Our views and their templates
+are below:</p>
+
+<div id="gist-3b857598c2f7b1e12747-views-1-js">
+<script src="https://gist.github.com/3b857598c2f7b1e12747.js?file=views-1.js"></script>
+<noscript>
+<pre>var Layout = Marionette.LayoutView.extend({
+  el: &#39;#main&#39;,
+  template: &#39;#layout-template&#39;,
+
+  regions: {
+    nameTag: &#39;#name-tag-container&#39;,
+    personView: &#39;#person-view-container&#39;,
+    personForm: &#39;#person-form-container&#39;
+  }
+});
+
+var NameTag = Marionette.PolymerView.extend({
+  tagName: &#39;name-tag&#39;
+});
+
+var PersonFormView = Marionette.ItemView.extend({
+  template: &#39;#person-form-template&#39;,
+
+  ui: {
+    name: &#39;input[name=name]&#39;,
+    job: &#39;input[name=job]&#39;
+  },
+
+  modelEvents: {
+    &#39;change&#39;: &#39;updateUI&#39;
+  },
+
+  events: {
+    &#39;keyup input&#39;: &#39;updateModel&#39;
+  },
+
+  updateUI: function() {
+    var ui = this.ui;
+    var changed = this.model.changed;
+
+    _.each(changed, function(value, key) {
+      if (ui[key].val() != value) {
+        ui[key].val(value);
+      }
+    });
+  },
+
+  updateModel: function(e) {
+    var key = e.target.name;
+    var value = e.target.value;
+    this.model.set(key, value);
+  }
+});
+
+var PersonView = Marionette.ItemView.extend({
+  template: &#39;#person-view-template&#39;,
+
+  modelEvents: {
+    change: &#39;render&#39;
+  }
+});</pre>
+</noscript>
+</div>
+
+<div id="gist-3b857598c2f7b1e12747-templates-1-html">
+<script src="https://gist.github.com/3b857598c2f7b1e12747.js?file=templates-1.html"></script>
+<noscript>
+<pre>&lt;script id=&quot;layout-template&quot; type=&quot;text/html&quot;&gt;
+  &lt;div class=&quot;column&quot;&gt;
+    &lt;h2&gt;Name Tag PolymerView&lt;/h2&gt;
+    &lt;div id=&quot;name-tag-container&quot;&gt;&lt;/div&gt;
+  &lt;/div&gt;
+  &lt;div class=&quot;column&quot;&gt;
+    &lt;h2&gt;Person View&lt;/h2&gt;
+    &lt;div id=&quot;person-view-container&quot;&gt;&lt;/div&gt;
+  &lt;/div&gt;
+  &lt;div class=&quot;column&quot;&gt;
+    &lt;h2&gt;Person Form View&lt;/h2&gt;
+    &lt;div id=&quot;person-form-container&quot;&gt;&lt;/div&gt;
+  &lt;/div&gt;
+&lt;/script&gt;
+
+&lt;script id=&quot;person-view-template&quot; type=&quot;text/html&quot;&gt;
+  &lt;h2&gt;Person View&lt;/h2&gt;
+  &lt;h3&gt;Name: &lt;%= name %&gt;&lt;/h3&gt;
+  &lt;h3&gt;Job: &lt;%= job %&gt;&lt;/h3&gt;
+&lt;/script&gt;
+
+&lt;script id=&quot;person-form-template&quot; type=&quot;text/html&quot;&gt;
+  &lt;div&gt;Name: &lt;input type=&quot;text&quot; name=&quot;name&quot; value=&quot;&lt;%= name %&gt;&quot;&gt;&lt;/div&gt;
+  &lt;div&gt;Job: &lt;input type=&quot;text&quot; name=&quot;job&quot; value=&quot;&lt;%= job %&gt;&quot;&gt;&lt;/div&gt;
+&lt;/script&gt;</pre>
+</noscript>
+</div>
+
+<p>Notice in our <code>views-1.js</code> that we again define a <code>NameTag</code> view from <code>PolymerView</code>. We
+also define a <code>PersonFormView</code> for editing the person model data and a <code>PersonView</code> for
+just displaying the person model data. Finally, we wire it all up:</p>
+
+<div id="gist-3b857598c2f7b1e12747-name-tag-usage-marionette-2-js">
+<script src="https://gist.github.com/3b857598c2f7b1e12747.js?file=name-tag-usage-marionette-2.js"></script>
+<noscript>
+<pre>var Person = Backbone.Model.extend();
+
+var person = new Person({
+  name: &#39;Jeremy Fairbank&#39;,
+  job: &#39;Web Developer&#39;
+});
+
+var nameTag = new NameTag({
+  model: person
+});
+
+var personView = new PersonView({
+  model: person
+});
+
+var personFormView = new PersonFormView({
+  model: person
+});
+
+var layout = new Layout();
+layout.render();
+
+layout.getRegion(&#39;nameTag&#39;).show(nameTag);
+layout.getRegion(&#39;personView&#39;).show(personView);
+layout.getRegion(&#39;personForm&#39;).show(personFormView);</pre>
+</noscript>
+</div>
+
+<p><a href="/demos/polymer-components-with-marionette-js/name-tag-usage-marionette-2.html" target="_blank" class="btn">DEMO</a></p>
+
+<p>(Again, the demo may not work on mobile devices.) Try editing the name and job in both
+the <code>PolymerView</code> section and the <code>PersonFormView</code> section. You will see the name and job
+update for the other views regardless of where you update the data!</p>
+
+<h2 id="conclusion">Conclusion</h2>
+
+<p>I know this is not anything groundbreaking. I do not doubt that someone has already done this.
+Regardless, I think it shows the exciting possibilities of combining web technologies and
+opens the door to incorporating web components into JavaScript applications already built
+on existing frameworks. I hope this post ignites your curiosity and propels you
+to play around with web components and join the big ole’ JavaScript playground that we
+love to have fun in from time to time.</p>
+
+<p>If you have any trouble with the demo or ideas to improve this implementation, please
+let me know in the comments or make a pull request at the GitHub repo.</p>
+
+<p><strong>Notes:</strong><br />
+* If you are a JavaScript developer, I encourage you to support, talk at, and attend
+<a href="http://www.nodevember.org" target="_blank">Nodevember</a>. The organizers did a fantastic job putting it together,
+and the caliber of speakers was spectacular.</p>
+
+      <div class="social-share">
+  <ul class="inline-list">
+    <li class="facebook">
+      <a href="https://www.facebook.com/sharer/sharer.php?u=http://blog.jeremyfairbank.com/javascript/polymer-web-components-with-marionette-js/" title="Share on Facebook"><span class="count"><i class="fa fa-facebook-square"></i> Share</span></a>
+    </li>
+    <li class="twitter">
+      <a href="https://twitter.com/intent/tweet?text=http://blog.jeremyfairbank.com/javascript/polymer-web-components-with-marionette-js/" title="Share on Twitter"><span class="count"><i class="fa fa-twitter-square"></i> Tweet</span></a>
+    </li>
+    <li class="googleplus">
+      <a href="https://plus.google.com/share?url=http://blog.jeremyfairbank.com/javascript/polymer-web-components-with-marionette-js/" title="Share on Google Plus"><span class="count"><i class="fa fa-google-plus-square"></i> +1</span></a>
+    </li>
+  </ul>
+</div>
+
+      <hr />
+      <footer role="contentinfo">
+        <div class="article-author-bottom">
+          
+
+
+
+	<img src="http://blog.jeremyfairbank.com/images/bio-photo-1.jpg" class="bio-photo" alt="Jeremy Fairbank bio photo">
+
+<h3>Jeremy Fairbank</h3>
+<p>Making the web with JavaScript.</p>
+
+<a href="http://twitter.com/ElPapaPollo" class="author-social" target="_blank"><i class="fa fa-fw fa-twitter-square"></i> Twitter</a>
+
+<a href="http://plus.google.com/+JeremyFairbank" class="author-social" target="_blank"><i class="fa fa-fw fa-google-plus-square"></i> Google+</a>
+
+<a href="http://instagram.com/elpapapollo" class="author-social" target="_blank"><i class="fa fa-fw fa-instagram"></i> Instagram</a>
+
+<a href="http://github.com/jfairbank" class="author-social" target="_blank"><i class="fa fa-fw fa-github"></i> Github</a>
+
+
+
+
+
+
+
+
+        </div>
+        <p class="byline"><strong>Polymer Web Components with Marionette.js</strong> was published on <time datetime="2015-01-03T00:00:00-05:00">January 03, 2015</time>.</p>
+      </footer>
+    </div><!-- /.article-wrap -->
+  
+    <section id="disqus_thread"></section><!-- /#disqus_thread -->
+  
+  </article>
+</div><!-- /#main -->
+
+<div class="footer-wrap">
+  <div class="related-articles">
+  <h4>You might also enjoy <small class="pull-right">(<a href="http://blog.jeremyfairbank.com/posts/">View all posts</a>)</small></h4>
+    <ul>
+    
+      <li><a href="http://blog.jeremyfairbank.com/programming/open-source-you/" title="Open Source You">Open Source You</a></li>
+    
+      <li><a href="http://blog.jeremyfairbank.com/javascript/components-with-backbone-js-and-marionette-js/" title="Components with Backbone.js and Marionette.js">Components with Backbone.js and Marionette.js</a></li>
+    
+      <li><a href="http://blog.jeremyfairbank.com/javascript/first-post-ensuring-remote-data-is-available/" title="First Post: Ensuring Remote Data is Available in JavaScript">First Post: Ensuring Remote Data is Available in JavaScript</a></li>
+    
+    </ul>
+    <hr />
+  </div><!-- /.related-articles -->
+  <footer>
+    
+
+<span>&copy; 2014 - 2015 Jeremy Fairbank. Powered by <a href="http://jekyllrb.com" rel="nofollow">Jekyll</a> using the <a href="http://mademistakes.com/minimal-mistakes/" rel="nofollow">Minimal Mistakes</a> theme.</span>
+
+  </footer>
+</div><!-- /.footer-wrap -->
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script>window.jQuery || document.write('<script src="http://blog.jeremyfairbank.com/assets/js/vendor/jquery-1.9.1.min.js"><\/script>')</script>
+<script src="http://blog.jeremyfairbank.com/assets/js/scripts.min.js"></script>
+
+<!-- Asynchronous Google Analytics snippet -->
+<script>
+  var _gaq = _gaq || [];
+  var pluginUrl = 
+ '//www.google-analytics.com/plugins/ga/inpage_linkid.js';
+  _gaq.push(['_require', 'inpage_linkid', pluginUrl]);
+  _gaq.push(['_setAccount', 'UA-52148605-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+
+
+  
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+    var disqus_shortname = 'jeremyfairbankblog'; // required: replace example with your forum shortname
+
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function () {
+        var s = document.createElement('script'); s.async = true;
+        s.type = 'text/javascript';
+        s.src = '//' + disqus_shortname + '.disqus.com/count.js';
+        (document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
+    }());
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+	        
+
+</body>
+</html>
