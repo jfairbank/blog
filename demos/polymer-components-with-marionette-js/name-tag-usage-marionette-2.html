@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Custom Name Tag Element</title>
+
+  <style>
+    .column {
+      float: left;
+      width: 300px;
+    }
+  </style>
+
+  <script src="bower_components/webcomponentsjs/webcomponents.min.js"></script>
+  <link rel="import" href="elements/name-tag-2.html">
+
+  <script src="bower_components/jquery/dist/jquery.min.js"></script>
+  <script src="bower_components/underscore/underscore.js"></script>
+  <script src="bower_components/backbone/backbone.js"></script>
+  <script src="bower_components/marionette/lib/backbone.marionette.min.js"></script>
+  <script src="js/marionette.polymerview.js"></script>
+  <script src="js/name-tag-usage-marionette-2.js"></script>
+
+  <script id="layout-template" type="text/html">
+    <div class="column">
+      <h2>Name Tag PolymerView</h2>
+      <div id="name-tag-container"></div>
+    </div>
+    <div class="column">
+      <h2>Person View</h2>
+      <div id="person-view-container"></div>
+    </div>
+    <div class="column">
+      <h2>Person Form View</h2>
+      <div id="person-form-container"></div>
+    </div>
+  </script>
+   
+  <script id="person-view-template" type="text/html">
+    <h3>Name: <%= name %></h3>
+    <h3>Job: <%= job %></h3>
+  </script>
+   
+  <script id="person-form-template" type="text/html">
+    <div>Name: <input type="text" name="name" value="<%= name %>"></div>
+    <div>Job: <input type="text" name="job" value="<%= job %>"></div>
+  </script>
+</head>
+<body>
+  <div id="main"></div>
+</body>
+</html>
