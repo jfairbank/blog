@@ -1,6 +1,6 @@
 module JF
   class ExtLinkTag < Liquid::Tag
-    MATCH_REGEXP = %r[(https?://\S*)(.*)]
+    MATCH_REGEXP = %r[(\S*)(.*)]
 
     def initialize(tag_name, content, tokens)
       super
