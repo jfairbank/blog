@@ -1,0 +1,501 @@
+<!doctype html>
+<!--[if lt IE 7]><html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="en"> <![endif]-->
+<!--[if (IE 7)&!(IEMobile)]><html class="no-js lt-ie9 lt-ie8" lang="en"><![endif]-->
+<!--[if (IE 8)&!(IEMobile)]><html class="no-js lt-ie9" lang="en"><![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en"><!--<![endif]-->
+<head>
+<meta charset="utf-8">
+<title>First Post: Ensuring Remote Data is Available in JavaScript &#8211; Jeremy Fairbank Blog</title>
+<meta name="description" content="How to access remote data in JavaScript through a single interface, caching the data for future requests.">
+<meta name="keywords" content="javascript, ruby on rails, rspec, capybara, api, first post, programming">
+
+
+
+<!-- Twitter Cards -->
+<meta name="twitter:title" content="First Post: Ensuring Remote Data is Available in JavaScript">
+<meta name="twitter:description" content="How to access remote data in JavaScript through a single interface, caching the data for future requests.">
+<meta name="twitter:site" content="@ElPapaPollo">
+<meta name="twitter:creator" content="@ElPapaPollo">
+
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://blog.jeremyfairbank.com/images/default-thumb.png">
+
+<!-- Open Graph -->
+<meta property="og:locale" content="en_US">
+<meta property="og:type" content="article">
+<meta property="og:title" content="First Post: Ensuring Remote Data is Available in JavaScript">
+<meta property="og:description" content="How to access remote data in JavaScript through a single interface, caching the data for future requests.">
+<meta property="og:url" content="http://blog.jeremyfairbank.com/javascript/first-post-ensuring-remote-data-is-available/">
+<meta property="og:site_name" content="Jeremy Fairbank Blog">
+
+
+
+
+
+<link rel="canonical" href="http://blog.jeremyfairbank.com/javascript/first-post-ensuring-remote-data-is-available/">
+<link href="http://blog.jeremyfairbank.com/feed.xml" type="application/atom+xml" rel="alternate" title="Jeremy Fairbank Blog Feed">
+<link rel="author" href="http://plus.google.com/+JeremyFairbank?rel=author">
+
+<!-- http://t.co/dKP3o1e -->
+<meta name="HandheldFriendly" content="True">
+<meta name="MobileOptimized" content="320">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="http://blog.jeremyfairbank.com/assets/css/main.css">
+
+<meta http-equiv="cleartype" content="on">
+
+<!-- HTML5 Shiv and Media Query Support -->
+<!--[if lt IE 9]>
+	<script src="http://blog.jeremyfairbank.com/assets/js/vendor/html5shiv.min.js"></script>
+	<script src="http://blog.jeremyfairbank.com/assets/js/vendor/respond.min.js"></script>
+<![endif]-->
+
+<!-- Modernizr -->
+<script src="http://blog.jeremyfairbank.com/assets/js/vendor/modernizr-2.7.1.custom.min.js"></script>
+
+<link href='//fonts.googleapis.com/css?family=PT+Sans+Narrow:400,700%7CPT+Serif:400,700,400italic' rel='stylesheet' type='text/css'>
+
+<!-- Icons -->
+<!-- 16x16 -->
+<link rel="shortcut icon" href="http://blog.jeremyfairbank.com/favicon.ico">
+<!-- 32x32 -->
+<link rel="shortcut icon" href="http://blog.jeremyfairbank.com/favicon.png">
+<!-- 57x57 (precomposed) for iPhone 3GS, pre-2011 iPod Touch and older Android devices -->
+<link rel="apple-touch-icon-precomposed" href="http://blog.jeremyfairbank.com/images/apple-touch-icon-precomposed.png">
+<!-- 72x72 (precomposed) for 1st generation iPad, iPad 2 and iPad mini -->
+<link rel="apple-touch-icon-precomposed" sizes="72x72" href="http://blog.jeremyfairbank.com/images/apple-touch-icon-72x72-precomposed.png">
+<!-- 114x114 (precomposed) for iPhone 4, 4S, 5 and post-2011 iPod Touch -->
+<link rel="apple-touch-icon-precomposed" sizes="114x114" href="http://blog.jeremyfairbank.com/images/apple-touch-icon-114x114-precomposed.png">
+<!-- 144x144 (precomposed) for iPad 3rd and 4th generation -->
+<link rel="apple-touch-icon-precomposed" sizes="144x144" href="http://blog.jeremyfairbank.com/images/apple-touch-icon-144x144-precomposed.png">
+
+</head>
+
+<body class="post">
+
+<!--[if lt IE 9]><div class="browser-upgrade alert alert-info">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</div><![endif]-->
+
+<div class="navigation-wrapper">
+	<div class="site-name">
+		<a href="http://blog.jeremyfairbank.com/">Jeremy Fairbank Blog</a>
+	</div><!-- /.site-name -->
+	<div class="top-navigation">
+		<nav role="navigation" id="site-nav" class="nav">
+		    <ul>
+		        
+				    
+				        
+				    
+				    <li><a href="http://blog.jeremyfairbank.com/about/" >About</a></li>
+				
+				    
+				        
+				    
+				    <li><a href="http://blog.jeremyfairbank.com/posts/" >Posts</a></li>
+				
+		    </ul>
+		</nav>
+	</div><!-- /.top-navigation -->
+</div><!-- /.navigation-wrapper -->
+
+
+
+<div id="main" role="main">
+  <div class="article-author-side">
+    
+
+
+
+	<img src="http://blog.jeremyfairbank.com/images/bio-photo-1.jpg" class="bio-photo" alt="Jeremy Fairbank bio photo">
+
+<h3>Jeremy Fairbank</h3>
+<p>Making the web with JavaScript.</p>
+
+<a href="http://twitter.com/ElPapaPollo" class="author-social" target="_blank"><i class="fa fa-fw fa-twitter-square"></i> Twitter</a>
+
+<a href="http://plus.google.com/+JeremyFairbank" class="author-social" target="_blank"><i class="fa fa-fw fa-google-plus-square"></i> Google+</a>
+
+<a href="http://instagram.com/elpapapollo" class="author-social" target="_blank"><i class="fa fa-fw fa-instagram"></i> Instagram</a>
+
+<a href="http://github.com/jfairbank" class="author-social" target="_blank"><i class="fa fa-fw fa-github"></i> Github</a>
+
+
+
+
+
+
+
+
+  </div>
+  <article class="post">
+    <div class="headline-wrap">
+      
+        <h1><a href="http://blog.jeremyfairbank.com/javascript/first-post-ensuring-remote-data-is-available/" rel="bookmark" title="First Post: Ensuring Remote Data is Available in JavaScript">First Post: Ensuring Remote Data is Available in JavaScript</a></h1>
+      
+    </div><!--/ .headline-wrap -->
+    <div class="article-wrap">
+      <div class="social-share">
+  <ul class="inline-list">
+    <li class="facebook">
+      <a href="https://www.facebook.com/sharer/sharer.php?u=http://blog.jeremyfairbank.com/javascript/first-post-ensuring-remote-data-is-available/" title="Share on Facebook"><span class="count"><i class="fa fa-facebook-square"></i> Share</span></a>
+    </li>
+    <li class="twitter">
+      <a href="https://twitter.com/intent/tweet?text=http://blog.jeremyfairbank.com/javascript/first-post-ensuring-remote-data-is-available/" title="Share on Twitter"><span class="count"><i class="fa fa-twitter-square"></i> Tweet</span></a>
+    </li>
+    <li class="googleplus">
+      <a href="https://plus.google.com/share?url=http://blog.jeremyfairbank.com/javascript/first-post-ensuring-remote-data-is-available/" title="Share on Google Plus"><span class="count"><i class="fa fa-google-plus-square"></i> +1</span></a>
+    </li>
+  </ul>
+</div>
+
+      <section id="table-of-contents" class="toc">
+  <header>
+    <h3>Contents</h3>
+  </header>
+<div id="drawer">
+<ul id="markdown-toc">
+  <li><a href="#greetings">Greetings</a></li>
+  <li><a href="#the-problem">The Problem</a></li>
+  <li><a href="#the-solution">The Solution</a></li>
+  <li><a href="#conclusion">Conclusion</a></li>
+</ul>
+
+  </div>
+</section>
+<!-- /#table-of-contents -->
+
+<h2 id="greetings">Greetings</h2>
+
+<p>Hello, my name is Jeremy Fairbank, and I am a front-end and back-end web developer.</p>
+
+<p>So, I have wanted to do a development blog for a long time, but I become easily distracted by Reddit, video games, or that random programming question that has been racking my brain for the past few days, and I will not be able to sleep tonight unless I sit down at my computer to solve it… Whew. I admit I like to see instantaneous results from my work (that is probably why I am a programmer), so I simply cannot be bothered with all the minutiae of setting up a blog.</p>
+
+<p>However, I get frustrated when I have a stroke of brilliance, swooping in to save the day with an incredibly elegant solution to a programming problem, and really want to share that with someone. You see, I am the development team where I work, so I do not have the junior developer to teach or the senior developer to probe for feedback and criticism. Half of my solutions could be terrible, unmaintable wrecks just waiting to rear their ugly heads in production months later.</p>
+
+<p>Don’t get me wrong, I still read articles and books and follow many a twitterer, so I’m always learning the thing I did last week was really stupid. OK, maybe not stupid, but definitely not as scaleable or maintainable as it could be. Ultimately, I <strong>LOVE</strong> to talk about programming, just ask my wife. I really want to be able to share my thoughts and opinions and garner feedback from fellow developers.</p>
+
+<p>Therefore, what better way than to finally start my blog and jump right in with an interesting fix I implemented last week for a feature spec!</p>
+
+<h2 id="the-problem">The Problem</h2>
+
+<p>I can’t really share the specific domain models used, so I will use some suitable substitutes for the problem.</p>
+
+<p>We have a large single-page application for ordering a highly customizable product. This application is built upon <a href="http://backbonejs.org/">Backbone</a> and <a href="http://marionettejs.com/">Marionette</a> with a <a href="http://rubyonrails.org/">Ruby on Rails</a> back-end. Now, let’s say our configurable product is a car. Certain configuration options on the car will incur various upcharges. These upcharges will not change often, so they will be constant throughout a user’s session on the application. Thus, one of the JavaScript files pulls down all the possible upcharge types from an API on the back-end.</p>
+
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="lineno"> 1</span> <span class="c1">// car.js</span>
+<span class="lineno"> 2</span> 
+<span class="lineno"> 3</span> <span class="kd">var</span> <span class="nx">Car</span> <span class="o">=</span> <span class="nx">Backbone</span><span class="p">.</span><span class="nx">Model</span><span class="p">.</span><span class="nx">extend</span><span class="p">();</span>
+<span class="lineno"> 4</span> 
+<span class="lineno"> 5</span> <span class="c1">// car/upcharges.js</span>
+<span class="lineno"> 6</span> 
+<span class="lineno"> 7</span> <span class="kd">var</span> <span class="nx">Upcharge</span> <span class="o">=</span> <span class="nx">Backbone</span><span class="p">.</span><span class="nx">Model</span><span class="p">.</span><span class="nx">extend</span><span class="p">();</span>
+<span class="lineno"> 8</span> 
+<span class="lineno"> 9</span> <span class="kd">var</span> <span class="nx">Upcharges</span> <span class="o">=</span> <span class="nx">Backbone</span><span class="p">.</span><span class="nx">Collection</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+<span class="lineno">10</span>   <span class="nx">model</span><span class="o">:</span> <span class="nx">Upcharge</span><span class="p">,</span>
+<span class="lineno">11</span>   <span class="nx">url</span><span class="o">:</span> <span class="s1">&#39;/api/upcharges&#39;</span>
+<span class="lineno">12</span> <span class="p">});</span>
+<span class="lineno">13</span> 
+<span class="lineno">14</span> <span class="kd">var</span> <span class="nx">availableUpcharges</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Upcharges</span><span class="p">();</span>
+<span class="lineno">15</span> <span class="nx">availableUpcharges</span><span class="p">.</span><span class="nx">fetch</span><span class="p">();</span></code></pre></div>
+
+<p>So, <code>car/upcharges.js</code> immediately fetches the upcharges as soon as the browser loads the file. In a normal user session, this is completely acceptable because by the time the user can begin to use the application, the upcharges have loaded.</p>
+
+<p>As the user navigates throughout the application, he/she will eventually make decisions that may require the application to add or remove different upcharges to a car. To handle this, the application uses another collection for managing which upcharges have been applied to the car based on a <code>key</code> field for each upcharge. Canonical upcharges have been seeded into the application with constant <code>key</code> names. For example, if the user wanted chrome rims, the application would add an upcharge via:</p>
+
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="lineno">1</span> <span class="c1">// app/some/module.js</span>
+<span class="lineno">2</span> 
+<span class="lineno">3</span> <span class="nx">car</span><span class="p">.</span><span class="nx">appliedUpcharges</span><span class="p">.</span><span class="nx">addUpchargeByKey</span><span class="p">(</span><span class="s1">&#39;chrome_rims&#39;</span><span class="p">);</span></code></pre></div>
+
+<p>The collection for applied upcharges might look something like this then:</p>
+
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="lineno"> 1</span> <span class="c1">// car/upcharges.js</span>
+<span class="lineno"> 2</span> 
+<span class="lineno"> 3</span> <span class="kd">var</span> <span class="nx">Upcharges</span> <span class="o">=</span> <span class="nx">Backbone</span><span class="p">.</span><span class="nx">Collection</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+<span class="lineno"> 4</span>   <span class="c1">// earlier definitions...</span>
+<span class="lineno"> 5</span> 
+<span class="lineno"> 6</span>   <span class="nx">getByKey</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">key</span><span class="p">)</span> <span class="p">{</span>
+<span class="lineno"> 7</span>     <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">findWhere</span><span class="p">({</span> <span class="nx">key</span><span class="o">:</span> <span class="nx">key</span> <span class="p">});</span>
+<span class="lineno"> 8</span>   <span class="p">}</span>
+<span class="lineno"> 9</span> <span class="p">});</span>
+<span class="lineno">10</span> 
+<span class="lineno">11</span> <span class="kd">var</span> <span class="nx">AppliedUpcharges</span> <span class="o">=</span> <span class="nx">Backbone</span><span class="p">.</span><span class="nx">Collection</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+<span class="lineno">12</span>   <span class="nx">model</span><span class="o">:</span> <span class="nx">Upcharge</span><span class="p">,</span>
+<span class="lineno">13</span> 
+<span class="lineno">14</span>   <span class="nx">addUpchargeByKey</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">key</span><span class="p">)</span> <span class="p">{</span>
+<span class="lineno">15</span>     <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">_getUpchargeByKeyAndRun</span><span class="p">(</span><span class="nx">key</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">addUpcharge</span><span class="p">);</span>
+<span class="lineno">16</span>   <span class="p">},</span>
+<span class="lineno">17</span> 
+<span class="lineno">18</span>   <span class="nx">removeUpchargeByKey</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">key</span><span class="p">)</span> <span class="p">{</span>
+<span class="lineno">19</span>     <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">_getUpchargeByKeyAndRun</span><span class="p">(</span><span class="nx">key</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">removeUpcharge</span><span class="p">);</span>
+<span class="lineno">20</span>   <span class="p">},</span>
+<span class="lineno">21</span> 
+<span class="lineno">22</span>   <span class="nx">addUpcharge</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">upcharge</span><span class="p">)</span> <span class="p">{</span>
+<span class="lineno">23</span>     <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">has</span><span class="p">(</span><span class="nx">upcharge</span><span class="p">))</span> <span class="p">{</span>
+<span class="lineno">24</span>       <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="nx">upcharge</span><span class="p">.</span><span class="nx">clone</span><span class="p">());</span>
+<span class="lineno">25</span>     <span class="p">}</span>
+<span class="lineno">26</span>   <span class="p">},</span>
+<span class="lineno">27</span> 
+<span class="lineno">28</span>   <span class="nx">removeUpcharge</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">upcharge</span><span class="p">)</span> <span class="p">{</span>
+<span class="lineno">29</span>     <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">remove</span><span class="p">(</span><span class="nx">upcharge</span><span class="p">);</span>
+<span class="lineno">30</span>   <span class="p">},</span>
+<span class="lineno">31</span> 
+<span class="lineno">32</span>   <span class="nx">_getUpchargeByKeyAndRun</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">key</span><span class="p">,</span> <span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
+<span class="lineno">33</span>     <span class="kd">var</span> <span class="nx">upcharge</span> <span class="o">=</span> <span class="nx">availableUpcharges</span><span class="p">.</span><span class="nx">getByKey</span><span class="p">(</span><span class="nx">key</span><span class="p">);</span>
+<span class="lineno">34</span>     <span class="nx">callback</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">upcharge</span><span class="p">);</span>
+<span class="lineno">35</span>   <span class="p">}</span>
+<span class="lineno">36</span> <span class="p">});</span></code></pre></div>
+
+<p>OK, so this is all fine and dandy and it works. Ehh, maybe we should move the logic for adding and removing upcharges to the back-end, but that’s for another time and place to discuss. In fact, I’m more in favor of that idea, but it would defeat the purpose of this blog post.</p>
+
+<p>Now, it’s time to set up a feature spec because we want to make sure that the upcharges display on the order totals page. Given we use RSpec, Capybara, and FactoryGirl, a very simplified version of the feature spec might look something like this:</p>
+
+<div class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="lineno"> 1</span> <span class="nb">require</span> <span class="s1">&#39;spec_helper&#39;</span>
+<span class="lineno"> 2</span> <span class="nb">require</span> <span class="s1">&#39;features/helpers&#39;</span>
+<span class="lineno"> 3</span> 
+<span class="lineno"> 4</span> <span class="n">feature</span> <span class="s1">&#39;Configuring a car&#39;</span><span class="p">,</span> <span class="ss">js</span><span class="p">:</span> <span class="kp">true</span> <span class="k">do</span>
+<span class="lineno"> 5</span>   <span class="n">given</span><span class="p">(</span><span class="ss">:user</span><span class="p">)</span>	<span class="p">{</span> <span class="n">create</span><span class="p">(</span><span class="ss">:user</span><span class="p">)</span> <span class="p">}</span>
+<span class="lineno"> 6</span>   <span class="n">given</span><span class="p">(</span><span class="ss">:order</span><span class="p">)</span> <span class="p">{</span> <span class="n">create</span><span class="p">(</span><span class="ss">:order</span><span class="p">,</span> <span class="ss">:incomplete</span><span class="p">)</span> <span class="p">}</span>
+<span class="lineno"> 7</span> 
+<span class="lineno"> 8</span>   <span class="n">background</span> <span class="k">do</span>
+<span class="lineno"> 9</span>     <span class="n">login_as</span> <span class="n">user</span> <span class="c1"># Helper method from &#39;features/helpers&#39;</span>
+<span class="lineno">10</span> 
+<span class="lineno">11</span>     <span class="n">create</span><span class="p">(</span><span class="ss">:upcharge</span><span class="p">,</span> <span class="p">{</span>
+<span class="lineno">12</span>       <span class="ss">key</span><span class="p">:</span> <span class="s1">&#39;chrome_rims&#39;</span><span class="p">,</span>
+<span class="lineno">13</span>       <span class="ss">description</span><span class="p">:</span> <span class="s1">&#39;Chrome Rims&#39;</span><span class="p">,</span>
+<span class="lineno">14</span>       <span class="ss">price</span><span class="p">:</span> <span class="mi">1000</span>
+<span class="lineno">15</span>     <span class="p">})</span>
+<span class="lineno">16</span> 
+<span class="lineno">17</span>     <span class="n">car</span> <span class="o">=</span> <span class="n">create</span><span class="p">(</span><span class="ss">:car</span><span class="p">)</span>
+<span class="lineno">18</span> 
+<span class="lineno">19</span>     <span class="n">order</span><span class="o">.</span><span class="n">car</span> <span class="o">=</span> <span class="n">car</span>
+<span class="lineno">20</span>     <span class="n">order</span><span class="o">.</span><span class="n">save</span>
+<span class="lineno">21</span>   <span class="k">end</span>
+<span class="lineno">22</span> 
+<span class="lineno">23</span>   <span class="n">scenario</span> <span class="s1">&#39;Viewing the order totals page&#39;</span> <span class="k">do</span>
+<span class="lineno">24</span>     <span class="n">click_on</span> <span class="s1">&#39;Orders&#39;</span>
+<span class="lineno">25</span> 
+<span class="lineno">26</span>     <span class="n">within</span><span class="p">(</span><span class="s1">&#39;#orders-table&#39;</span><span class="p">)</span> <span class="k">do</span>
+<span class="lineno">27</span>       <span class="n">click_on</span> <span class="s2">&quot;Order #</span><span class="si">#{</span><span class="n">order</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="lineno">28</span>     <span class="k">end</span>
+<span class="lineno">29</span> 
+<span class="lineno">30</span>     <span class="n">click_on</span> <span class="s1">&#39;Configure Car&#39;</span>
+<span class="lineno">31</span>     <span class="n">click_on</span> <span class="s1">&#39;Add Chrome Rims&#39;</span>
+<span class="lineno">32</span>     <span class="n">click_on</span> <span class="s1">&#39;Order Totals&#39;</span>
+<span class="lineno">33</span> 
+<span class="lineno">34</span>     <span class="n">totals</span> <span class="o">=</span> <span class="n">find</span><span class="p">(</span><span class="s1">&#39;#order-totals&#39;</span><span class="p">)</span>
+<span class="lineno">35</span>     <span class="n">expect</span><span class="p">(</span><span class="n">totals</span><span class="p">)</span><span class="o">.</span><span class="n">to</span> <span class="n">have_selector</span><span class="p">(</span><span class="s1">&#39;.car-upcharge&#39;</span><span class="p">,</span> <span class="ss">count</span><span class="p">:</span> <span class="mi">1</span><span class="p">)</span>
+<span class="lineno">36</span>     <span class="n">expect</span><span class="p">(</span><span class="n">totals</span><span class="p">)</span><span class="o">.</span><span class="n">to</span> <span class="n">have_selector</span><span class="p">(</span><span class="s1">&#39;.car-upcharge&#39;</span><span class="p">,</span> <span class="ss">text</span><span class="p">:</span> <span class="s1">&#39;Chrome Rims&#39;</span><span class="p">)</span>
+<span class="lineno">37</span>   <span class="k">end</span>
+<span class="lineno">38</span> <span class="k">end</span></code></pre></div>
+
+<p>So, I run the spec and it <em>fails</em>. Okay… Did I not properly set up the order and car? Is there some random attribute that is still <code>nil</code> on a model that needs to have a value? After strategically (maybe a little randomly) placing <code>console.log</code>’s and <code>puts</code>’s, I discovered that my <code>availableUpcharges</code> variable was an empty collection. But, I added the chrome rims upcharge in my <code>background</code> block.</p>
+
+<p>A couple more <code>console.log</code>’s and it begins to make sense. RSpec and Capybara load my application’s assets before the <code>background</code> block runs. So, I fetch the available upcharges before any have even been created. This is problematic for a single page application that pulls remote data down once to use it for the remainder of the user’s session. Yes, it’s good to not create additional requests for remote data, but maybe immediately loading the data when the file loads isn’t a good idea either.</p>
+
+<h2 id="the-solution">The Solution</h2>
+<p>What can we do then? A better solution would be to asynchronously load and use the available upcharges the first time they’re needed. We could use a singleton object for managing the available upcharges like so:</p>
+
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="lineno"> 1</span> <span class="c1">// car/upcharges.js</span>
+<span class="lineno"> 2</span> 
+<span class="lineno"> 3</span> <span class="kd">var</span> <span class="nx">AppliedUpcharges</span> <span class="o">=</span> <span class="nx">Backbone</span><span class="p">.</span><span class="nx">Collection</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+<span class="lineno"> 4</span>   <span class="c1">// other definitions...</span>
+<span class="lineno"> 5</span> 
+<span class="lineno"> 6</span>   <span class="c1">// Redefine this function</span>
+<span class="lineno"> 7</span>   <span class="nx">_getUpchargeByKeyAndRun</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">key</span><span class="p">,</span> <span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
+<span class="lineno"> 8</span>     <span class="kd">var</span> <span class="nx">self</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+<span class="lineno"> 9</span> 
+<span class="lineno">10</span>     <span class="nx">availableUpcharges</span><span class="p">.</span><span class="nx">ensured</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">upcharges</span><span class="p">)</span> <span class="p">{</span>
+<span class="lineno">11</span>       <span class="kd">var</span> <span class="nx">upcharge</span> <span class="o">=</span> <span class="nx">upcharges</span><span class="p">.</span><span class="nx">getByKey</span><span class="p">(</span><span class="nx">key</span><span class="p">);</span>
+<span class="lineno">12</span>       <span class="nx">callback</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">self</span><span class="p">,</span> <span class="nx">upcharge</span><span class="p">);</span>
+<span class="lineno">13</span>     <span class="p">});</span>
+<span class="lineno">14</span>   <span class="p">}</span>
+<span class="lineno">15</span> <span class="p">});</span>
+<span class="lineno">16</span> 
+<span class="lineno">17</span> <span class="kd">var</span> <span class="nx">availableUpcharges</span> <span class="o">=</span> <span class="p">{</span>
+<span class="lineno">18</span>   <span class="nx">ensured</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">firstCallback</span><span class="p">)</span> <span class="p">{</span>
+<span class="lineno">19</span>     <span class="kd">var</span> <span class="nx">self</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+<span class="lineno">20</span>     <span class="kd">var</span> <span class="nx">upcharges</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Upcharges</span><span class="p">();</span>
+<span class="lineno">21</span> 
+<span class="lineno">22</span>     <span class="nx">upcharges</span><span class="p">.</span><span class="nx">fetch</span><span class="p">({</span>
+<span class="lineno">23</span>       <span class="nx">success</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+<span class="lineno">24</span> 	<span class="nx">self</span><span class="p">.</span><span class="nx">ensured</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
+<span class="lineno">25</span> 	  <span class="nx">callback</span><span class="p">(</span><span class="nx">upcharges</span><span class="p">);</span>
+<span class="lineno">26</span> 	<span class="p">};</span>
+<span class="lineno">27</span> 
+<span class="lineno">28</span> 	<span class="nx">self</span><span class="p">.</span><span class="nx">ensured</span><span class="p">(</span><span class="nx">firstCallback</span><span class="p">);</span>
+<span class="lineno">29</span>       <span class="p">}</span>
+<span class="lineno">30</span>     <span class="p">})</span>
+<span class="lineno">31</span>   <span class="p">}</span>
+<span class="lineno">32</span> <span class="p">};</span></code></pre></div>
+
+<p>Now, we just call <code>availableUpcharges.ensured</code> first, passing it a callback function. We create one interface for accessing the real available upcharges, whether they’re loaded yet or not. Our singleton object handles loading them the first time. Once they’re loaded, it redefines it’s <code>ensured</code> method to just simply pass the loaded upcharges to the callback.</p>
+
+<p>I test it out in my application, but then I start to see multiple requests for the available upcharges. That’s the exact opposite of what this is supposed to do. Then, I realize my error. You see, our application automatically checks for multiple upcharges based on measurement constraints. There are multiple configurable measurements that are interrelated. So, if a user’s car had an atypical length-to-width ratio, then the application catches that on the order totals page and applies an appropriate upcharge. That way, if the user left the application and came back later, the application can recheck the car and update the upcharges as needed. Now, imagine there are several more of those measurement checks occurring all at once, meaning the application would call <code>addUpchargeByKey</code> and <code>removeUpchargeByKey</code> several times, calling <code>_getUpchargeByKeyAndRun</code> several times.</p>
+
+<p>This presents a problem; if the application calls <code>_getUpchargeByKeyAndRun</code> multiple consecutive times and the available upcharges haven’t loaded yet, then it is going to naturally create multiple requests for them because the <code>ensured</code> function has not been redefined yet. We need to tweak our singleton object to take this into account:</p>
+
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="lineno"> 1</span> <span class="c1">// car/upcharges.js</span>
+<span class="lineno"> 2</span> 
+<span class="lineno"> 3</span> <span class="kd">var</span> <span class="nx">availableUpcharges</span> <span class="o">=</span> <span class="p">{</span>
+<span class="lineno"> 4</span>   <span class="nx">queue</span><span class="o">:</span> <span class="p">[],</span>
+<span class="lineno"> 5</span> 
+<span class="lineno"> 6</span>   <span class="nx">ensured</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">firstCallback</span><span class="p">)</span> <span class="p">{</span>
+<span class="lineno"> 7</span>     <span class="k">this</span><span class="p">.</span><span class="nx">queue</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">firstCallback</span><span class="p">);</span>
+<span class="lineno"> 8</span> 
+<span class="lineno"> 9</span>     <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">request</span><span class="p">)</span> <span class="p">{</span>
+<span class="lineno">10</span>       <span class="k">return</span><span class="p">;</span>
+<span class="lineno">11</span>     <span class="p">}</span>
+<span class="lineno">12</span> 
+<span class="lineno">13</span>     <span class="kd">var</span> <span class="nx">self</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+<span class="lineno">14</span>     <span class="kd">var</span> <span class="nx">upcharges</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Upcharges</span><span class="p">();</span>
+<span class="lineno">15</span> 
+<span class="lineno">16</span>     <span class="k">this</span><span class="p">.</span><span class="nx">request</span> <span class="o">=</span> <span class="nx">upcharges</span><span class="p">.</span><span class="nx">fetch</span><span class="p">({</span>
+<span class="lineno">17</span>       <span class="nx">success</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+<span class="lineno">18</span> 	<span class="kd">var</span> <span class="nx">currentCallback</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+<span class="lineno">19</span> 
+<span class="lineno">20</span> 	<span class="nx">self</span><span class="p">.</span><span class="nx">ensured</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
+<span class="lineno">21</span> 	  <span class="nx">callback</span><span class="p">(</span><span class="nx">upcharges</span><span class="p">);</span>
+<span class="lineno">22</span> 	<span class="p">};</span>
+<span class="lineno">23</span> 
+<span class="lineno">24</span> 	<span class="k">while</span> <span class="p">(</span><span class="nx">currentCallback</span> <span class="o">=</span> <span class="nx">self</span><span class="p">.</span><span class="nx">queue</span><span class="p">.</span><span class="nx">shift</span><span class="p">())</span> <span class="p">{</span>
+<span class="lineno">25</span> 	  <span class="nx">self</span><span class="p">.</span><span class="nx">ensured</span><span class="p">(</span><span class="nx">currentCallback</span><span class="p">);</span>
+<span class="lineno">26</span> 	<span class="p">}</span>
+<span class="lineno">27</span> 
+<span class="lineno">28</span> 	<span class="k">delete</span> <span class="nx">self</span><span class="p">.</span><span class="nx">request</span><span class="p">;</span>
+<span class="lineno">29</span> 	<span class="k">delete</span> <span class="nx">self</span><span class="p">.</span><span class="nx">queue</span><span class="p">;</span>
+<span class="lineno">30</span>       <span class="p">}</span>
+<span class="lineno">31</span>     <span class="p">});</span>
+<span class="lineno">32</span>   <span class="p">}</span>
+<span class="lineno">33</span> <span class="p">};</span></code></pre></div>
+
+<p>So, what’s the difference? Well, until the available upcharges are loaded and the <code>ensured</code> function is redefined, we simply queue up every callback passed in and check to see if a request has already been made. Once the upcharges load, we redefine the function as before. We also clear our queue, calling the new <code>ensured</code> function definition with each queued callback. I run through the application again, and now there is only one request, and all the upcharge checks work properly. I rerun my spec and get my glorious green dot!</p>
+
+<h2 id="conclusion">Conclusion</h2>
+
+<p>I like this solution, and it’s currently working fine in production and testing. Granted, the business logic for checking these upcharges should move to the back-end, but it’s one of those refactors that gets overshadowed by other bugs and features (I’m sure you know what I mean). Regardless, I feel this is a relatively good starting point for handling this problem. You can use this type of approach to lazily load data in JavaScript that you may not need immediately.</p>
+
+<p>I hope you enjoyed this post and please provide whatever questions or feedback you have!</p>
+
+      <div class="social-share">
+  <ul class="inline-list">
+    <li class="facebook">
+      <a href="https://www.facebook.com/sharer/sharer.php?u=http://blog.jeremyfairbank.com/javascript/first-post-ensuring-remote-data-is-available/" title="Share on Facebook"><span class="count"><i class="fa fa-facebook-square"></i> Share</span></a>
+    </li>
+    <li class="twitter">
+      <a href="https://twitter.com/intent/tweet?text=http://blog.jeremyfairbank.com/javascript/first-post-ensuring-remote-data-is-available/" title="Share on Twitter"><span class="count"><i class="fa fa-twitter-square"></i> Tweet</span></a>
+    </li>
+    <li class="googleplus">
+      <a href="https://plus.google.com/share?url=http://blog.jeremyfairbank.com/javascript/first-post-ensuring-remote-data-is-available/" title="Share on Google Plus"><span class="count"><i class="fa fa-google-plus-square"></i> +1</span></a>
+    </li>
+  </ul>
+</div>
+
+      <hr />
+      <footer role="contentinfo">
+        <div class="article-author-bottom">
+          
+
+
+
+	<img src="http://blog.jeremyfairbank.com/images/bio-photo-1.jpg" class="bio-photo" alt="Jeremy Fairbank bio photo">
+
+<h3>Jeremy Fairbank</h3>
+<p>Making the web with JavaScript.</p>
+
+<a href="http://twitter.com/ElPapaPollo" class="author-social" target="_blank"><i class="fa fa-fw fa-twitter-square"></i> Twitter</a>
+
+<a href="http://plus.google.com/+JeremyFairbank" class="author-social" target="_blank"><i class="fa fa-fw fa-google-plus-square"></i> Google+</a>
+
+<a href="http://instagram.com/elpapapollo" class="author-social" target="_blank"><i class="fa fa-fw fa-instagram"></i> Instagram</a>
+
+<a href="http://github.com/jfairbank" class="author-social" target="_blank"><i class="fa fa-fw fa-github"></i> Github</a>
+
+
+
+
+
+
+
+
+        </div>
+        <p class="byline"><strong>First Post: Ensuring Remote Data is Available in JavaScript</strong> was published on <time datetime="2014-06-21T00:00:00-04:00">June 21, 2014</time>.</p>
+      </footer>
+    </div><!-- /.article-wrap -->
+  
+    <section id="disqus_thread"></section><!-- /#disqus_thread -->
+  
+  </article>
+</div><!-- /#main -->
+
+<div class="footer-wrap">
+  <div class="related-articles">
+  <h4>You might also enjoy <small class="pull-right">(<a href="http://blog.jeremyfairbank.com/posts/">View all posts</a>)</small></h4>
+    <ul>
+    
+      <li><a href="http://blog.jeremyfairbank.com/javascript/polymer-web-components-with-marionette-js/" title="Polymer Web Components with Marionette.js">Polymer Web Components with Marionette.js</a></li>
+    
+      <li><a href="http://blog.jeremyfairbank.com/programming/open-source-you/" title="Open Source You">Open Source You</a></li>
+    
+      <li><a href="http://blog.jeremyfairbank.com/javascript/components-with-backbone-js-and-marionette-js/" title="Components with Backbone.js and Marionette.js">Components with Backbone.js and Marionette.js</a></li>
+    
+    </ul>
+    <hr />
+  </div><!-- /.related-articles -->
+  <footer>
+    
+
+<span>&copy; 2014 - 2015 Jeremy Fairbank. Powered by <a href="http://jekyllrb.com" rel="nofollow">Jekyll</a> using the <a href="http://mademistakes.com/minimal-mistakes/" rel="nofollow">Minimal Mistakes</a> theme.</span>
+
+  </footer>
+</div><!-- /.footer-wrap -->
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script>window.jQuery || document.write('<script src="http://blog.jeremyfairbank.com/assets/js/vendor/jquery-1.9.1.min.js"><\/script>')</script>
+<script src="http://blog.jeremyfairbank.com/assets/js/scripts.min.js"></script>
+
+<!-- Asynchronous Google Analytics snippet -->
+<script>
+  var _gaq = _gaq || [];
+  var pluginUrl = 
+ '//www.google-analytics.com/plugins/ga/inpage_linkid.js';
+  _gaq.push(['_require', 'inpage_linkid', pluginUrl]);
+  _gaq.push(['_setAccount', 'UA-52148605-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+
+
+  
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+    var disqus_shortname = 'jeremyfairbankblog'; // required: replace example with your forum shortname
+
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function () {
+        var s = document.createElement('script'); s.async = true;
+        s.type = 'text/javascript';
+        s.src = '//' + disqus_shortname + '.disqus.com/count.js';
+        (document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
+    }());
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+	        
+
+</body>
+</html>

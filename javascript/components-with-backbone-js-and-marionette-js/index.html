@@ -1,0 +1,829 @@
+<!doctype html>
+<!--[if lt IE 7]><html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="en"> <![endif]-->
+<!--[if (IE 7)&!(IEMobile)]><html class="no-js lt-ie9 lt-ie8" lang="en"><![endif]-->
+<!--[if (IE 8)&!(IEMobile)]><html class="no-js lt-ie9" lang="en"><![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en"><!--<![endif]-->
+<head>
+<meta charset="utf-8">
+<title>Components with Backbone.js and Marionette.js &#8211; Jeremy Fairbank Blog</title>
+<meta name="description" content="Build and use reusable components in Backbone.js and Marionette.js to make clean and modular code.">
+<meta name="keywords" content="javascript, backbone, marionette, component, modular">
+
+
+
+<!-- Twitter Cards -->
+<meta name="twitter:title" content="Components with Backbone.js and Marionette.js">
+<meta name="twitter:description" content="Build and use reusable components in Backbone.js and Marionette.js to make clean and modular code.">
+<meta name="twitter:site" content="@ElPapaPollo">
+<meta name="twitter:creator" content="@ElPapaPollo">
+
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://blog.jeremyfairbank.com/images/default-thumb.png">
+
+<!-- Open Graph -->
+<meta property="og:locale" content="en_US">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Components with Backbone.js and Marionette.js">
+<meta property="og:description" content="Build and use reusable components in Backbone.js and Marionette.js to make clean and modular code.">
+<meta property="og:url" content="http://blog.jeremyfairbank.com/javascript/components-with-backbone-js-and-marionette-js/">
+<meta property="og:site_name" content="Jeremy Fairbank Blog">
+
+
+
+
+
+<link rel="canonical" href="http://blog.jeremyfairbank.com/javascript/components-with-backbone-js-and-marionette-js/">
+<link href="http://blog.jeremyfairbank.com/feed.xml" type="application/atom+xml" rel="alternate" title="Jeremy Fairbank Blog Feed">
+<link rel="author" href="http://plus.google.com/+JeremyFairbank?rel=author">
+
+<!-- http://t.co/dKP3o1e -->
+<meta name="HandheldFriendly" content="True">
+<meta name="MobileOptimized" content="320">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="http://blog.jeremyfairbank.com/assets/css/main.css">
+
+<meta http-equiv="cleartype" content="on">
+
+<!-- HTML5 Shiv and Media Query Support -->
+<!--[if lt IE 9]>
+	<script src="http://blog.jeremyfairbank.com/assets/js/vendor/html5shiv.min.js"></script>
+	<script src="http://blog.jeremyfairbank.com/assets/js/vendor/respond.min.js"></script>
+<![endif]-->
+
+<!-- Modernizr -->
+<script src="http://blog.jeremyfairbank.com/assets/js/vendor/modernizr-2.7.1.custom.min.js"></script>
+
+<link href='//fonts.googleapis.com/css?family=PT+Sans+Narrow:400,700%7CPT+Serif:400,700,400italic' rel='stylesheet' type='text/css'>
+
+<!-- Icons -->
+<!-- 16x16 -->
+<link rel="shortcut icon" href="http://blog.jeremyfairbank.com/favicon.ico">
+<!-- 32x32 -->
+<link rel="shortcut icon" href="http://blog.jeremyfairbank.com/favicon.png">
+<!-- 57x57 (precomposed) for iPhone 3GS, pre-2011 iPod Touch and older Android devices -->
+<link rel="apple-touch-icon-precomposed" href="http://blog.jeremyfairbank.com/images/apple-touch-icon-precomposed.png">
+<!-- 72x72 (precomposed) for 1st generation iPad, iPad 2 and iPad mini -->
+<link rel="apple-touch-icon-precomposed" sizes="72x72" href="http://blog.jeremyfairbank.com/images/apple-touch-icon-72x72-precomposed.png">
+<!-- 114x114 (precomposed) for iPhone 4, 4S, 5 and post-2011 iPod Touch -->
+<link rel="apple-touch-icon-precomposed" sizes="114x114" href="http://blog.jeremyfairbank.com/images/apple-touch-icon-114x114-precomposed.png">
+<!-- 144x144 (precomposed) for iPad 3rd and 4th generation -->
+<link rel="apple-touch-icon-precomposed" sizes="144x144" href="http://blog.jeremyfairbank.com/images/apple-touch-icon-144x144-precomposed.png">
+
+</head>
+
+<body class="post">
+
+<!--[if lt IE 9]><div class="browser-upgrade alert alert-info">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</div><![endif]-->
+
+<div class="navigation-wrapper">
+	<div class="site-name">
+		<a href="http://blog.jeremyfairbank.com/">Jeremy Fairbank Blog</a>
+	</div><!-- /.site-name -->
+	<div class="top-navigation">
+		<nav role="navigation" id="site-nav" class="nav">
+		    <ul>
+		        
+				    
+				        
+				    
+				    <li><a href="http://blog.jeremyfairbank.com/about/" >About</a></li>
+				
+				    
+				        
+				    
+				    <li><a href="http://blog.jeremyfairbank.com/posts/" >Posts</a></li>
+				
+		    </ul>
+		</nav>
+	</div><!-- /.top-navigation -->
+</div><!-- /.navigation-wrapper -->
+
+
+
+<div id="main" role="main">
+  <div class="article-author-side">
+    
+
+
+
+	<img src="http://blog.jeremyfairbank.com/images/bio-photo-1.jpg" class="bio-photo" alt="Jeremy Fairbank bio photo">
+
+<h3>Jeremy Fairbank</h3>
+<p>Making the web with JavaScript.</p>
+
+<a href="http://twitter.com/ElPapaPollo" class="author-social" target="_blank"><i class="fa fa-fw fa-twitter-square"></i> Twitter</a>
+
+<a href="http://plus.google.com/+JeremyFairbank" class="author-social" target="_blank"><i class="fa fa-fw fa-google-plus-square"></i> Google+</a>
+
+<a href="http://instagram.com/elpapapollo" class="author-social" target="_blank"><i class="fa fa-fw fa-instagram"></i> Instagram</a>
+
+<a href="http://github.com/jfairbank" class="author-social" target="_blank"><i class="fa fa-fw fa-github"></i> Github</a>
+
+
+
+
+
+
+
+
+  </div>
+  <article class="post">
+    <div class="headline-wrap">
+      
+        <h1><a href="http://blog.jeremyfairbank.com/javascript/components-with-backbone-js-and-marionette-js/" rel="bookmark" title="Components with Backbone.js and Marionette.js">Components with Backbone.js and Marionette.js</a></h1>
+      
+    </div><!--/ .headline-wrap -->
+    <div class="article-wrap">
+      <div class="social-share">
+  <ul class="inline-list">
+    <li class="facebook">
+      <a href="https://www.facebook.com/sharer/sharer.php?u=http://blog.jeremyfairbank.com/javascript/components-with-backbone-js-and-marionette-js/" title="Share on Facebook"><span class="count"><i class="fa fa-facebook-square"></i> Share</span></a>
+    </li>
+    <li class="twitter">
+      <a href="https://twitter.com/intent/tweet?text=http://blog.jeremyfairbank.com/javascript/components-with-backbone-js-and-marionette-js/" title="Share on Twitter"><span class="count"><i class="fa fa-twitter-square"></i> Tweet</span></a>
+    </li>
+    <li class="googleplus">
+      <a href="https://plus.google.com/share?url=http://blog.jeremyfairbank.com/javascript/components-with-backbone-js-and-marionette-js/" title="Share on Google Plus"><span class="count"><i class="fa fa-google-plus-square"></i> +1</span></a>
+    </li>
+  </ul>
+</div>
+
+      <section id="table-of-contents" class="toc">
+  <header>
+    <h3>Contents</h3>
+  </header>
+<div id="drawer">
+<ul id="markdown-toc">
+  <li><a href="#building-and-maintaining-applications-with-components">Building and Maintaining Applications with Components</a></li>
+  <li><a href="#framework-components">Framework Components</a></li>
+  <li><a href="#modularity-and-components-in-marionette">Modularity and Components in Marionette</a></li>
+  <li><a href="#components-are-reusable">Components Are Reusable</a></li>
+  <li><a href="#create-a-component-type">Create A Component Type</a></li>
+  <li><a href="#conclusion">Conclusion</a></li>
+</ul>
+
+  </div>
+</section>
+<!-- /#table-of-contents -->
+
+<p>A lot of my JavaScript work involves using <a href="http://backbonejs.org">Backbone.js</a> and <a href="http://marionettejs.com">Marionette.js</a> for the front-end. I really like other frameworks such as <a href="http://angularjs.com">Angular.js</a> too. Despite the framework I find myself in, I immediately gravitate toward whatever modular patterns that framework facilitates. More specifically, I am interested in how I can build reusable components within the framework. Components are the objects that encapsulate some specific functionality and typically operate independently of the application as a whole. For example, imagine the cliché stock widget that displays stock symbols along with their current prices. It functions entirely on its own, but together with other components it makes up a dashboard page.</p>
+
+<h2 id="building-and-maintaining-applications-with-components">Building and Maintaining Applications with Components</h2>
+<p>Components are critical to scaleable applications because they encourage separation of concerns. Each piece of an application, including components, should have one responsibility and not heavily depend on the other pieces. Applications with tightly coupled modules or a lack of division of work will become incredibly more difficult to maintain and amend with newer features. Adding a single feature could require changing code in several places. Altering a function here breaks a function there, which then requires this other function to handle another parameter. Discovering everything that breaks usually involves a trial-and-error process of integration tests with your eyeballs. Suddenly, you’re traveling down the recursive Twilight Zone of refactoring <em>ad nauseam</em> and other smart-people Latin phrases.</p>
+
+<p>Components also encourage the <a href="http://en.wikipedia.org/wiki/Don't_repeat_yourself">DRY principle</a>. In case you don’t know, the DRY principle stands for “Don’t Repeat Yourself.” You will waste extra time in the long run if you repeatedly write the same code, especially when you need to go back to refactor or add another feature. If you need to build a few datagrids with the same style but different data, then you should abstract that out into a reusable datagrid component. Then, all you need to do is configure each instance of the datagrid with its data. Components <strong>GOOD</strong>, monolithic applications <strong>BAD</strong>.</p>
+
+<h2 id="framework-components">Framework Components</h2>
+<p>Now, for the purpose of this article, we should have a shared idea of what a component is. I’ve already hinted at my understanding of a component. A component is akin to a sub-application, with its own views, models, state, business logic, and even sub-components. When it comes to JavaScript frameworks, Angular overtly offers components in the form of directives. Directives allow you to create custom HTML elements via a handful of syntactical options. You may also define a controller and scope for the directive to handle related business logic and state, respectively. The beauty of directives is how easily reusable they are. Define your own HTML element and then just plop it into your application views where you need it. You can even use them inside other directives in a way that would make Xzibit proud (fine, old joke, shame on me).</p>
+
+<p>However, when it comes to Backbone.js, we don’t necessarily have our go-to object to handle components. Yes, we have views which are reusable, but we would need to add several methods to a view to make it like a component. You would need both business logic and the boilerplate code to facilitate adding and removing to the DOM (without creating memory leaks). If you try to do this all with a single view, I’m fairly certain you’ll violate the single responsibilty principle.</p>
+
+<p>Well, this leaves us with rolling our own solution, which isn’t a terrible idea. I advocate trying it out yourself and stretching your current understanding and abilities. However, countless other people have faced a similar issue, and someone has probably already built a robust solution that solves the problem.</p>
+
+<h2 id="modularity-and-components-in-marionette">Modularity and Components in Marionette</h2>
+
+<p>In steps Marionette.js. <a href="http://marionettejs.com/">Marionette</a> is an awesome library created by <a href="http://derickbailey.com">Derick Bailey</a> to eliminate a host of the pains associated with building applications in vanilla Backbone. It offers a sensible boilerplate that supplies several view types, an application router, modules, an event aggregator, and many other objects. In my opinion, the greatest benefit of Marionette is that it empowers you to easily build modular Backbone applications.</p>
+
+<p>As previously stated, Marionette offers modules, which are our go-to objects for segregating the different pieces of our application. They almost sound like components, but there is still a distinction. Modules operate as sub-applications and namespaces that separate the different concerns of our application. A music streaming application may have an account module for handling user account information and an albums module for displaying and filtering albums to listen to. Within the account module, we would have a component for updating billing information and another component for updating the email address and password.</p>
+
+<p>However, we can use modules to act as components in Marionette. Let’s walk through building a datagrid component for an orders dashboard page. (If you’re unfamiliar with Marionette’s objects and syntax, I encourage you to look at the docs on the GitHub repo <a href="https://github.com/marionettejs/backbone.marionette">marionettejs/backbone.marionette</a> first.)</p>
+
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="lineno"> 1</span> <span class="c1">// File: app.js</span>
+<span class="lineno"> 2</span> <span class="c1">// ------------</span>
+<span class="lineno"> 3</span> 
+<span class="lineno"> 4</span> <span class="kd">var</span> <span class="nx">MyApp</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Marionette</span><span class="p">.</span><span class="nx">Application</span><span class="p">();</span>
+<span class="lineno"> 5</span> 
+<span class="lineno"> 6</span> <span class="c1">// Helper for switching modules, or sub apps</span>
+<span class="lineno"> 7</span> <span class="nx">MyApp</span><span class="p">.</span><span class="nx">startSubApp</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">subApp</span><span class="p">)</span> <span class="p">{</span>
+<span class="lineno"> 8</span>   <span class="kd">var</span> <span class="nx">currentApp</span> <span class="o">=</span> <span class="nx">MyApp</span><span class="p">.</span><span class="nx">module</span><span class="p">(</span><span class="nx">subApp</span><span class="p">);</span>
+<span class="lineno"> 9</span> 
+<span class="lineno">10</span>   <span class="k">if</span> <span class="p">(</span><span class="nx">MyApp</span><span class="p">.</span><span class="nx">currentApp</span> <span class="o">===</span> <span class="nx">currentApp</span><span class="p">)</span> <span class="p">{</span>
+<span class="lineno">11</span>     <span class="k">return</span><span class="p">;</span>
+<span class="lineno">12</span>   <span class="p">}</span>
+<span class="lineno">13</span> 
+<span class="lineno">14</span>   <span class="k">if</span> <span class="p">(</span><span class="nx">MyApp</span><span class="p">.</span><span class="nx">currentApp</span><span class="p">)</span> <span class="p">{</span>
+<span class="lineno">15</span>     <span class="nx">MyApp</span><span class="p">.</span><span class="nx">currentApp</span><span class="p">.</span><span class="nx">stop</span><span class="p">();</span>
+<span class="lineno">16</span>   <span class="p">}</span>
+<span class="lineno">17</span> 
+<span class="lineno">18</span>   <span class="nx">App</span><span class="p">.</span><span class="nx">currentApp</span> <span class="o">=</span> <span class="nx">currentApp</span><span class="p">;</span>
+<span class="lineno">19</span> 
+<span class="lineno">20</span>   <span class="nx">currentApp</span><span class="p">.</span><span class="nx">start</span><span class="p">();</span>
+<span class="lineno">21</span> <span class="p">};</span>
+<span class="lineno">22</span> 
+<span class="lineno">23</span> <span class="nx">MyApp</span><span class="p">.</span><span class="nx">addRegions</span><span class="p">({</span>
+<span class="lineno">24</span>   <span class="nx">mainRegion</span><span class="o">:</span> <span class="s1">&#39;#main&#39;</span>
+<span class="lineno">25</span> <span class="p">});</span>
+<span class="lineno">26</span> 
+<span class="lineno">27</span> <span class="nx">MyApp</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;start&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+<span class="lineno">28</span>   <span class="nx">Backbone</span><span class="p">.</span><span class="nx">history</span><span class="p">.</span><span class="nx">start</span><span class="p">();</span>
+<span class="lineno">29</span> <span class="p">});</span></code></pre></div>
+
+<p>Here we set up our base application called <code>MyApp</code>, attach an existing HTML element with id <code>#main</code> to the app’s <code>mainRegion</code>, and listen for the app’s <code>start</code> event to make sure Backbone history is running. We also add a simple helper method <code>startSubApp</code> for managing the currently running sub-application, or module.</p>
+
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="lineno"> 1</span> <span class="c1">// File: orders/orders.js</span>
+<span class="lineno"> 2</span> <span class="c1">// ----------------------</span>
+<span class="lineno"> 3</span> 
+<span class="lineno"> 4</span> <span class="c1">// Define our orders module</span>
+<span class="lineno"> 5</span> <span class="nx">MyApp</span><span class="p">.</span><span class="nx">module</span><span class="p">(</span><span class="s1">&#39;Orders&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">Orders</span><span class="p">,</span> <span class="nx">MyApp</span><span class="p">,</span> <span class="nx">Backbone</span><span class="p">,</span> <span class="nx">Marionette</span><span class="p">,</span> <span class="nx">$</span><span class="p">,</span> <span class="nx">_</span><span class="p">)</span> <span class="p">{</span>
+<span class="lineno"> 6</span> 
+<span class="lineno"> 7</span>   <span class="c1">// Router</span>
+<span class="lineno"> 8</span>   <span class="nx">Orders</span><span class="p">.</span><span class="nx">Router</span> <span class="o">=</span> <span class="nx">Marionette</span><span class="p">.</span><span class="nx">AppRouter</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+<span class="lineno"> 9</span>     <span class="nx">appRoutes</span><span class="o">:</span> <span class="p">{</span>
+<span class="lineno">10</span>       <span class="s1">&#39;orders/dashboard&#39;</span><span class="o">:</span> <span class="s1">&#39;ordersDashboard&#39;</span>
+<span class="lineno">11</span>     <span class="p">}</span>
+<span class="lineno">12</span>   <span class="p">});</span>
+<span class="lineno">13</span> 
+<span class="lineno">14</span>   <span class="c1">// Controller</span>
+<span class="lineno">15</span>   <span class="nx">Orders</span><span class="p">.</span><span class="nx">Controller</span> <span class="o">=</span> <span class="nx">Marionette</span><span class="p">.</span><span class="nx">Controller</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+<span class="lineno">16</span>     <span class="nx">ordersDashboard</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+<span class="lineno">17</span>       <span class="nx">App</span><span class="p">.</span><span class="nx">startSubApp</span><span class="p">(</span><span class="s1">&#39;Orders.Dashboard&#39;</span><span class="p">);</span>
+<span class="lineno">18</span>       <span class="nx">Orders</span><span class="p">.</span><span class="nx">Dashboard</span><span class="p">.</span><span class="nx">controller</span><span class="p">.</span><span class="nx">show</span><span class="p">();</span>
+<span class="lineno">19</span>     <span class="p">}</span>
+<span class="lineno">20</span>   <span class="p">});</span>
+<span class="lineno">21</span> 
+<span class="lineno">22</span>   <span class="c1">// Initializers</span>
+<span class="lineno">23</span>   <span class="nx">Orders</span><span class="p">.</span><span class="nx">addInitializer</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+<span class="lineno">24</span>     <span class="nx">Orders</span><span class="p">.</span><span class="nx">controller</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Orders</span><span class="p">.</span><span class="nx">Controller</span><span class="p">();</span>
+<span class="lineno">25</span> 
+<span class="lineno">26</span>     <span class="nx">Orders</span><span class="p">.</span><span class="nx">router</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Orders</span><span class="p">.</span><span class="nx">Router</span><span class="p">({</span>
+<span class="lineno">27</span>       <span class="nx">controller</span><span class="o">:</span> <span class="nx">Orders</span><span class="p">.</span><span class="nx">controller</span>
+<span class="lineno">28</span>     <span class="p">});</span>
+<span class="lineno">29</span>   <span class="p">});</span>
+<span class="lineno">30</span> 
+<span class="lineno">31</span> <span class="p">});</span></code></pre></div>
+
+<p>This is our main orders module. We define the module, a router, and a controller for orders-related functionality. We ensure everything is properly wired up with a call to <code>addInitializer</code> on the module as well. Notice in <code>Orders.Controller#ordersDashboard</code> we start up and show the <code>Orders.Dashboard</code> submodule, which we define below.</p>
+
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="lineno"> 1</span> <span class="c1">// File: orders/dashboard/dashboard.js</span>
+<span class="lineno"> 2</span> <span class="c1">// -----------------------------------</span>
+<span class="lineno"> 3</span> 
+<span class="lineno"> 4</span> <span class="c1">// Define our dashboard submodule</span>
+<span class="lineno"> 5</span> <span class="nx">MyApp</span><span class="p">.</span><span class="nx">module</span><span class="p">(</span><span class="s1">&#39;Orders.Dashboard&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">Dashboard</span><span class="p">,</span> <span class="nx">MyApp</span><span class="p">,</span> <span class="nx">Backbone</span><span class="p">,</span> <span class="nx">Marionette</span><span class="p">,</span> <span class="nx">$</span><span class="p">,</span> <span class="nx">_</span><span class="p">)</span> <span class="p">{</span>
+<span class="lineno"> 6</span> 
+<span class="lineno"> 7</span>   <span class="nx">Dashboard</span><span class="p">.</span><span class="nx">startWithParent</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+<span class="lineno"> 8</span> 
+<span class="lineno"> 9</span>   <span class="c1">// Model</span>
+<span class="lineno">10</span>   <span class="nx">Dashboard</span><span class="p">.</span><span class="nx">DashboardOrders</span> <span class="o">=</span> <span class="nx">Backbone</span><span class="p">.</span><span class="nx">Model</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+<span class="lineno">11</span>     <span class="nx">defaults</span><span class="o">:</span> <span class="p">{</span>
+<span class="lineno">12</span>       <span class="nx">incompleteOrders</span><span class="o">:</span> <span class="p">[],</span>
+<span class="lineno">13</span>       <span class="nx">submittedOrders</span><span class="o">:</span> <span class="p">[],</span>
+<span class="lineno">14</span>       <span class="nx">shippedOrders</span><span class="o">:</span> <span class="p">[]</span>
+<span class="lineno">15</span>     <span class="p">},</span>
+<span class="lineno">16</span> 
+<span class="lineno">17</span>     <span class="nx">url</span><span class="o">:</span> <span class="s1">&#39;/api/orders/dashboard&#39;</span>
+<span class="lineno">18</span>   <span class="p">});</span>
+<span class="lineno">19</span> 
+<span class="lineno">20</span>   <span class="c1">// LayoutView</span>
+<span class="lineno">21</span>   <span class="nx">Dashboard</span><span class="p">.</span><span class="nx">LayoutView</span> <span class="o">=</span> <span class="nx">Marionette</span><span class="p">.</span><span class="nx">LayoutView</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+<span class="lineno">22</span>     <span class="nx">template</span><span class="o">:</span> <span class="s1">&#39;#orders-dashboard-layout-template&#39;</span><span class="p">,</span>
+<span class="lineno">23</span> 
+<span class="lineno">24</span>     <span class="nx">regions</span><span class="o">:</span> <span class="p">{</span>
+<span class="lineno">25</span>       <span class="nx">incompleteOrders</span><span class="o">:</span> <span class="s1">&#39;#incomplete-orders&#39;</span>
+<span class="lineno">26</span>     <span class="p">}</span>
+<span class="lineno">27</span>   <span class="p">});</span>
+<span class="lineno">28</span> 
+<span class="lineno">29</span>   <span class="c1">// Controller</span>
+<span class="lineno">30</span>   <span class="nx">Dashboard</span><span class="p">.</span><span class="nx">Controller</span> <span class="o">=</span> <span class="nx">Marionette</span><span class="p">.</span><span class="nx">Controller</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+<span class="lineno">31</span>     <span class="nx">initialize</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+<span class="lineno">32</span>       <span class="k">this</span><span class="p">.</span><span class="nx">region</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">region</span><span class="p">;</span>
+<span class="lineno">33</span>     <span class="p">},</span>
+<span class="lineno">34</span> 
+<span class="lineno">35</span>     <span class="nx">show</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+<span class="lineno">36</span>       <span class="k">this</span><span class="p">.</span><span class="nx">layout</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getLayout</span><span class="p">();</span>
+<span class="lineno">37</span>       <span class="k">this</span><span class="p">.</span><span class="nx">region</span><span class="p">.</span><span class="nx">show</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">layout</span><span class="p">);</span>
+<span class="lineno">38</span>     <span class="p">},</span>
+<span class="lineno">39</span> 
+<span class="lineno">40</span>     <span class="nx">getLayout</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+<span class="lineno">41</span>       <span class="kd">var</span> <span class="nx">layout</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">LayoutView</span><span class="p">();</span>
+<span class="lineno">42</span>       <span class="k">this</span><span class="p">.</span><span class="nx">listenTo</span><span class="p">(</span><span class="nx">layout</span><span class="p">,</span> <span class="s1">&#39;show&#39;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">showGrid</span><span class="p">);</span>
+<span class="lineno">43</span>       <span class="k">return</span> <span class="nx">layout</span><span class="p">;</span>
+<span class="lineno">44</span>     <span class="p">},</span>
+<span class="lineno">45</span> 
+<span class="lineno">46</span>     <span class="nx">showGrid</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+<span class="lineno">47</span>       <span class="kd">var</span> <span class="nx">dashboardOrders</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Dashboard</span><span class="p">.</span><span class="nx">DashboardOrders</span><span class="p">();</span>
+<span class="lineno">48</span> 
+<span class="lineno">49</span>       <span class="nx">dashboardOrders</span><span class="p">.</span><span class="nx">fetch</span><span class="p">().</span>
+<span class="lineno">50</span>         <span class="nx">then</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_showGridComponent</span><span class="p">(</span>
+<span class="lineno">51</span>           <span class="k">this</span><span class="p">.</span><span class="nx">layout</span><span class="p">.</span><span class="nx">incompleteOrders</span><span class="p">,</span>
+<span class="lineno">52</span>           <span class="nx">dashboardOrders</span><span class="p">.</span><span class="nx">incompleteOrders</span>
+<span class="lineno">53</span>         <span class="p">));</span>
+<span class="lineno">54</span>     <span class="p">},</span>
+<span class="lineno">55</span> 
+<span class="lineno">56</span>     <span class="nx">onDestroy</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+<span class="lineno">57</span>       <span class="nx">Dashboard</span><span class="p">.</span><span class="nx">DataGrid</span><span class="p">.</span><span class="nx">stop</span><span class="p">();</span>
+<span class="lineno">58</span>     <span class="p">},</span>
+<span class="lineno">59</span> 
+<span class="lineno">60</span>     <span class="nx">_showGridComponent</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">region</span><span class="p">,</span> <span class="nx">dashboardOrders</span><span class="p">)</span> <span class="p">{</span>
+<span class="lineno">61</span>       <span class="k">return</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+<span class="lineno">62</span>         <span class="nx">Dashboard</span><span class="p">.</span><span class="nx">DataGrid</span><span class="p">.</span><span class="nx">start</span><span class="p">({</span>
+<span class="lineno">63</span>           <span class="nx">collection</span><span class="o">:</span> <span class="nx">dashboardOrders</span><span class="p">.</span><span class="nx">incompleteOrders</span><span class="p">,</span>
+<span class="lineno">64</span>           <span class="nx">region</span><span class="o">:</span> <span class="nx">region</span>
+<span class="lineno">65</span>         <span class="p">});</span>
+<span class="lineno">66</span> 
+<span class="lineno">67</span>         <span class="nx">Dashboard</span><span class="p">.</span><span class="nx">DataGrid</span><span class="p">.</span><span class="nx">controller</span><span class="p">.</span><span class="nx">show</span><span class="p">();</span>
+<span class="lineno">68</span>       <span class="p">};</span>
+<span class="lineno">69</span>     <span class="p">}</span>
+<span class="lineno">70</span>   <span class="p">});</span>
+<span class="lineno">71</span> 
+<span class="lineno">72</span>   <span class="c1">// Initializers</span>
+<span class="lineno">73</span>   <span class="nx">Dashboard</span><span class="p">.</span><span class="nx">addInitializer</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+<span class="lineno">74</span>     <span class="nx">Dashboard</span><span class="p">.</span><span class="nx">controller</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Dashboard</span><span class="p">.</span><span class="nx">Controller</span><span class="p">({</span>
+<span class="lineno">75</span>       <span class="nx">region</span><span class="o">:</span> <span class="nx">MyApp</span><span class="p">.</span><span class="nx">mainRegion</span>
+<span class="lineno">76</span>     <span class="p">});</span>
+<span class="lineno">77</span> 
+<span class="lineno">78</span>     <span class="nx">Dashboard</span><span class="p">.</span><span class="nx">controller</span><span class="p">.</span><span class="nx">show</span><span class="p">();</span>
+<span class="lineno">79</span>   <span class="p">});</span>
+<span class="lineno">80</span> 
+<span class="lineno">81</span>   <span class="c1">// Finalizers</span>
+<span class="lineno">82</span>   <span class="nx">Dashboard</span><span class="p">.</span><span class="nx">addFinalizer</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+<span class="lineno">83</span>     <span class="nx">Dashboard</span><span class="p">.</span><span class="nx">controller</span><span class="p">.</span><span class="nx">destroy</span><span class="p">();</span>
+<span class="lineno">84</span>     <span class="k">delete</span> <span class="nx">Dashboard</span><span class="p">.</span><span class="nx">controller</span><span class="p">;</span>
+<span class="lineno">85</span>   <span class="p">});</span>
+<span class="lineno">86</span> 
+<span class="lineno">87</span> <span class="p">});</span></code></pre></div>
+
+<p>This is our <code>Dashboard</code> submodule. Notice we set <code>Dashboard.startWithParent = false</code>. This prevents the module from automatically running because we will want it to start only when we need it. In the controller after we show the layout, we fetch the dashboard orders and display the incomplete orders in a datagrid component via <code>showGrid</code> and <code>_showGridComponent</code>. If our module is stopped, we make sure to also stop the datagrid component in <code>onDestroy</code>.</p>
+
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="lineno"> 1</span> <span class="c1">// File: orders/dashboard/dataGrid.js</span>
+<span class="lineno"> 2</span> <span class="c1">// ----------------------------------</span>
+<span class="lineno"> 3</span> 
+<span class="lineno"> 4</span> <span class="c1">// Define our datagrid module component</span>
+<span class="lineno"> 5</span> <span class="nx">MyApp</span><span class="p">.</span><span class="nx">module</span><span class="p">(</span><span class="s1">&#39;Orders.Dashboard.DataGrid&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">DataGrid</span><span class="p">,</span> <span class="nx">MyApp</span><span class="p">,</span> <span class="nx">Backbone</span><span class="p">,</span> <span class="nx">Marionette</span><span class="p">,</span> <span class="nx">$</span><span class="p">,</span> <span class="nx">_</span><span class="p">)</span> <span class="p">{</span>
+<span class="lineno"> 6</span> 
+<span class="lineno"> 7</span>   <span class="nx">DataGrid</span><span class="p">.</span><span class="nx">startWithParent</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+<span class="lineno"> 8</span> 
+<span class="lineno"> 9</span>   <span class="c1">// Views</span>
+<span class="lineno">10</span>   <span class="nx">DataGrid</span><span class="p">.</span><span class="nx">RowView</span> <span class="o">=</span> <span class="nx">Marionette</span><span class="p">.</span><span class="nx">ItemView</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+<span class="lineno">11</span>     <span class="nx">template</span><span class="o">:</span> <span class="s1">&#39;#orders-dashboard-datagrid-row-template&#39;</span><span class="p">,</span>
+<span class="lineno">12</span>     <span class="nx">tagName</span><span class="o">:</span> <span class="s1">&#39;tr&#39;</span>
+<span class="lineno">13</span>   <span class="p">});</span>
+<span class="lineno">14</span> 
+<span class="lineno">15</span>   <span class="nx">DataGrid</span><span class="p">.</span><span class="nx">GridView</span> <span class="o">=</span> <span class="nx">Marionette</span><span class="p">.</span><span class="nx">CompositeView</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+<span class="lineno">16</span>     <span class="nx">template</span><span class="o">:</span> <span class="s1">&#39;#orders-dashboard-datagrid-template&#39;</span><span class="p">,</span>
+<span class="lineno">17</span>     <span class="nx">childView</span><span class="o">:</span> <span class="nx">DataGrid</span><span class="p">.</span><span class="nx">RowView</span><span class="p">,</span>
+<span class="lineno">18</span>     <span class="nx">childViewContainer</span><span class="o">:</span> <span class="s1">&#39;tbody&#39;</span>
+<span class="lineno">19</span>   <span class="p">});</span>
+<span class="lineno">20</span> 
+<span class="lineno">21</span>   <span class="c1">// Controller</span>
+<span class="lineno">22</span>   <span class="nx">DataGrid</span><span class="p">.</span><span class="nx">Controller</span> <span class="o">=</span> <span class="nx">Marionette</span><span class="p">.</span><span class="nx">Controller</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+<span class="lineno">23</span>     <span class="nx">initialize</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+<span class="lineno">24</span>       <span class="k">this</span><span class="p">.</span><span class="nx">region</span>     <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">region</span><span class="p">;</span>
+<span class="lineno">25</span>       <span class="k">this</span><span class="p">.</span><span class="nx">collection</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">collection</span><span class="p">;</span>
+<span class="lineno">26</span>     <span class="p">},</span>
+<span class="lineno">27</span> 
+<span class="lineno">28</span>     <span class="nx">show</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+<span class="lineno">29</span>       <span class="k">this</span><span class="p">.</span><span class="nx">gridView</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getGridView</span><span class="p">();</span>
+<span class="lineno">30</span>       <span class="k">this</span><span class="p">.</span><span class="nx">region</span><span class="p">.</span><span class="nx">show</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">gridView</span><span class="p">);</span>
+<span class="lineno">31</span>     <span class="p">},</span>
+<span class="lineno">32</span> 
+<span class="lineno">33</span>     <span class="nx">getGridView</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+<span class="lineno">34</span>       <span class="kd">var</span> <span class="nx">gridView</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">DataGrid</span><span class="p">.</span><span class="nx">GridView</span><span class="p">({</span>
+<span class="lineno">35</span>         <span class="nx">collection</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">collection</span>
+<span class="lineno">36</span>       <span class="p">});</span>
+<span class="lineno">37</span> 
+<span class="lineno">38</span>       <span class="k">this</span><span class="p">.</span><span class="nx">listenTo</span><span class="p">(</span><span class="nx">gridView</span><span class="p">,</span> <span class="s1">&#39;foo&#39;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">doBar</span><span class="p">);</span>
+<span class="lineno">39</span> 
+<span class="lineno">40</span>       <span class="k">return</span> <span class="nx">gridView</span><span class="p">;</span>
+<span class="lineno">41</span>     <span class="p">},</span>
+<span class="lineno">42</span> 
+<span class="lineno">43</span>     <span class="nx">doBar</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+<span class="lineno">44</span>       <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;I did bar!&#39;</span><span class="p">);</span>
+<span class="lineno">45</span>     <span class="p">}</span>
+<span class="lineno">46</span>   <span class="p">});</span>
+<span class="lineno">47</span> 
+<span class="lineno">48</span>   <span class="c1">// Initializers</span>
+<span class="lineno">49</span>   <span class="nx">DataGrid</span><span class="p">.</span><span class="nx">addInitializer</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+<span class="lineno">50</span>     <span class="nx">DataGrid</span><span class="p">.</span><span class="nx">controller</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">DataGrid</span><span class="p">.</span><span class="nx">Controller</span><span class="p">({</span>
+<span class="lineno">51</span>       <span class="nx">region</span><span class="o">:</span> <span class="nx">options</span><span class="p">.</span><span class="nx">region</span><span class="p">,</span>
+<span class="lineno">52</span>       <span class="nx">collection</span><span class="o">:</span> <span class="nx">options</span><span class="p">.</span><span class="nx">collection</span>
+<span class="lineno">53</span>     <span class="p">});</span>
+<span class="lineno">54</span>   <span class="p">});</span>
+<span class="lineno">55</span> 
+<span class="lineno">56</span>   <span class="c1">// Finalizers</span>
+<span class="lineno">57</span>   <span class="nx">DataGrid</span><span class="p">.</span><span class="nx">addFinalizer</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+<span class="lineno">58</span>     <span class="nx">DataGrid</span><span class="p">.</span><span class="nx">controller</span><span class="p">.</span><span class="nx">destroy</span><span class="p">();</span>
+<span class="lineno">59</span>     <span class="k">delete</span> <span class="nx">DataGrid</span><span class="p">.</span><span class="nx">controller</span><span class="p">;</span>
+<span class="lineno">60</span>   <span class="p">});</span>
+<span class="lineno">61</span> 
+<span class="lineno">62</span> <span class="p">});</span></code></pre></div>
+
+<p>This is our <code>DataGrid</code> module component. Notice, we’ve set it up similar to the <code>Dashboard</code> module. We can instantiate our component and use it with <code>DataGrid.start</code> followed by <code>DataGrid.controller.show</code>.</p>
+
+<div class="highlight"><pre><code class="language-html" data-lang="html"><span class="lineno"> 1</span> <span class="c">&lt;!-- Our view --&gt;</span>
+<span class="lineno"> 2</span> 
+<span class="lineno"> 3</span> <span class="nt">&lt;script </span><span class="na">id=</span><span class="s">&quot;orders-dashboard-layout-template&quot;</span> <span class="na">type=</span><span class="s">&quot;text/html&quot;</span><span class="nt">&gt;</span>
+<span class="lineno"> 4</span>   <span class="o">&lt;</span><span class="nx">h1</span><span class="o">&gt;</span><span class="nx">Orders</span> <span class="nx">Dashboard</span><span class="o">&lt;</span><span class="err">/h1&gt;</span>
+<span class="lineno"> 5</span>   <span class="o">&lt;</span><span class="nx">div</span> <span class="nx">id</span><span class="o">=</span><span class="s2">&quot;incomplete-orders&quot;</span><span class="o">&gt;&lt;</span><span class="err">/div&gt;</span>
+<span class="lineno"> 6</span> <span class="nt">&lt;/script&gt;</span>
+<span class="lineno"> 7</span> 
+<span class="lineno"> 8</span> <span class="nt">&lt;script </span><span class="na">id=</span><span class="s">&quot;orders-dashboard-datagrid-row-template&quot;</span> <span class="na">type=</span><span class="s">&quot;text/html&quot;</span><span class="nt">&gt;</span>
+<span class="lineno"> 9</span>   <span class="o">&lt;</span><span class="nx">td</span><span class="o">&gt;&lt;%=</span> <span class="nx">id</span> <span class="o">%&gt;&lt;</span><span class="err">/td&gt;</span>
+<span class="lineno">10</span>   <span class="o">&lt;</span><span class="nx">td</span><span class="o">&gt;&lt;%=</span> <span class="nx">total</span> <span class="o">%&gt;&lt;</span><span class="err">/td&gt;</span>
+<span class="lineno">11</span> <span class="nt">&lt;/script&gt;</span>
+<span class="lineno">12</span> 
+<span class="lineno">13</span> <span class="nt">&lt;script </span><span class="na">id=</span><span class="s">&quot;orders-dashboard-datagrid-template&quot;</span> <span class="na">type=</span><span class="s">&quot;text/html&quot;</span><span class="nt">&gt;</span>
+<span class="lineno">14</span>   <span class="o">&lt;</span><span class="nx">table</span><span class="o">&gt;</span>
+<span class="lineno">15</span>     <span class="o">&lt;</span><span class="nx">thead</span><span class="o">&gt;</span>
+<span class="lineno">16</span>       <span class="o">&lt;</span><span class="nx">tr</span><span class="o">&gt;</span>
+<span class="lineno">17</span>         <span class="o">&lt;</span><span class="nx">th</span><span class="o">&gt;</span><span class="nx">ID</span><span class="o">&lt;</span><span class="err">/th&gt;</span>
+<span class="lineno">18</span>         <span class="o">&lt;</span><span class="nx">th</span><span class="o">&gt;</span><span class="nx">Total</span><span class="o">&lt;</span><span class="err">/th&gt;</span>
+<span class="lineno">19</span>       <span class="o">&lt;</span><span class="err">/tr&gt;</span>
+<span class="lineno">20</span>     <span class="o">&lt;</span><span class="err">/thead&gt;</span>
+<span class="lineno">21</span>     <span class="o">&lt;</span><span class="nx">tbody</span><span class="o">&gt;&lt;</span><span class="err">/tbody&gt;</span>
+<span class="lineno">22</span>   <span class="o">&lt;</span><span class="err">/table&gt;</span>
+<span class="lineno">23</span> <span class="nt">&lt;/script&gt;</span>
+<span class="lineno">24</span> 
+<span class="lineno">25</span> <span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;main&quot;</span><span class="nt">&gt;&lt;/div&gt;</span>
+<span class="lineno">26</span> 
+<span class="lineno">27</span> <span class="nt">&lt;script </span><span class="na">src=</span><span class="s">&quot;app.js&quot;</span><span class="nt">&gt;&lt;/script&gt;</span>
+<span class="lineno">28</span> <span class="nt">&lt;script </span><span class="na">src=</span><span class="s">&quot;orders/orders.js&quot;</span><span class="nt">&gt;&lt;/script&gt;</span>
+<span class="lineno">29</span> <span class="nt">&lt;script </span><span class="na">src=</span><span class="s">&quot;orders/dashboard/dashboard.js&quot;</span><span class="nt">&gt;&lt;/script&gt;</span>
+<span class="lineno">30</span> <span class="nt">&lt;script </span><span class="na">src=</span><span class="s">&quot;orders/dashboard/dataGrid.js&quot;</span><span class="nt">&gt;&lt;/script&gt;</span>
+<span class="lineno">31</span> <span class="nt">&lt;script&gt;</span>
+<span class="lineno">32</span>   <span class="nx">MyApp</span><span class="p">.</span><span class="nx">start</span><span class="p">();</span>
+<span class="lineno">33</span> <span class="nt">&lt;/script&gt;</span></code></pre></div>
+
+<p>Finally, our HTML view.</p>
+
+<h2 id="components-are-reusable">Components Are Reusable</h2>
+
+<p>So, the datagrid module works almost perfectly as a component. It has its own logic, state, and view, but something isn’t right. Remember components are reusable. If we set up a datagrid component using a module and then want to use it multiple times, we would encounter a problem. We’re locked down to one instance of the component at any one time by the <code>controller</code> property set in the <code>addInitializer</code> call. We need to tweak our module to allow for multiple instances.</p>
+
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="lineno"> 1</span> <span class="c1">// File: orders/dashboard/dataGrid.js</span>
+<span class="lineno"> 2</span> <span class="c1">// ----------------------------------</span>
+<span class="lineno"> 3</span> 
+<span class="lineno"> 4</span> <span class="nx">MyApp</span><span class="p">.</span><span class="nx">module</span><span class="p">(</span><span class="s1">&#39;Orders.Dashboard.DataGrid&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">DataGrid</span><span class="p">,</span> <span class="nx">MyApp</span><span class="p">,</span> <span class="nx">Backbone</span><span class="p">,</span> <span class="nx">Marionette</span><span class="p">,</span> <span class="nx">$</span><span class="p">,</span> <span class="nx">_</span><span class="p">)</span> <span class="p">{</span>
+<span class="lineno"> 5</span> 
+<span class="lineno"> 6</span>   <span class="c1">// Let it start with parent now. This is usually the default for modules, but</span>
+<span class="lineno"> 7</span>   <span class="c1">// I&#39;m explicity setting it to true this time to show the difference with our</span>
+<span class="lineno"> 8</span>   <span class="c1">// earlier version of this module.</span>
+<span class="lineno"> 9</span>   <span class="nx">DataGrid</span><span class="p">.</span><span class="nx">startWithParent</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+<span class="lineno">10</span> 
+<span class="lineno">11</span>   <span class="c1">// Definitions for views and controller go here...</span>
+<span class="lineno">12</span> 
+<span class="lineno">13</span>   <span class="c1">// This time DON&#39;T define initializers or finalizers. Instead we want to</span>
+<span class="lineno">14</span>   <span class="c1">// create an interface for instantiating multiple component instances.</span>
+<span class="lineno">15</span> 
+<span class="lineno">16</span>   <span class="nx">DataGrid</span><span class="p">.</span><span class="nx">newComponent</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+<span class="lineno">17</span>     <span class="k">return</span> <span class="k">new</span> <span class="nx">DataGrid</span><span class="p">.</span><span class="nx">Controller</span><span class="p">({</span>
+<span class="lineno">18</span>       <span class="nx">region</span><span class="o">:</span> <span class="nx">options</span><span class="p">.</span><span class="nx">region</span><span class="p">,</span>
+<span class="lineno">19</span>       <span class="nx">collection</span><span class="o">:</span> <span class="nx">options</span><span class="p">.</span><span class="nx">collection</span>
+<span class="lineno">20</span>     <span class="p">});</span>
+<span class="lineno">21</span>   <span class="p">};</span>
+<span class="lineno">22</span> 
+<span class="lineno">23</span> <span class="p">});</span></code></pre></div>
+
+<p>Before, we depended on <code>DataGrid.start</code> to create a single instance of the component. Now, we have an interface for creating multiple component instances via our <code>DataGrid.newComponent</code> method. Therefore, we redefine our component module to automatically start with its parent, and we remove initializers and finalizers because we don’t have to depend on <code>start</code> to use our component.</p>
+
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="lineno"> 1</span> <span class="c1">// File: orders/dashboard/dashboard.js</span>
+<span class="lineno"> 2</span> <span class="c1">// -----------------------------------</span>
+<span class="lineno"> 3</span> 
+<span class="lineno"> 4</span> <span class="nx">MyApp</span><span class="p">.</span><span class="nx">module</span><span class="p">(</span><span class="s1">&#39;Orders.Dashboard&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">Dashboard</span><span class="p">,</span> <span class="nx">MyApp</span><span class="p">,</span> <span class="nx">Backbone</span><span class="p">,</span> <span class="nx">Marionette</span><span class="p">,</span> <span class="nx">$</span><span class="p">,</span> <span class="nx">_</span><span class="p">)</span> <span class="p">{</span>
+<span class="lineno"> 5</span> 
+<span class="lineno"> 6</span>   <span class="c1">// Earlier definitions...</span>
+<span class="lineno"> 7</span> 
+<span class="lineno"> 8</span>   <span class="c1">// LayoutView</span>
+<span class="lineno"> 9</span>   <span class="nx">Dashboard</span><span class="p">.</span><span class="nx">LayoutView</span> <span class="o">=</span> <span class="nx">Marionette</span><span class="p">.</span><span class="nx">LayoutView</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+<span class="lineno">10</span>     <span class="nx">template</span><span class="o">:</span> <span class="s1">&#39;#orders-dashboard-layout-template&#39;</span><span class="p">,</span>
+<span class="lineno">11</span> 
+<span class="lineno">12</span>     <span class="nx">regions</span><span class="o">:</span> <span class="p">{</span>
+<span class="lineno">13</span>       <span class="nx">incompleteOrders</span><span class="o">:</span> <span class="s1">&#39;#incomplete-orders&#39;</span><span class="p">,</span>
+<span class="lineno">14</span>       <span class="nx">submittedOrders</span><span class="o">:</span> <span class="s1">&#39;#submitted-orders&#39;</span><span class="p">,</span>
+<span class="lineno">15</span>       <span class="nx">shippedOrders</span><span class="o">:</span> <span class="s1">&#39;#shipped-orders&#39;</span>
+<span class="lineno">16</span>     <span class="p">}</span>
+<span class="lineno">17</span>   <span class="p">});</span>
+<span class="lineno">18</span> 
+<span class="lineno">19</span>   <span class="c1">// Controller</span>
+<span class="lineno">20</span>   <span class="nx">Dashboard</span><span class="p">.</span><span class="nx">Controller</span> <span class="o">=</span> <span class="nx">Marionette</span><span class="p">.</span><span class="nx">Controller</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+<span class="lineno">21</span>     <span class="nx">initialize</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+<span class="lineno">22</span>       <span class="k">this</span><span class="p">.</span><span class="nx">region</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">region</span><span class="p">;</span>
+<span class="lineno">23</span>     <span class="p">},</span>
+<span class="lineno">24</span> 
+<span class="lineno">25</span>     <span class="nx">show</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+<span class="lineno">26</span>       <span class="k">this</span><span class="p">.</span><span class="nx">layout</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getLayout</span><span class="p">();</span>
+<span class="lineno">27</span>       <span class="k">this</span><span class="p">.</span><span class="nx">region</span><span class="p">.</span><span class="nx">show</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">layout</span><span class="p">);</span>
+<span class="lineno">28</span>     <span class="p">},</span>
+<span class="lineno">29</span> 
+<span class="lineno">30</span>     <span class="nx">getLayout</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+<span class="lineno">31</span>       <span class="kd">var</span> <span class="nx">layout</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">LayoutView</span><span class="p">({</span>
+<span class="lineno">32</span>         <span class="nx">model</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">model</span>
+<span class="lineno">33</span>       <span class="p">});</span>
+<span class="lineno">34</span> 
+<span class="lineno">35</span>       <span class="k">this</span><span class="p">.</span><span class="nx">listenTo</span><span class="p">(</span><span class="nx">layout</span><span class="p">,</span> <span class="s1">&#39;show&#39;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">showGrids</span><span class="p">);</span>
+<span class="lineno">36</span> 
+<span class="lineno">37</span>       <span class="k">return</span> <span class="nx">layout</span><span class="p">;</span>
+<span class="lineno">38</span>     <span class="p">},</span>
+<span class="lineno">39</span> 
+<span class="lineno">40</span>     <span class="nx">showGrids</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+<span class="lineno">41</span>       <span class="kd">var</span> <span class="nx">dashboardOrders</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Dashboard</span><span class="p">.</span><span class="nx">DashboardOrders</span><span class="p">();</span>
+<span class="lineno">42</span>       <span class="nx">dashboardOrders</span><span class="p">.</span><span class="nx">fetch</span><span class="p">().</span><span class="nx">then</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_showGridComponents</span><span class="p">(</span><span class="nx">dashboardOrders</span><span class="p">));</span>
+<span class="lineno">43</span>     <span class="p">},</span>
+<span class="lineno">44</span> 
+<span class="lineno">45</span>     <span class="nx">onDestroy</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+<span class="lineno">46</span>       <span class="nx">_</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_grids</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">grid</span><span class="p">)</span> <span class="p">{</span>
+<span class="lineno">47</span>         <span class="nx">grid</span><span class="p">.</span><span class="nx">destroy</span><span class="p">();</span>
+<span class="lineno">48</span>       <span class="p">});</span>
+<span class="lineno">49</span> 
+<span class="lineno">50</span>       <span class="k">delete</span> <span class="k">this</span><span class="p">.</span><span class="nx">_grids</span><span class="p">;</span>
+<span class="lineno">51</span>     <span class="p">},</span>
+<span class="lineno">52</span> 
+<span class="lineno">53</span>     <span class="nx">_showGridComponents</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">dashboardOrders</span><span class="p">)</span> <span class="p">{</span>
+<span class="lineno">54</span>       <span class="kd">var</span> <span class="nx">self</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+<span class="lineno">55</span>       <span class="kd">var</span> <span class="nx">layout</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">layout</span><span class="p">;</span>
+<span class="lineno">56</span> 
+<span class="lineno">57</span>       <span class="k">return</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+<span class="lineno">58</span>         <span class="nx">self</span><span class="p">.</span><span class="nx">_showGridComponent</span><span class="p">(</span><span class="nx">layout</span><span class="p">.</span><span class="nx">incompleteOrders</span><span class="p">,</span> <span class="nx">dashboardOrders</span><span class="p">.</span><span class="nx">incompleteOrders</span><span class="p">);</span>
+<span class="lineno">59</span>         <span class="nx">self</span><span class="p">.</span><span class="nx">_showGridComponent</span><span class="p">(</span><span class="nx">layout</span><span class="p">.</span><span class="nx">submittedOrders</span><span class="p">,</span> <span class="nx">dashboardOrders</span><span class="p">.</span><span class="nx">submittedOrders</span><span class="p">);</span>
+<span class="lineno">60</span>         <span class="nx">self</span><span class="p">.</span><span class="nx">_showGridComponent</span><span class="p">(</span><span class="nx">layout</span><span class="p">.</span><span class="nx">shippedOrders</span><span class="p">,</span> <span class="nx">dashboardOrders</span><span class="p">.</span><span class="nx">shippedOrders</span><span class="p">);</span>
+<span class="lineno">61</span>       <span class="p">};</span>
+<span class="lineno">62</span>     <span class="p">},</span>
+<span class="lineno">63</span> 
+<span class="lineno">64</span>     <span class="nx">_showGridComponent</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">region</span><span class="p">,</span> <span class="nx">orders</span><span class="p">)</span> <span class="p">{</span>
+<span class="lineno">65</span>       <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">_grids</span><span class="p">)</span> <span class="p">{</span>
+<span class="lineno">66</span>         <span class="k">this</span><span class="p">.</span><span class="nx">_grids</span> <span class="o">=</span> <span class="p">[];</span>
+<span class="lineno">67</span>       <span class="p">}</span>
+<span class="lineno">68</span> 
+<span class="lineno">69</span>       <span class="kd">var</span> <span class="nx">datagrid</span> <span class="o">=</span> <span class="nx">Dashboard</span><span class="p">.</span><span class="nx">DataGrid</span><span class="p">.</span><span class="nx">newComponent</span><span class="p">({</span>
+<span class="lineno">70</span>         <span class="nx">collection</span><span class="o">:</span> <span class="nx">orders</span><span class="p">,</span>
+<span class="lineno">71</span>         <span class="nx">region</span><span class="o">:</span> <span class="nx">region</span>
+<span class="lineno">72</span>       <span class="p">});</span>
+<span class="lineno">73</span> 
+<span class="lineno">74</span>       <span class="k">this</span><span class="p">.</span><span class="nx">_grids</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">datagrid</span><span class="p">);</span>
+<span class="lineno">75</span> 
+<span class="lineno">76</span>       <span class="nx">datagrid</span><span class="p">.</span><span class="nx">show</span><span class="p">();</span>
+<span class="lineno">77</span>     <span class="p">}</span>
+<span class="lineno">78</span>   <span class="p">});</span>
+<span class="lineno">79</span> 
+<span class="lineno">80</span>   <span class="c1">// Define initializers and finalizers...</span>
+<span class="lineno">81</span> 
+<span class="lineno">82</span> <span class="p">});</span></code></pre></div>
+
+<div class="highlight"><pre><code class="language-html" data-lang="html"><span class="lineno">1</span> <span class="c">&lt;!-- Add our other regions --&gt;</span>
+<span class="lineno">2</span> <span class="nt">&lt;script </span><span class="na">id=</span><span class="s">&quot;orders-dashboard-layout-template&quot;</span> <span class="na">type=</span><span class="s">&quot;text/html&quot;</span><span class="nt">&gt;</span>
+<span class="lineno">3</span>   <span class="o">&lt;</span><span class="nx">h1</span><span class="o">&gt;</span><span class="nx">Orders</span> <span class="nx">Dashboard</span><span class="o">&lt;</span><span class="err">/h1&gt;</span>
+<span class="lineno">4</span>   <span class="o">&lt;</span><span class="nx">div</span> <span class="nx">id</span><span class="o">=</span><span class="s2">&quot;incomplete-orders&quot;</span><span class="o">&gt;&lt;</span><span class="err">/div&gt;</span>
+<span class="lineno">5</span>   <span class="o">&lt;</span><span class="nx">div</span> <span class="nx">id</span><span class="o">=</span><span class="s2">&quot;submitted-orders&quot;</span><span class="o">&gt;&lt;</span><span class="err">/div&gt;</span>
+<span class="lineno">6</span>   <span class="o">&lt;</span><span class="nx">div</span> <span class="nx">id</span><span class="o">=</span><span class="s2">&quot;shipped-orders&quot;</span><span class="o">&gt;&lt;</span><span class="err">/div&gt;</span>
+<span class="lineno">7</span> <span class="nt">&lt;/script&gt;</span></code></pre></div>
+
+<p>OK, now we have a component that is reusable. We instantiate our datagrid three times to display different categories of orders on our dashboard page. This seems to work well, but we can’t deny the little bit of code smell.</p>
+
+<h2 id="create-a-component-type">Create A Component Type</h2>
+
+<p>If we want to create more components in our application, we will have to repeat the same pattern of creating a new module and setting the <code>newComponent</code> method on it. We don’t want to manually add the method to every module component. Yes, we could create a custom module with that method defined on its prototype and then let our module components inherit from it. But, that still doesn’t address the issue of using modules for something they’re not. All we’ve done is use a module as a glorified wrapper for other objects. In fact, our datagrid is really just two views and a controller. If all we really need to do is wrap other objects, then we should create a custom component type to use as our facade.</p>
+
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="lineno"> 1</span> <span class="c1">// File: lib/marionette.component.js</span>
+<span class="lineno"> 2</span> <span class="c1">// ---------------------------------</span>
+<span class="lineno"> 3</span> 
+<span class="lineno"> 4</span> <span class="nx">Marionette</span><span class="p">.</span><span class="nx">Application</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">component</span> <span class="o">=</span>
+<span class="lineno"> 5</span> <span class="nx">Marionette</span><span class="p">.</span><span class="nx">Module</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">component</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">name</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+<span class="lineno"> 6</span>   <span class="kd">var</span> <span class="nx">Component</span> <span class="o">=</span> <span class="k">this</span><span class="p">[</span><span class="nx">name</span><span class="p">];</span>
+<span class="lineno"> 7</span> 
+<span class="lineno"> 8</span>   <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">Component</span><span class="p">)</span> <span class="p">{</span>
+<span class="lineno"> 9</span>     <span class="nx">Component</span> <span class="o">=</span> <span class="nx">Marionette</span><span class="p">.</span><span class="nx">Component</span><span class="p">.</span><span class="nx">extend</span><span class="p">(</span><span class="nx">options</span><span class="p">);</span>
+<span class="lineno">10</span>     <span class="k">this</span><span class="p">[</span><span class="nx">name</span><span class="p">]</span> <span class="o">=</span> <span class="nx">Component</span><span class="p">;</span>
+<span class="lineno">11</span>   <span class="p">}</span>
+<span class="lineno">12</span> 
+<span class="lineno">13</span>   <span class="k">return</span> <span class="nx">Component</span><span class="p">;</span>
+<span class="lineno">14</span> <span class="p">};</span>
+<span class="lineno">15</span> 
+<span class="lineno">16</span> <span class="nx">Marionette</span><span class="p">.</span><span class="nx">Component</span> <span class="o">=</span> <span class="nx">Marionette</span><span class="p">.</span><span class="nx">Controller</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+<span class="lineno">17</span>   <span class="nx">constructor</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+<span class="lineno">18</span>     <span class="nx">options</span> <span class="o">=</span> <span class="nx">options</span> <span class="o">||</span> <span class="p">{};</span>
+<span class="lineno">19</span> 
+<span class="lineno">20</span>     <span class="k">this</span><span class="p">.</span><span class="nx">region</span>     <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">region</span><span class="p">;</span>
+<span class="lineno">21</span>     <span class="k">this</span><span class="p">.</span><span class="nx">model</span>      <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">model</span><span class="p">;</span>
+<span class="lineno">22</span>     <span class="k">this</span><span class="p">.</span><span class="nx">collection</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">collection</span><span class="p">;</span>
+<span class="lineno">23</span> 
+<span class="lineno">24</span>     <span class="nx">Marionette</span><span class="p">.</span><span class="nx">Controller</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">constructor</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">);</span>
+<span class="lineno">25</span>   <span class="p">},</span>
+<span class="lineno">26</span> 
+<span class="lineno">27</span>   <span class="nx">show</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+<span class="lineno">28</span>     <span class="k">this</span><span class="p">.</span><span class="nx">showView</span><span class="p">();</span>
+<span class="lineno">29</span>   <span class="p">},</span>
+<span class="lineno">30</span> 
+<span class="lineno">31</span>   <span class="nx">showView</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+<span class="lineno">32</span>     <span class="kd">var</span> <span class="nx">view</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">view</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getView</span><span class="p">();</span>
+<span class="lineno">33</span> 
+<span class="lineno">34</span>     <span class="k">this</span><span class="p">.</span><span class="nx">listenTo</span><span class="p">(</span><span class="nx">view</span><span class="p">,</span> <span class="s1">&#39;show&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+<span class="lineno">35</span>       <span class="k">this</span><span class="p">.</span><span class="nx">triggerMethod</span><span class="p">(</span><span class="s1">&#39;show:view&#39;</span><span class="p">);</span>
+<span class="lineno">36</span>     <span class="p">});</span>
+<span class="lineno">37</span> 
+<span class="lineno">38</span>     <span class="k">this</span><span class="p">.</span><span class="nx">region</span><span class="p">.</span><span class="nx">show</span><span class="p">(</span><span class="nx">view</span><span class="p">);</span>
+<span class="lineno">39</span>   <span class="p">}</span>
+<span class="lineno">40</span> <span class="p">});</span>
+<span class="lineno">41</span> 
+<span class="lineno">42</span> <span class="nx">Marionette</span><span class="p">.</span><span class="nx">Component</span><span class="p">.</span><span class="nx">define</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+<span class="lineno">43</span>   <span class="nx">_</span><span class="p">.</span><span class="nx">extend</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">prototype</span><span class="p">,</span> <span class="nx">options</span><span class="p">);</span>
+<span class="lineno">44</span> <span class="p">};</span></code></pre></div>
+
+<p>So, we’ve defined a new type: <code>Marionette.Component</code>. This component type is based off work Derick Bailey did when he and I developed together on a project. To actually create or use a component, we call <code>component</code> on an instance of a Marionette application or module. It attaches the component to the receiver and takes in options to add to the component prototype. We can also call <code>define</code> on our component type to add other properties to the prototype.</p>
+
+<p>Notice the component type makes some assumptions about how it will be used. It takes a region for displaying itself along with a model and/or a collection. It has a <code>show</code> method, where it calls <code>showView</code>. Notice that <code>showView</code> calls <code>getView</code> but doesn’t define it. When you create your own custom component type through this interface, you need to supply a <code>getView</code> method that returns your custom view instance (item view, collection view, layout view, etc.).</p>
+
+<p>The component also listens for the <code>show</code> event on the view and triggers an <code>onShowView</code> method via the <code>this.triggerMethod('show:view')</code> call. So, you can also define an <code>onShowView</code> method if you need to do additional work after the view is displayed. Finally, the component displays the view in the supplied region.</p>
+
+<p>Let’s use our new component type to redefine our datagrid component.</p>
+
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="lineno"> 1</span> <span class="c1">// File: orders/dashboard/dataGrid.js</span>
+<span class="lineno"> 2</span> <span class="c1">// ----------------------------------</span>
+<span class="lineno"> 3</span> 
+<span class="lineno"> 4</span> <span class="c1">// Define the component under the dashboard module now</span>
+<span class="lineno"> 5</span> <span class="nx">MyApp</span><span class="p">.</span><span class="nx">module</span><span class="p">(</span><span class="s1">&#39;Orders.Dashboard&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">Dashboard</span><span class="p">,</span> <span class="nx">MyApp</span><span class="p">,</span> <span class="nx">Backbone</span><span class="p">,</span> <span class="nx">Marionette</span><span class="p">,</span> <span class="nx">$</span><span class="p">,</span> <span class="nx">_</span><span class="p">)</span> <span class="p">{</span>
+<span class="lineno"> 6</span> 
+<span class="lineno"> 7</span>   <span class="c1">// Instead of a controller, use our module `component` method</span>
+<span class="lineno"> 8</span>   <span class="kd">var</span> <span class="nx">DataGrid</span> <span class="o">=</span> <span class="nx">Dashboard</span><span class="p">.</span><span class="nx">component</span><span class="p">(</span><span class="s1">&#39;DataGrid&#39;</span><span class="p">);</span>
+<span class="lineno"> 9</span> 
+<span class="lineno">10</span>   <span class="c1">// Views stay the same from the previous version...</span>
+<span class="lineno">11</span> 
+<span class="lineno">12</span>   <span class="c1">// Define the actual component type</span>
+<span class="lineno">13</span>   <span class="nx">DataGrid</span><span class="p">.</span><span class="nx">define</span><span class="p">({</span>
+<span class="lineno">14</span>     <span class="nx">getView</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+<span class="lineno">15</span>       <span class="kd">var</span> <span class="nx">gridView</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">DataGrid</span><span class="p">.</span><span class="nx">GridView</span><span class="p">({</span>
+<span class="lineno">16</span>         <span class="nx">collection</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">collection</span>
+<span class="lineno">17</span>       <span class="p">});</span>
+<span class="lineno">18</span> 
+<span class="lineno">19</span>       <span class="k">this</span><span class="p">.</span><span class="nx">listenTo</span><span class="p">(</span><span class="nx">gridView</span><span class="p">,</span> <span class="s1">&#39;foo&#39;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">doBar</span><span class="p">);</span>
+<span class="lineno">20</span> 
+<span class="lineno">21</span>       <span class="k">return</span> <span class="nx">gridView</span><span class="p">;</span>
+<span class="lineno">22</span>     <span class="p">},</span>
+<span class="lineno">23</span> 
+<span class="lineno">24</span>     <span class="nx">doBar</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+<span class="lineno">25</span>       <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;I did bar!&#39;</span><span class="p">);</span>
+<span class="lineno">26</span>     <span class="p">}</span>
+<span class="lineno">27</span>   <span class="p">});</span>
+<span class="lineno">28</span> 
+<span class="lineno">29</span> <span class="p">});</span></code></pre></div>
+
+<p>Notice that we still define the component within a module, but we’re just reopening up our dashboard module to create the datagrid component on it. We still define the views in the same way, and then we define the datagrid type. Since we made assumptions about how components should be used (for example, take some basic options in their constructor and provide a <code>show</code> method), all we need to define is our <code>getView</code> method and any other custom logic we require.</p>
+
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="lineno"> 1</span> <span class="c1">// File: orders/dashboard/dashboard.js</span>
+<span class="lineno"> 2</span> <span class="c1">// -----------------------------------</span>
+<span class="lineno"> 3</span> 
+<span class="lineno"> 4</span> <span class="nx">MyApp</span><span class="p">.</span><span class="nx">module</span><span class="p">(</span><span class="s1">&#39;Orders.Dashboard&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">Dashboard</span><span class="p">,</span> <span class="nx">MyApp</span><span class="p">,</span> <span class="nx">Backbone</span><span class="p">,</span> <span class="nx">Marionette</span><span class="p">,</span> <span class="nx">$</span><span class="p">,</span> <span class="nx">_</span><span class="p">)</span> <span class="p">{</span>
+<span class="lineno"> 5</span> 
+<span class="lineno"> 6</span>   <span class="c1">// Earlier definitions...</span>
+<span class="lineno"> 7</span> 
+<span class="lineno"> 8</span>   <span class="c1">// Redefine our controller method for showing a grid</span>
+<span class="lineno"> 9</span>   <span class="nx">Dashboard</span><span class="p">.</span><span class="nx">Controller</span> <span class="o">=</span> <span class="nx">Marionette</span><span class="p">.</span><span class="nx">Controller</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+<span class="lineno">10</span>     <span class="c1">// Earlier method definitions...</span>
+<span class="lineno">11</span> 
+<span class="lineno">12</span>     <span class="nx">_showGridComponent</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">region</span><span class="p">,</span> <span class="nx">order</span><span class="p">)</span> <span class="p">{</span>
+<span class="lineno">13</span>       <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">_grids</span><span class="p">)</span> <span class="p">{</span>
+<span class="lineno">14</span>         <span class="k">this</span><span class="p">.</span><span class="nx">_grids</span> <span class="o">=</span> <span class="p">[];</span>
+<span class="lineno">15</span>       <span class="p">}</span>
+<span class="lineno">16</span> 
+<span class="lineno">17</span>       <span class="kd">var</span> <span class="nx">datagrid</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Dashboard</span><span class="p">.</span><span class="nx">DataGrid</span><span class="p">({</span>
+<span class="lineno">18</span>         <span class="nx">collection</span><span class="o">:</span> <span class="nx">orders</span><span class="p">,</span>
+<span class="lineno">19</span>         <span class="nx">region</span><span class="o">:</span> <span class="nx">region</span>
+<span class="lineno">20</span>       <span class="p">});</span>
+<span class="lineno">21</span> 
+<span class="lineno">22</span>       <span class="k">this</span><span class="p">.</span><span class="nx">_grids</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">datagrid</span><span class="p">);</span>
+<span class="lineno">23</span> 
+<span class="lineno">24</span>       <span class="nx">datagrid</span><span class="p">.</span><span class="nx">show</span><span class="p">();</span>
+<span class="lineno">25</span>     <span class="p">}</span>
+<span class="lineno">26</span>   <span class="p">});</span>
+<span class="lineno">27</span> 
+<span class="lineno">28</span>   <span class="c1">// Define initializers and finalizers...</span>
+<span class="lineno">29</span> 
+<span class="lineno">30</span> <span class="p">});</span></code></pre></div>
+
+<p>We make sure to update our dashboard controller to instantiate the datagrid components with the new component type constructor.</p>
+
+<div class="highlight"><pre><code class="language-html" data-lang="html"><span class="lineno">1</span> <span class="nt">&lt;script </span><span class="na">src=</span><span class="s">&quot;app.js&quot;</span><span class="nt">&gt;&lt;/script&gt;</span>
+<span class="lineno">2</span> <span class="nt">&lt;script </span><span class="na">src=</span><span class="s">&quot;lib/marionette.component.js&quot;</span><span class="nt">&gt;&lt;/script&gt;</span>
+<span class="lineno">3</span> <span class="nt">&lt;script </span><span class="na">src=</span><span class="s">&quot;orders/orders.js&quot;</span><span class="nt">&gt;&lt;/script&gt;</span>
+<span class="lineno">4</span> <span class="nt">&lt;script </span><span class="na">src=</span><span class="s">&quot;orders/dashboard/dashboard.js&quot;</span><span class="nt">&gt;&lt;/script&gt;</span>
+<span class="lineno">5</span> <span class="nt">&lt;script </span><span class="na">src=</span><span class="s">&quot;orders/dashboard/dataGrid.js&quot;</span><span class="nt">&gt;&lt;/script&gt;</span></code></pre></div>
+
+<p>Finally, we add the component source file to our loaded scripts.</p>
+
+<h2 id="conclusion">Conclusion</h2>
+
+<p>So, we now understand how to build reusable components in Backbone.js and Marionette.js. We’ve learned that components allow us to reduce the amount of code we need to write and afford us more scaleable applications. I think this simple approach to components in Marionette can go a long way toward building modular applications. I’m sure there are ways to improve our component type and reduce even more repeated patterns. I know our method of defining and using modules could use some refactoring, possibly incorporating some of the same ideas we used to make our custom component type.</p>
+
+<p>I hope you enjoyed this post, and I look forward to any questions or feedback!</p>
+
+      <div class="social-share">
+  <ul class="inline-list">
+    <li class="facebook">
+      <a href="https://www.facebook.com/sharer/sharer.php?u=http://blog.jeremyfairbank.com/javascript/components-with-backbone-js-and-marionette-js/" title="Share on Facebook"><span class="count"><i class="fa fa-facebook-square"></i> Share</span></a>
+    </li>
+    <li class="twitter">
+      <a href="https://twitter.com/intent/tweet?text=http://blog.jeremyfairbank.com/javascript/components-with-backbone-js-and-marionette-js/" title="Share on Twitter"><span class="count"><i class="fa fa-twitter-square"></i> Tweet</span></a>
+    </li>
+    <li class="googleplus">
+      <a href="https://plus.google.com/share?url=http://blog.jeremyfairbank.com/javascript/components-with-backbone-js-and-marionette-js/" title="Share on Google Plus"><span class="count"><i class="fa fa-google-plus-square"></i> +1</span></a>
+    </li>
+  </ul>
+</div>
+
+      <hr />
+      <footer role="contentinfo">
+        <div class="article-author-bottom">
+          
+
+
+
+	<img src="http://blog.jeremyfairbank.com/images/bio-photo-1.jpg" class="bio-photo" alt="Jeremy Fairbank bio photo">
+
+<h3>Jeremy Fairbank</h3>
+<p>Making the web with JavaScript.</p>
+
+<a href="http://twitter.com/ElPapaPollo" class="author-social" target="_blank"><i class="fa fa-fw fa-twitter-square"></i> Twitter</a>
+
+<a href="http://plus.google.com/+JeremyFairbank" class="author-social" target="_blank"><i class="fa fa-fw fa-google-plus-square"></i> Google+</a>
+
+<a href="http://instagram.com/elpapapollo" class="author-social" target="_blank"><i class="fa fa-fw fa-instagram"></i> Instagram</a>
+
+<a href="http://github.com/jfairbank" class="author-social" target="_blank"><i class="fa fa-fw fa-github"></i> Github</a>
+
+
+
+
+
+
+
+
+        </div>
+        <p class="byline"><strong>Components with Backbone.js and Marionette.js</strong> was published on <time datetime="2014-06-25T00:00:00-04:00">June 25, 2014</time>.</p>
+      </footer>
+    </div><!-- /.article-wrap -->
+  
+    <section id="disqus_thread"></section><!-- /#disqus_thread -->
+  
+  </article>
+</div><!-- /#main -->
+
+<div class="footer-wrap">
+  <div class="related-articles">
+  <h4>You might also enjoy <small class="pull-right">(<a href="http://blog.jeremyfairbank.com/posts/">View all posts</a>)</small></h4>
+    <ul>
+    
+      <li><a href="http://blog.jeremyfairbank.com/javascript/polymer-web-components-with-marionette-js/" title="Polymer Web Components with Marionette.js">Polymer Web Components with Marionette.js</a></li>
+    
+      <li><a href="http://blog.jeremyfairbank.com/programming/open-source-you/" title="Open Source You">Open Source You</a></li>
+    
+      <li><a href="http://blog.jeremyfairbank.com/javascript/first-post-ensuring-remote-data-is-available/" title="First Post: Ensuring Remote Data is Available in JavaScript">First Post: Ensuring Remote Data is Available in JavaScript</a></li>
+    
+    </ul>
+    <hr />
+  </div><!-- /.related-articles -->
+  <footer>
+    
+
+<span>&copy; 2014 - 2015 Jeremy Fairbank. Powered by <a href="http://jekyllrb.com" rel="nofollow">Jekyll</a> using the <a href="http://mademistakes.com/minimal-mistakes/" rel="nofollow">Minimal Mistakes</a> theme.</span>
+
+  </footer>
+</div><!-- /.footer-wrap -->
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script>window.jQuery || document.write('<script src="http://blog.jeremyfairbank.com/assets/js/vendor/jquery-1.9.1.min.js"><\/script>')</script>
+<script src="http://blog.jeremyfairbank.com/assets/js/scripts.min.js"></script>
+
+<!-- Asynchronous Google Analytics snippet -->
+<script>
+  var _gaq = _gaq || [];
+  var pluginUrl = 
+ '//www.google-analytics.com/plugins/ga/inpage_linkid.js';
+  _gaq.push(['_require', 'inpage_linkid', pluginUrl]);
+  _gaq.push(['_setAccount', 'UA-52148605-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+
+
+  
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+    var disqus_shortname = 'jeremyfairbankblog'; // required: replace example with your forum shortname
+
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function () {
+        var s = document.createElement('script'); s.async = true;
+        s.type = 'text/javascript';
+        s.src = '//' + disqus_shortname + '.disqus.com/count.js';
+        (document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
+    }());
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+	        
+
+</body>
+</html>

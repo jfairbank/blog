@@ -1,0 +1,16 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+ 
+<polymer-element name="name-tag" attributes="name job">
+  <template>
+    <div>Hello, my name is {{name}}</div>
+    <div>My job is {{job}}</div><br>
+    <div>Name: <input type="text" value="{{name}}"></div>
+    <div>Job: <input type="text" value="{{job}}"></div>
+  </template>
+  <script>
+    Polymer({
+      name: 'Joe Schmoe',
+      job: 'Plumber'
+    });
+  </script>
+</polymer-element>
