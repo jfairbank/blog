@@ -17,3 +17,15 @@
   height: 80px;
   width: 234px;
 }
+
+#open-source {
+  p {
+    @extend .clearfix;
+  }
+
+  .logo {
+    display: inline-block;
+    float: left;
+    margin-right: 20px;
+  }
+}

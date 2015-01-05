@@ -26,6 +26,27 @@ company called Push ([pushagency.io](http://pushagency.io)).
 
 ---
 
+## Open Source
+
+<div id="open-source">
+  <p>
+    <img class="logo" src="/images/marionette-logo.png" width="64" alt="Marionette.js"/>
+
+    I am a big fan of the {% ext_link http://marionettejs.com Marionette.js %}
+    framework for {% ext_link http://backbonejs.org Backbone.js %} and am a core
+    team member. Check out our repo at {% gh marionettejs/backbone.marionette %}.
+  </p>
+
+  <p>
+    <img class="logo" src="/images/github-mark.png" width="64" alt="GitHub" />
+    I also have a few open source libraries on GitHub such as my component library
+    for Marionette.js, {% gh jfairbank/marionette.component %}. You can view my GitHub
+    profile {% gh jfairbank here %}.
+  </p>
+</div>
+
+---
+
 ## Conferences
 
 {% assign talk = site.data.talks.nodevember_14 %}
