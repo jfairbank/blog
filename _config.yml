@@ -26,6 +26,8 @@ owner:
   name: Jeremy Fairbank
   avatar: bio-photo-1.jpg
   bio: "Making the web with JavaScript."
+  role: "Web Developer"
+  location: Tennessee
   email:
   disqus-shortname: jeremyfairbankblog
   twitter: ElPapaPollo
