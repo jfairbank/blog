@@ -40,8 +40,14 @@ company called Push ([pushagency.io](http://pushagency.io)).
   <p>
     <img class="logo" src="/images/github-mark.png" width="64" alt="GitHub" />
     I also have a few open source libraries on GitHub such as my component library
-    for Marionette.js, {% gh jfairbank/marionette.component %}. You can view my GitHub
-    profile {% gh jfairbank here %}.
+    for Marionette.js,
+    {% gh jfairbank/marionette.component Marionette.Component %},
+    and a color manipulation gem for Ruby,
+    {% gh jfairbank/chroma chroma %}.
+  </p>
+
+  <p>
+    You can view my GitHub profile {% gh jfairbank here %}.
   </p>
 </div>
 
