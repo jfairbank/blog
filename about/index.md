@@ -55,14 +55,26 @@ company called Push ([pushagency.io](http://pushagency.io)).
 
 ## Conferences
 
-{% assign talk = site.data.talks.nodevember_14 %}
-<h3>{{ talk.conference }}<br><small>{{ talk.title }}</small></h3>
+{% for talk_data in site.data.talks %}
+  <div class="conference-talk">
+    {% assign talk = talk_data[1] %}
 
-I had the amazing honor to give my first developer talk at the inaugural
-{{ talk.conference_ext_link }} conference
-in {{ talk.location }}.
+    <h3 class="conference-talk-heading">
+      {{ talk.conference }}<br>
+      <small class="conference-talk-title">{{ talk.title }}</small>
+    </h3>
 
-{{ talk.video }}
+    <p>
+      {{ talk.blurb | replace: '#[conference_ext_link]', talk.conference_ext_link | replace: '#[location]', talk.location }}
+    </p>
+
+    {{ talk.video }}
+  </div>
+
+  {% unless forloop.last %}
+---
+  {% endunless %}
+{% endfor %}
 
 ---
 

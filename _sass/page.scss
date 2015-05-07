@@ -709,3 +709,15 @@ $button-size: 1.5rem;
     margin-right: auto !important;
   }
 }
+
+// Conferences
+.conference-talk {
+  .conference-talk-heading {
+    font-size: 1.7rem;
+  }
+
+  .conference-talk-title {
+    color: #555;
+    font-weight: normal;
+  }
+}
