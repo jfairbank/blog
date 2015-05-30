@@ -1,0 +1,622 @@
+<!doctype html>
+<!--[if lt IE 7]><html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="en"> <![endif]-->
+<!--[if (IE 7)&!(IEMobile)]><html class="no-js lt-ie9 lt-ie8" lang="en"><![endif]-->
+<!--[if (IE 8)&!(IEMobile)]><html class="no-js lt-ie9" lang="en"><![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en"><!--<![endif]-->
+<head>
+<meta charset="utf-8">
+<title>JavaScript ES7 Function Bind Syntax &#8211; Jeremy Fairbank Blog</title>
+<meta name="description" content="Bind JavaScript functions with a cleaner, more versatile syntax in ES7.">
+<meta name="keywords" content="javascript, es7, es2016, functions">
+
+
+
+<!-- Twitter Cards -->
+<meta name="twitter:title" content="JavaScript ES7 Function Bind Syntax">
+<meta name="twitter:description" content="Bind JavaScript functions with a cleaner, more versatile syntax in ES7.">
+<meta name="twitter:site" content="@ElPapaPollo">
+<meta name="twitter:creator" content="@ElPapaPollo">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://blog.jeremyfairbank.com/images/bio-photo-1.jpg">
+<!-- Open Graph -->
+<meta property="og:locale" content="en_US">
+<meta property="og:type" content="article">
+<meta property="og:title" content="JavaScript ES7 Function Bind Syntax">
+<meta property="og:description" content="Bind JavaScript functions with a cleaner, more versatile syntax in ES7.">
+<meta property="og:url" content="http://blog.jeremyfairbank.com/javascript/javascript-es7-function-bind-syntax/">
+<meta property="og:site_name" content="Jeremy Fairbank Blog">
+<meta property="og:image" content="http://blog.jeremyfairbank.com/images/bio-photo-1.jpg">
+
+
+
+
+
+
+
+<link rel="canonical" href="http://blog.jeremyfairbank.com/javascript/javascript-es7-function-bind-syntax/">
+<link href="http://blog.jeremyfairbank.com/feed.xml" type="application/atom+xml" rel="alternate" title="Jeremy Fairbank Blog Feed">
+<link rel="author" href="http://plus.google.com/+JeremyFairbank?rel=author">
+
+<!-- http://t.co/dKP3o1e -->
+<meta name="HandheldFriendly" content="True">
+<meta name="MobileOptimized" content="320">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="http://blog.jeremyfairbank.com/assets/css/main.css">
+
+<meta http-equiv="cleartype" content="on">
+
+<!-- HTML5 Shiv and Media Query Support -->
+<!--[if lt IE 9]>
+	<script src="http://blog.jeremyfairbank.com/assets/js/vendor/html5shiv.min.js"></script>
+	<script src="http://blog.jeremyfairbank.com/assets/js/vendor/respond.min.js"></script>
+<![endif]-->
+
+<!-- Modernizr -->
+<script src="http://blog.jeremyfairbank.com/assets/js/vendor/modernizr-2.7.1.custom.min.js"></script>
+
+<link href='//fonts.googleapis.com/css?family=PT+Sans+Narrow:400,700%7CPT+Serif:400,700,400italic' rel='stylesheet' type='text/css'>
+
+<!-- Icons -->
+<!-- 16x16 -->
+<link rel="shortcut icon" href="http://blog.jeremyfairbank.com/favicon.ico">
+<!-- 32x32 -->
+<link rel="shortcut icon" href="http://blog.jeremyfairbank.com/favicon.png">
+<!-- 57x57 (precomposed) for iPhone 3GS, pre-2011 iPod Touch and older Android devices -->
+<link rel="apple-touch-icon-precomposed" href="http://blog.jeremyfairbank.com/images/apple-touch-icon-precomposed.png">
+<!-- 72x72 (precomposed) for 1st generation iPad, iPad 2 and iPad mini -->
+<link rel="apple-touch-icon-precomposed" sizes="72x72" href="http://blog.jeremyfairbank.com/images/apple-touch-icon-72x72-precomposed.png">
+<!-- 114x114 (precomposed) for iPhone 4, 4S, 5 and post-2011 iPod Touch -->
+<link rel="apple-touch-icon-precomposed" sizes="114x114" href="http://blog.jeremyfairbank.com/images/apple-touch-icon-114x114-precomposed.png">
+<!-- 144x144 (precomposed) for iPad 3rd and 4th generation -->
+<link rel="apple-touch-icon-precomposed" sizes="144x144" href="http://blog.jeremyfairbank.com/images/apple-touch-icon-144x144-precomposed.png">
+
+</head>
+
+<body class="post">
+
+<!--[if lt IE 9]><div class="browser-upgrade alert alert-info">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</div><![endif]-->
+
+<div class="navigation-wrapper">
+	<div class="site-name">
+		<a href="http://blog.jeremyfairbank.com/">Jeremy Fairbank Blog</a>
+	</div><!-- /.site-name -->
+	<div class="top-navigation">
+		<nav role="navigation" id="site-nav" class="nav">
+		    <ul>
+		        
+				    
+				        
+				    
+				    <li><a href="http://blog.jeremyfairbank.com/about/" >About</a></li>
+				
+				    
+				        
+				    
+				    <li><a href="http://blog.jeremyfairbank.com/posts/" >Posts</a></li>
+				
+		    </ul>
+		</nav>
+	</div><!-- /.top-navigation -->
+</div><!-- /.navigation-wrapper -->
+
+
+
+<div id="main" role="main">
+  <div class="article-author-side">
+    
+
+
+<div itemscope itemtype="http://data-vocabulary.org/Person">
+  
+    <img itemprop="photo" src="http://blog.jeremyfairbank.com/images/bio-photo-1.jpg" class="bio-photo" alt="Jeremy Fairbank bio photo">
+  
+  <h3 itemprop="name">Jeremy Fairbank</h3>
+  <p>
+    <span itemprop="role">Web Developer</span>.
+    <span itemprop="address" itemscope><span itemprop="locality">Tennessee</span></span>.
+    Making the web with JavaScript.
+  </p>
+  
+  <a href="http://twitter.com/ElPapaPollo" class="author-social" target="_blank"><i class="fa fa-fw fa-twitter-square"></i> Twitter</a>
+  
+  <a href="http://plus.google.com/+JeremyFairbank" class="author-social" target="_blank"><i class="fa fa-fw fa-google-plus-square"></i> Google+</a>
+  
+  <a href="http://instagram.com/elpapapollo" class="author-social" target="_blank"><i class="fa fa-fw fa-instagram"></i> Instagram</a>
+  
+  <a href="http://github.com/jfairbank" class="author-social" target="_blank"><i class="fa fa-fw fa-github"></i> Github</a>
+  
+  
+  
+  
+  
+  
+  
+  
+</div>
+
+  </div>
+  <article class="post">
+    <div class="headline-wrap">
+      
+        <h1><a href="http://blog.jeremyfairbank.com/javascript/javascript-es7-function-bind-syntax/" rel="bookmark" title="JavaScript ES7 Function Bind Syntax">JavaScript ES7 Function Bind Syntax</a></h1>
+      
+    </div><!--/ .headline-wrap -->
+    <div class="article-wrap">
+      <div class="social-share">
+  <ul class="inline-list">
+    <li class="facebook">
+      <a href="https://www.facebook.com/sharer/sharer.php?u=http://blog.jeremyfairbank.com/javascript/javascript-es7-function-bind-syntax/" title="Share on Facebook"><span class="count"><i class="fa fa-facebook-square"></i> Share</span></a>
+    </li>
+    <li class="twitter">
+      <a href="https://twitter.com/intent/tweet?text=http://blog.jeremyfairbank.com/javascript/javascript-es7-function-bind-syntax/" title="Share on Twitter"><span class="count"><i class="fa fa-twitter-square"></i> Tweet</span></a>
+    </li>
+    <li class="googleplus">
+      <a href="https://plus.google.com/share?url=http://blog.jeremyfairbank.com/javascript/javascript-es7-function-bind-syntax/" title="Share on Google Plus"><span class="count"><i class="fa fa-google-plus-square"></i> +1</span></a>
+    </li>
+  </ul>
+</div>
+
+      <section id="table-of-contents" class="toc">
+  <header>
+    <h3>Contents</h3>
+  </header>
+<div id="drawer">
+<ul id="markdown-toc">
+  <li><a href="#the-syntax">The Syntax</a></li>
+  <li><a href="#iteration">Iteration</a></li>
+  <li><a href="#callbacks">Callbacks</a></li>
+  <li><a href="#chaining">Chaining</a></li>
+  <li><a href="#getting-started">Getting Started</a></li>
+  <li><a href="#gripes-caveats-wishlist">Gripes, Caveats, Wishlist</a></li>
+  <li><a href="#conclusion">Conclusion</a></li>
+</ul>
+
+  </div>
+</section>
+<!-- /#table-of-contents -->
+
+<p style="font-weight: bold; font-size: 1.5em;">
+  <em>Bind your functions with this one weird trick!</em>
+</p>
+
+<p>Sorry, I couldn’t resist.</p>
+
+<p>I write this post with hesitation but excitement. I have enjoyed playing around
+with the new ECMAScript function bind syntax as proposed
+<a href="https://github.com/zenparsing/es-function-bind">here</a>. This is a very early
+proposal for addition in ES2016 (ES7, whatever) and could drastically change
+or even be scrapped. Therefore, I recognize that this post may become obsolete.</p>
+
+<p>I hope by advocating for this syntax, it will get the attention it deserves so
+that it will become standard ES syntax. I find it to be a very versatile and
+welcome tool in my JavaScript arsenal.</p>
+
+<h2 id="the-syntax">The Syntax</h2>
+
+<p>So what does the syntax actually look like?</p>
+
+<div id="gist-c64db36d16a2719d7a1d-syntax-js">
+<script src="https://gist.github.com/c64db36d16a2719d7a1d.js?file=syntax.js"></script>
+<noscript>
+<pre>// Binding a function to a context
+let log = ::console.log;
+
+// Calling a function with a context
+foo::bar();</pre>
+</noscript>
+</div>
+
+<p>That’s pretty much it. The proposal introduces a new <code>::</code> operator that
+simplifies function binding. Essentially, it offers syntactic sugar for calling
+the <code>bind</code>, <code>call</code>, and <code>apply</code> methods on <code>Function.prototype</code>. The equivalent
+ES5 code is below:</p>
+
+<div id="gist-c64db36d16a2719d7a1d-syntax-compiled-js">
+<script src="https://gist.github.com/c64db36d16a2719d7a1d.js?file=syntax-compiled.js"></script>
+<noscript>
+<pre>// Binding a function to a context
+let log = console.log.bind(console);
+ 
+// Calling functions with a context
+bar.call(foo);
+
+function hello() {
+  world.apply(foo, ...arguments);
+}</pre>
+</noscript>
+</div>
+
+<p>We could call it a day at that, but I don’t want to devalue the power that this
+syntax affords us. Let’s explore the ramifications of this syntax further.</p>
+
+<h2 id="iteration">Iteration</h2>
+
+<p>How often have you done something like this in your JavaScript code?</p>
+
+<div id="gist-c64db36d16a2719d7a1d-es5-iteration-js">
+<script src="https://gist.github.com/c64db36d16a2719d7a1d.js?file=es5-iteration.js"></script>
+<noscript>
+<pre>var ArrayProto = Array.prototype;
+var map = ArrayProto.map;
+var filter = ArrayProto.filter;
+var todoItems = document.querySelectorAll(&#39;ul.my-list &gt; li&#39;);
+
+var completedItems = filter.call(todoItems, function(item) {
+  return item.dataset.completed;
+});
+
+var titles = map.call(todoItems, function(item) {
+  return item.textContent;
+});</pre>
+</noscript>
+</div>
+
+<p>Granted, you might be using a framework for your Todo app or a library like
+lodash for iteration, but I don’t doubt we’ve all used the native <code>Array</code>
+methods on a different context at some point. It’s tedious and messy, but it gets
+the job done.</p>
+
+<p>Now, with function bind syntax, we can make this code more expressive and
+elegant:</p>
+
+<div id="gist-c64db36d16a2719d7a1d-es7-iteration-js">
+<script src="https://gist.github.com/c64db36d16a2719d7a1d.js?file=es7-iteration.js"></script>
+<noscript>
+<pre>let { map, filter } = Array.prototype;
+let todoItems = document.querySelectorAll(&#39;ul.my-list &gt; li&#39;);
+
+let completedItems = todoItems::filter(item =&gt; item.dataset.completed);
+let titles = todoItems::map(item =&gt; item.textContent);</pre>
+</noscript>
+</div>
+
+<p>The semantics remain the same, yet this reads more naturally and hides away the
+uglier syntax we’re accustomed to.</p>
+
+<p>If you visit the proposal
+(<a href="https://github.com/zenparsing/es-function-bind">link</a>), you’ll see another
+example where we can import helper functions from a hypothetical iteration
+library to iterate over a collection. This creates a better separation of
+concerns between data structures and function calls on those structures through
+generalization.</p>
+
+<p>Maybe your data structure needs to provide only one function for iteration, and
+then you can import iteration “methods” that depend on the function. This
+creates modularization possibilities in our JavaScript code similar to Ruby’s
+Enumerable module (<a href="http://ruby-doc.org/core-2.2.2/Enumerable.html">link</a>).</p>
+
+<h2 id="callbacks">Callbacks</h2>
+
+<p>Another common pattern in JavaScript is passing callbacks to another function
+like an event library. This becomes tricky when we desire a specific <code>this</code>
+context for our callback. Normally, we have to create a reference to <code>this</code> in a
+separate variable and refer to it in our callback, or we call
+<code>Function.prototype.bind</code> on our callback, passing in <code>this</code>.</p>
+
+<div id="gist-c64db36d16a2719d7a1d-es5-callbacks-js">
+<script src="https://gist.github.com/c64db36d16a2719d7a1d.js?file=es5-callbacks.js"></script>
+<noscript>
+<pre>var eventLib = require(&#39;eventLib&#39;);
+var self = this;
+
+eventLib.on(&#39;foo&#39;, function() {
+  self.gotFoo();
+});
+
+eventLib.on(&#39;bar&#39;, this.gotBar.bind(this));
+eventLib.on(&#39;log&#39;, console.log.bind(console));</pre>
+</noscript>
+</div>
+
+<p>Again, this is a little messy and slightly ugly. But with function bind syntax,
+it becomes drastically simpler:</p>
+
+<div id="gist-c64db36d16a2719d7a1d-es7-callbacks-js">
+<script src="https://gist.github.com/c64db36d16a2719d7a1d.js?file=es7-callbacks.js"></script>
+<noscript>
+<pre>import eventLib from &#39;eventLib&#39;;
+
+eventLib.on(&#39;foo&#39;, ::this.gotFoo);
+eventLib.on(&#39;bar&#39;, ::this.gotBar);
+eventLib.on(&#39;log&#39;, ::console.log);</pre>
+</noscript>
+</div>
+
+<p>This is powerfully expressive. No function wrapping. No explicit <code>bind</code> calls
+(we’re obviously still calling it via <code>::</code>, but we hide away those details). We
+are declaring our intent that these functions should be called in response to an
+event, and we’re ensuring our <code>this</code> context with minimal effort.</p>
+
+<h2 id="chaining">Chaining</h2>
+
+<p>If I wasn’t already convinced by the function bind syntax, chaining is what
+really sold it for me. Recently, I have been using
+<a href="https://github.com/Huddle/PhantomCSS">PhantomCSS</a> and
+<a href="http://casperjs.org/">CasperJS</a> for a CSS refactoring endeavor. Of course, I’m
+on the up-and-up and utilizing ES2015 via <a href="http://babeljs.io/">Babel</a> to write
+my test suite. If you have not heard of PhantomCSS or CasperJS, I encourage you
+to check them out. PhantomCSS is a very promising project for automating visual
+regressions of your website. CasperJS is a wrapper over PhantomJS and SlimerJS,
+offering a higher-level API.</p>
+
+<p>For this particular project, I represent web pages as classes according to a
+minimal interface. They each have a <code>run</code> method that takes in my <code>casper</code>
+instance. From there, each class chains method calls on my <code>casper</code> instance,
+returning the result. It’s very “promisey.” (I also added a few custom methods
+to my instance to wrap over some other methods to make them more “promisey.”)</p>
+
+<p>To avoid duplication in some classes, I wanted to add some methods to the
+<code>casper</code> instance that are specific to the concerns of that page. However, I
+didn’t want to pollute the actual object instance. Function bind syntax to the
+rescue!</p>
+
+<div id="gist-c64db36d16a2719d7a1d-es7-casper-chaining-js">
+<script src="https://gist.github.com/c64db36d16a2719d7a1d.js?file=es7-casper-chaining.js"></script>
+<noscript>
+<pre>class HomePage {
+  run(casper) {
+    function clickInMySection(n, selector) {
+      return this.thenClick(`.my-section:nth-of-type(${n}) ${selector}`);
+    }
+
+    function screenshotContainer(name) {
+      return this.thenScreenshot(&#39;#container&#39;, name);
+    }
+
+    return casper
+      .thenVisit(&#39;http://my-url.com/home&#39;)
+      .thenScreenshot(&#39;body&#39;, &#39;home&#39;)
+      ::thenClickInMySection(1, &#39;.foo&#39;)
+      ::thenScreenshotContainer(&#39;foo&#39;)
+      .thenClick(&#39;.cancel&#39;)
+      ::thenClickInMySection(2, &#39;.bar&#39;)
+      ::thenScreenshotContainer(&#39;bar&#39;);
+  }
+}</pre>
+</noscript>
+</div>
+
+<p>That is amazing! I can naturally express the chaining semantics while decorating
+my instance without altering it. Just as a reminder of what we would probably
+have to do without function bind syntax, here is some equivalent ES2015 code:</p>
+
+<div id="gist-c64db36d16a2719d7a1d-es6-casper-chaining-js">
+<script src="https://gist.github.com/c64db36d16a2719d7a1d.js?file=es6-casper-chaining.js"></script>
+<noscript>
+<pre>class HomePage {
+  run(casper) {
+    function clickInMySection(n, selector) {
+      return this.thenClick(`.my-section:nth-of-type(${n}) ${selector}`);
+    }
+
+    function screenshotContainer(name) {
+      return this.thenScreenshot(&#39;#container&#39;, name);
+    }
+
+    casper = casper
+      .thenVisit(&#39;http://my-url.com/home&#39;)
+      .thenScreenshot(&#39;body&#39;, &#39;home&#39;);
+
+    casper = thenClickInMySection.call(casper, 1, &#39;.foo&#39;);
+    casper = thenScreenshotContainer.call(casper, &#39;foo&#39;);
+    casper = casper.thenClick(&#39;.cancel&#39;);
+    casper = thenClickInMySection.call(casper, 2, &#39;.bar&#39;);
+    casper = thenScreenshotContainer.call(casper, &#39;bar&#39;);
+    
+    return casper;
+  }
+}</pre>
+</noscript>
+</div>
+
+<p>It gets the job done, but it doesn’t flow as nicely as our chaining example.
+Function bind syntax allows us to reduce how much code we write and effectively
+express this notion of flowing through each step.</p>
+
+<h2 id="getting-started">Getting Started</h2>
+
+<p>If you’d like to try out function bind syntax, then I encourage you check it out
+with Babel. If you’ve not heard of Babel, it’s a transpiler that transforms
+ES2015/2016 code into ES5. You can learn more about Babel from its website
+(<a href="http://babeljs.io/">link</a>) and learn how to use function bind syntax
+<a href="http://babeljs.io/docs/usage/experimental/">here</a>.</p>
+
+<h2 id="gripes-caveats-wishlist">Gripes, Caveats, Wishlist</h2>
+
+<p>I don’t think this syntax is without its faults. I’m not entirely sold on the
+actual <code>::</code> operator yet. Maybe it’s the baggage I carry from other languages
+like Ruby, PHP, and CoffeeScript, each which use that operator for different
+semantics. Another option might be the <code>-&gt;</code> operator, but it’s not my favorite
+either (burnout from PHP and C, no doubt). The <code>::</code> operator might be the best
+solution, and I don’t necessarily hate it.</p>
+
+<p>I haven’t dived into the discussion over this spec, but to my knowledge there is
+no affordance for partial application via this syntax. Recall that the <code>bind</code>
+method on <code>Function.prototype</code> can also partially apply parameters to the bound
+function by passing in additional arguments.</p>
+
+<div id="gist-c64db36d16a2719d7a1d-es5-partial-application-js">
+<script src="https://gist.github.com/c64db36d16a2719d7a1d.js?file=es5-partial-application.js"></script>
+<noscript>
+<pre>var DEBUG = console.log.bind(console, &#39;DEBUG:&#39;);
+
+function add(x, y) {
+  return x + y;
+}
+
+var add1 = add.bind(null, 1);
+var three = add1(2);
+
+DEBUG(three); // prints &quot;DEBUG: 3&quot;</pre>
+</noscript>
+</div>
+
+<p>I would like to see some type of partial application syntax, especially as we
+continue to push the boundaries of functional-style programming in JavaScript.
+Alas, I recognize that designing clean, efficient syntax is difficult. This may
+just not be possible. Some quick ideas for a syntax could be:</p>
+
+<div id="gist-c64db36d16a2719d7a1d-es7-partial-application-js">
+<script src="https://gist.github.com/c64db36d16a2719d7a1d.js?file=es7-partial-application.js"></script>
+<noscript>
+<pre>const DEBUG1 = ::console.log(&#39;DEBUG:&#39;);
+// Currently calls the function back on the same receiver
+// var DEBUG1 = console.log.call(console, &#39;DEBUG:&#39;);
+ 
+const DEBUG2 = ::console.log[&#39;DEBUG:&#39;];
+// This clashes with existing [] semantics
+// var DEBUG2 = console.log[&#39;DEBUG:&#39;].bind(console);
+
+const DEBUG3 = ::console.log&lt;&#39;DEBUG:&#39;&gt;;
+// SyntaxError
+
+const DEBUG4 = ::console.log{&#39;DEBUG:&#39;};
+// SyntaxError
+
+function add(x, y) {
+  return x + y;
+}
+
+let add1 = ::add(1);
+// SyntaxError (we need a context for the bind operator)
+
+// ...</pre>
+</noscript>
+</div>
+
+<h2 id="conclusion">Conclusion</h2>
+
+<p>Despite my small gripes and wishes, I readily welcome this proposal for ES2016
+and hope the maintainers strongly consider its inclusion. This syntax opens up
+the door for writing cleaner and more expressive JavaScript.</p>
+
+      <div class="social-share">
+  <ul class="inline-list">
+    <li class="facebook">
+      <a href="https://www.facebook.com/sharer/sharer.php?u=http://blog.jeremyfairbank.com/javascript/javascript-es7-function-bind-syntax/" title="Share on Facebook"><span class="count"><i class="fa fa-facebook-square"></i> Share</span></a>
+    </li>
+    <li class="twitter">
+      <a href="https://twitter.com/intent/tweet?text=http://blog.jeremyfairbank.com/javascript/javascript-es7-function-bind-syntax/" title="Share on Twitter"><span class="count"><i class="fa fa-twitter-square"></i> Tweet</span></a>
+    </li>
+    <li class="googleplus">
+      <a href="https://plus.google.com/share?url=http://blog.jeremyfairbank.com/javascript/javascript-es7-function-bind-syntax/" title="Share on Google Plus"><span class="count"><i class="fa fa-google-plus-square"></i> +1</span></a>
+    </li>
+  </ul>
+</div>
+
+      <hr />
+      <footer role="contentinfo">
+        <div class="article-author-bottom">
+          
+
+
+<div itemscope itemtype="http://data-vocabulary.org/Person">
+  
+    <img itemprop="photo" src="http://blog.jeremyfairbank.com/images/bio-photo-1.jpg" class="bio-photo" alt="Jeremy Fairbank bio photo">
+  
+  <h3 itemprop="name">Jeremy Fairbank</h3>
+  <p>
+    <span itemprop="role">Web Developer</span>.
+    <span itemprop="address" itemscope><span itemprop="locality">Tennessee</span></span>.
+    Making the web with JavaScript.
+  </p>
+  
+  <a href="http://twitter.com/ElPapaPollo" class="author-social" target="_blank"><i class="fa fa-fw fa-twitter-square"></i> Twitter</a>
+  
+  <a href="http://plus.google.com/+JeremyFairbank" class="author-social" target="_blank"><i class="fa fa-fw fa-google-plus-square"></i> Google+</a>
+  
+  <a href="http://instagram.com/elpapapollo" class="author-social" target="_blank"><i class="fa fa-fw fa-instagram"></i> Instagram</a>
+  
+  <a href="http://github.com/jfairbank" class="author-social" target="_blank"><i class="fa fa-fw fa-github"></i> Github</a>
+  
+  
+  
+  
+  
+  
+  
+  
+</div>
+
+        </div>
+        <p class="byline"><strong>JavaScript ES7 Function Bind Syntax</strong> was published on <time datetime="2015-05-30T00:00:00-04:00">May 30, 2015</time>.</p>
+      </footer>
+    </div><!-- /.article-wrap -->
+    <div class="related-articles">
+      <h4>You might also enjoy <small class="pull-right">(<a href="http://blog.jeremyfairbank.com/posts/">View all posts</a>)</small></h4>
+      <ul>
+      
+        <li><a href="http://blog.jeremyfairbank.com/javascript/functional-javascript-lists-1/" title="Functional JavaScript Part 1: Lists">Functional JavaScript Part 1: Lists</a></li>
+      
+        <li><a href="http://blog.jeremyfairbank.com/javascript/polymer-web-components-with-marionette-js/" title="Polymer Web Components with Marionette.js">Polymer Web Components with Marionette.js</a></li>
+      
+        <li><a href="http://blog.jeremyfairbank.com/programming/open-source-you/" title="Open Source You">Open Source You</a></li>
+      
+      </ul>
+      <hr />
+    </div><!-- /.related-articles -->
+  
+    <section id="disqus_thread"></section><!-- /#disqus_thread -->
+  
+  </article>
+</div><!-- /#main -->
+
+<div class="footer-wrap">
+  <footer>
+    
+
+<span>&copy; 2014 - 2015 Jeremy Fairbank. Powered by <a href="http://jekyllrb.com" rel="nofollow">Jekyll</a> using the <a href="http://mademistakes.com/minimal-mistakes/" rel="nofollow">Minimal Mistakes</a> theme.</span>
+
+  </footer>
+</div><!-- /.footer-wrap -->
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<script>window.jQuery || document.write('<script src="http://blog.jeremyfairbank.com/assets/js/vendor/jquery-1.9.1.min.js"><\/script>')</script>
+<script src="http://blog.jeremyfairbank.com/assets/js/scripts.min.js"></script>
+
+<!-- Google Analytics -->
+<script>
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-52148605-1', 'auto');
+ga('require', 'linkid', 'linkid.js');
+ga('require', 'displayfeatures');
+ga('send', 'pageview');
+</script>
+<!-- End Google Analytics -->
+
+
+  
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+    var disqus_shortname = 'jeremyfairbankblog'; // required: replace example with your forum shortname
+
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function () {
+        var s = document.createElement('script'); s.async = true;
+        s.type = 'text/javascript';
+        s.src = '//' + disqus_shortname + '.disqus.com/count.js';
+        (document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
+    }());
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+	        
+
+</body>
+</html>
