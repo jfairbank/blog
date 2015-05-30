@@ -4,13 +4,364 @@
 <generator uri="https://github.com/jekyll/jekyll">Jekyll</generator>
 <link rel="self" type="application/atom+xml" href="http://blog.jeremyfairbank.com/feed.xml" />
 <link rel="alternate" type="text/html" href="http://blog.jeremyfairbank.com" />
-<updated>2015-01-29T23:47:49-05:00</updated>
+<updated>2015-05-30T14:46:30-04:00</updated>
 <id>http://blog.jeremyfairbank.com/</id>
 <author>
   <name>Jeremy Fairbank</name>
   <uri>http://blog.jeremyfairbank.com/</uri>
   
 </author>
+
+
+  
+
+<entry>
+  <title type="html"><![CDATA[JavaScript ES7 Function Bind Syntax]]></title>
+  <link rel="alternate" type="text/html" href="http://blog.jeremyfairbank.com/javascript/javascript-es7-function-bind-syntax/" />
+  <id>http://blog.jeremyfairbank.com/javascript/javascript-es7-function-bind-syntax</id>
+  <published>2015-05-30T00:00:00-04:00</published>
+  <updated>2015-05-30T00:00:00-04:00</updated>
+  <author>
+    <name>Jeremy Fairbank</name>
+    <uri>http://blog.jeremyfairbank.com</uri>
+    
+  </author>
+  <content type="html">&lt;section id=&quot;table-of-contents&quot; class=&quot;toc&quot;&gt;
+  &lt;header&gt;
+    &lt;h3&gt;Contents&lt;/h3&gt;
+  &lt;/header&gt;
+&lt;div id=&quot;drawer&quot;&gt;
+&lt;ul id=&quot;markdown-toc&quot;&gt;
+  &lt;li&gt;&lt;a href=&quot;#the-syntax&quot;&gt;The Syntax&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#iteration&quot;&gt;Iteration&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#callbacks&quot;&gt;Callbacks&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#chaining&quot;&gt;Chaining&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#getting-started&quot;&gt;Getting Started&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#gripes-caveats-wishlist&quot;&gt;Gripes, Caveats, Wishlist&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#conclusion&quot;&gt;Conclusion&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+  &lt;/div&gt;
+&lt;/section&gt;
+&lt;!-- /#table-of-contents --&gt;
+
+&lt;p style=&quot;font-weight: bold; font-size: 1.5em;&quot;&gt;
+  &lt;em&gt;Bind your functions with this one weird trick!&lt;/em&gt;
+&lt;/p&gt;
+
+&lt;p&gt;Sorry, I couldn’t resist.&lt;/p&gt;
+
+&lt;p&gt;I write this post with hesitation but excitement. I have enjoyed playing around
+with the new ECMAScript function bind syntax as proposed
+&lt;a href=&quot;https://github.com/zenparsing/es-function-bind&quot;&gt;here&lt;/a&gt;. This is a very early
+proposal for addition in ES2016 (ES7, whatever) and could drastically change
+or even be scrapped. Therefore, I recognize that this post may become obsolete.&lt;/p&gt;
+
+&lt;p&gt;I hope by advocating for this syntax, it will get the attention it deserves so
+that it will become standard ES syntax. I find it to be a very versatile and
+welcome tool in my JavaScript arsenal.&lt;/p&gt;
+
+&lt;h2 id=&quot;the-syntax&quot;&gt;The Syntax&lt;/h2&gt;
+
+&lt;p&gt;So what does the syntax actually look like?&lt;/p&gt;
+
+&lt;div id=&quot;gist-c64db36d16a2719d7a1d-syntax-js&quot;&gt;
+&lt;script src=&quot;https://gist.github.com/c64db36d16a2719d7a1d.js?file=syntax.js&quot;&gt;&lt;/script&gt;
+&lt;noscript&gt;
+&lt;pre&gt;// Binding a function to a context
+let log = ::console.log;
+
+// Calling a function with a context
+foo::bar();&lt;/pre&gt;
+&lt;/noscript&gt;
+&lt;/div&gt;
+
+&lt;p&gt;That’s pretty much it. The proposal introduces a new &lt;code&gt;::&lt;/code&gt; operator that
+simplifies function binding. Essentially, it offers syntactic sugar for calling
+the &lt;code&gt;bind&lt;/code&gt;, &lt;code&gt;call&lt;/code&gt;, and &lt;code&gt;apply&lt;/code&gt; methods on &lt;code&gt;Function.prototype&lt;/code&gt;. The equivalent
+ES5 code is below:&lt;/p&gt;
+
+&lt;div id=&quot;gist-c64db36d16a2719d7a1d-syntax-compiled-js&quot;&gt;
+&lt;script src=&quot;https://gist.github.com/c64db36d16a2719d7a1d.js?file=syntax-compiled.js&quot;&gt;&lt;/script&gt;
+&lt;noscript&gt;
+&lt;pre&gt;// Binding a function to a context
+let log = console.log.bind(console);
+ 
+// Calling functions with a context
+bar.call(foo);
+
+function hello() {
+  world.apply(foo, ...arguments);
+}&lt;/pre&gt;
+&lt;/noscript&gt;
+&lt;/div&gt;
+
+&lt;p&gt;We could call it a day at that, but I don’t want to devalue the power that this
+syntax affords us. Let’s explore the ramifications of this syntax further.&lt;/p&gt;
+
+&lt;h2 id=&quot;iteration&quot;&gt;Iteration&lt;/h2&gt;
+
+&lt;p&gt;How often have you done something like this in your JavaScript code?&lt;/p&gt;
+
+&lt;div id=&quot;gist-c64db36d16a2719d7a1d-es5-iteration-js&quot;&gt;
+&lt;script src=&quot;https://gist.github.com/c64db36d16a2719d7a1d.js?file=es5-iteration.js&quot;&gt;&lt;/script&gt;
+&lt;noscript&gt;
+&lt;pre&gt;var ArrayProto = Array.prototype;
+var map = ArrayProto.map;
+var filter = ArrayProto.filter;
+var todoItems = document.querySelectorAll(&amp;#39;ul.my-list &amp;gt; li&amp;#39;);
+
+var completedItems = filter.call(todoItems, function(item) {
+  return item.dataset.completed;
+});
+
+var titles = map.call(todoItems, function(item) {
+  return item.textContent;
+});&lt;/pre&gt;
+&lt;/noscript&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Granted, you might be using a framework for your Todo app or a library like
+lodash for iteration, but I don’t doubt we’ve all used the native &lt;code&gt;Array&lt;/code&gt;
+methods on a different context at some point. It’s tedious and messy, but it gets
+the job done.&lt;/p&gt;
+
+&lt;p&gt;Now, with function bind syntax, we can make this code more expressive and
+elegant:&lt;/p&gt;
+
+&lt;div id=&quot;gist-c64db36d16a2719d7a1d-es7-iteration-js&quot;&gt;
+&lt;script src=&quot;https://gist.github.com/c64db36d16a2719d7a1d.js?file=es7-iteration.js&quot;&gt;&lt;/script&gt;
+&lt;noscript&gt;
+&lt;pre&gt;let { map, filter } = Array.prototype;
+let todoItems = document.querySelectorAll(&amp;#39;ul.my-list &amp;gt; li&amp;#39;);
+
+let completedItems = todoItems::filter(item =&amp;gt; item.dataset.completed);
+let titles = todoItems::map(item =&amp;gt; item.textContent);&lt;/pre&gt;
+&lt;/noscript&gt;
+&lt;/div&gt;
+
+&lt;p&gt;The semantics remain the same, yet this reads more naturally and hides away the
+uglier syntax we’re accustomed to.&lt;/p&gt;
+
+&lt;p&gt;If you visit the proposal
+(&lt;a href=&quot;https://github.com/zenparsing/es-function-bind&quot;&gt;link&lt;/a&gt;), you’ll see another
+example where we can import helper functions from a hypothetical iteration
+library to iterate over a collection. This creates a better separation of
+concerns between data structures and function calls on those structures through
+generalization.&lt;/p&gt;
+
+&lt;p&gt;Maybe your data structure needs to provide only one function for iteration, and
+then you can import iteration “methods” that depend on the function. This
+creates modularization possibilities in our JavaScript code similar to Ruby’s
+Enumerable module (&lt;a href=&quot;http://ruby-doc.org/core-2.2.2/Enumerable.html&quot;&gt;link&lt;/a&gt;).&lt;/p&gt;
+
+&lt;h2 id=&quot;callbacks&quot;&gt;Callbacks&lt;/h2&gt;
+
+&lt;p&gt;Another common pattern in JavaScript is passing callbacks to another function
+like an event library. This becomes tricky when we desire a specific &lt;code&gt;this&lt;/code&gt;
+context for our callback. Normally, we have to create a reference to &lt;code&gt;this&lt;/code&gt; in a
+separate variable and refer to it in our callback, or we call
+&lt;code&gt;Function.prototype.bind&lt;/code&gt; on our callback, passing in &lt;code&gt;this&lt;/code&gt;.&lt;/p&gt;
+
+&lt;div id=&quot;gist-c64db36d16a2719d7a1d-es5-callbacks-js&quot;&gt;
+&lt;script src=&quot;https://gist.github.com/c64db36d16a2719d7a1d.js?file=es5-callbacks.js&quot;&gt;&lt;/script&gt;
+&lt;noscript&gt;
+&lt;pre&gt;var eventLib = require(&amp;#39;eventLib&amp;#39;);
+var self = this;
+
+eventLib.on(&amp;#39;foo&amp;#39;, function() {
+  self.gotFoo();
+});
+
+eventLib.on(&amp;#39;bar&amp;#39;, this.gotBar.bind(this));
+eventLib.on(&amp;#39;log&amp;#39;, console.log.bind(console));&lt;/pre&gt;
+&lt;/noscript&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Again, this is a little messy and slightly ugly. But with function bind syntax,
+it becomes drastically simpler:&lt;/p&gt;
+
+&lt;div id=&quot;gist-c64db36d16a2719d7a1d-es7-callbacks-js&quot;&gt;
+&lt;script src=&quot;https://gist.github.com/c64db36d16a2719d7a1d.js?file=es7-callbacks.js&quot;&gt;&lt;/script&gt;
+&lt;noscript&gt;
+&lt;pre&gt;import eventLib from &amp;#39;eventLib&amp;#39;;
+
+eventLib.on(&amp;#39;foo&amp;#39;, ::this.gotFoo);
+eventLib.on(&amp;#39;bar&amp;#39;, ::this.gotBar);
+eventLib.on(&amp;#39;log&amp;#39;, ::console.log);&lt;/pre&gt;
+&lt;/noscript&gt;
+&lt;/div&gt;
+
+&lt;p&gt;This is powerfully expressive. No function wrapping. No explicit &lt;code&gt;bind&lt;/code&gt; calls
+(we’re obviously still calling it via &lt;code&gt;::&lt;/code&gt;, but we hide away those details). We
+are declaring our intent that these functions should be called in response to an
+event, and we’re ensuring our &lt;code&gt;this&lt;/code&gt; context with minimal effort.&lt;/p&gt;
+
+&lt;h2 id=&quot;chaining&quot;&gt;Chaining&lt;/h2&gt;
+
+&lt;p&gt;If I wasn’t already convinced by the function bind syntax, chaining is what
+really sold it for me. Recently, I have been using
+&lt;a href=&quot;https://github.com/Huddle/PhantomCSS&quot;&gt;PhantomCSS&lt;/a&gt; and
+&lt;a href=&quot;http://casperjs.org/&quot;&gt;CasperJS&lt;/a&gt; for a CSS refactoring endeavor. Of course, I’m
+on the up-and-up and utilizing ES2015 via &lt;a href=&quot;http://babeljs.io/&quot;&gt;Babel&lt;/a&gt; to write
+my test suite. If you have not heard of PhantomCSS or CasperJS, I encourage you
+to check them out. PhantomCSS is a very promising project for automating visual
+regressions of your website. CasperJS is a wrapper over PhantomJS and SlimerJS,
+offering a higher-level API.&lt;/p&gt;
+
+&lt;p&gt;For this particular project, I represent web pages as classes according to a
+minimal interface. They each have a &lt;code&gt;run&lt;/code&gt; method that takes in my &lt;code&gt;casper&lt;/code&gt;
+instance. From there, each class chains method calls on my &lt;code&gt;casper&lt;/code&gt; instance,
+returning the result. It’s very “promisey.” (I also added a few custom methods
+to my instance to wrap over some other methods to make them more “promisey.”)&lt;/p&gt;
+
+&lt;p&gt;To avoid duplication in some classes, I wanted to add some methods to the
+&lt;code&gt;casper&lt;/code&gt; instance that are specific to the concerns of that page. However, I
+didn’t want to pollute the actual object instance. Function bind syntax to the
+rescue!&lt;/p&gt;
+
+&lt;div id=&quot;gist-c64db36d16a2719d7a1d-es7-casper-chaining-js&quot;&gt;
+&lt;script src=&quot;https://gist.github.com/c64db36d16a2719d7a1d.js?file=es7-casper-chaining.js&quot;&gt;&lt;/script&gt;
+&lt;noscript&gt;
+&lt;pre&gt;class HomePage {
+  run(casper) {
+    function clickInMySection(n, selector) {
+      return this.thenClick(`.my-section:nth-of-type(${n}) ${selector}`);
+    }
+
+    function screenshotContainer(name) {
+      return this.thenScreenshot(&amp;#39;#container&amp;#39;, name);
+    }
+
+    return casper
+      .thenVisit(&amp;#39;http://my-url.com/home&amp;#39;)
+      .thenScreenshot(&amp;#39;body&amp;#39;, &amp;#39;home&amp;#39;)
+      ::thenClickInMySection(1, &amp;#39;.foo&amp;#39;)
+      ::thenScreenshotContainer(&amp;#39;foo&amp;#39;)
+      .thenClick(&amp;#39;.cancel&amp;#39;)
+      ::thenClickInMySection(2, &amp;#39;.bar&amp;#39;)
+      ::thenScreenshotContainer(&amp;#39;bar&amp;#39;);
+  }
+}&lt;/pre&gt;
+&lt;/noscript&gt;
+&lt;/div&gt;
+
+&lt;p&gt;That is amazing! I can naturally express the chaining semantics while decorating
+my instance without altering it. Just as a reminder of what we would probably
+have to do without function bind syntax, here is some equivalent ES2015 code:&lt;/p&gt;
+
+&lt;div id=&quot;gist-c64db36d16a2719d7a1d-es6-casper-chaining-js&quot;&gt;
+&lt;script src=&quot;https://gist.github.com/c64db36d16a2719d7a1d.js?file=es6-casper-chaining.js&quot;&gt;&lt;/script&gt;
+&lt;noscript&gt;
+&lt;pre&gt;class HomePage {
+  run(casper) {
+    function clickInMySection(n, selector) {
+      return this.thenClick(`.my-section:nth-of-type(${n}) ${selector}`);
+    }
+
+    function screenshotContainer(name) {
+      return this.thenScreenshot(&amp;#39;#container&amp;#39;, name);
+    }
+
+    casper = casper
+      .thenVisit(&amp;#39;http://my-url.com/home&amp;#39;)
+      .thenScreenshot(&amp;#39;body&amp;#39;, &amp;#39;home&amp;#39;);
+
+    casper = thenClickInMySection.call(casper, 1, &amp;#39;.foo&amp;#39;);
+    casper = thenScreenshotContainer.call(casper, &amp;#39;foo&amp;#39;);
+    casper = casper.thenClick(&amp;#39;.cancel&amp;#39;);
+    casper = thenClickInMySection.call(casper, 2, &amp;#39;.bar&amp;#39;);
+    casper = thenScreenshotContainer.call(casper, &amp;#39;bar&amp;#39;);
+    
+    return casper;
+  }
+}&lt;/pre&gt;
+&lt;/noscript&gt;
+&lt;/div&gt;
+
+&lt;p&gt;It gets the job done, but it doesn’t flow as nicely as our chaining example.
+Function bind syntax allows us to reduce how much code we write and effectively
+express this notion of flowing through each step.&lt;/p&gt;
+
+&lt;h2 id=&quot;getting-started&quot;&gt;Getting Started&lt;/h2&gt;
+
+&lt;p&gt;If you’d like to try out function bind syntax, then I encourage you check it out
+with Babel. If you’ve not heard of Babel, it’s a transpiler that transforms
+ES2015/2016 code into ES5. You can learn more about Babel from its website
+(&lt;a href=&quot;http://babeljs.io/&quot;&gt;link&lt;/a&gt;) and learn how to use function bind syntax
+&lt;a href=&quot;http://babeljs.io/docs/usage/experimental/&quot;&gt;here&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h2 id=&quot;gripes-caveats-wishlist&quot;&gt;Gripes, Caveats, Wishlist&lt;/h2&gt;
+
+&lt;p&gt;I don’t think this syntax is without its faults. I’m not entirely sold on the
+actual &lt;code&gt;::&lt;/code&gt; operator yet. Maybe it’s the baggage I carry from other languages
+like Ruby, PHP, and CoffeeScript, each which use that operator for different
+semantics. Another option might be the &lt;code&gt;-&amp;gt;&lt;/code&gt; operator, but it’s not my favorite
+either (burnout from PHP and C, no doubt). The &lt;code&gt;::&lt;/code&gt; operator might be the best
+solution, and I don’t necessarily hate it.&lt;/p&gt;
+
+&lt;p&gt;I haven’t dived into the discussion over this spec, but to my knowledge there is
+no affordance for partial application via this syntax. Recall that the &lt;code&gt;bind&lt;/code&gt;
+method on &lt;code&gt;Function.prototype&lt;/code&gt; can also partially apply parameters to the bound
+function by passing in additional arguments.&lt;/p&gt;
+
+&lt;div id=&quot;gist-c64db36d16a2719d7a1d-es5-partial-application-js&quot;&gt;
+&lt;script src=&quot;https://gist.github.com/c64db36d16a2719d7a1d.js?file=es5-partial-application.js&quot;&gt;&lt;/script&gt;
+&lt;noscript&gt;
+&lt;pre&gt;var DEBUG = console.log.bind(console, &amp;#39;DEBUG:&amp;#39;);
+
+function add(x, y) {
+  return x + y;
+}
+
+var add1 = add.bind(null, 1);
+var three = add1(2);
+
+DEBUG(three); // prints &amp;quot;DEBUG: 3&amp;quot;&lt;/pre&gt;
+&lt;/noscript&gt;
+&lt;/div&gt;
+
+&lt;p&gt;I would like to see some type of partial application syntax, especially as we
+continue to push the boundaries of functional-style programming in JavaScript.
+Alas, I recognize that designing clean, efficient syntax is difficult. This may
+just not be possible. Some quick ideas for a syntax could be:&lt;/p&gt;
+
+&lt;div id=&quot;gist-c64db36d16a2719d7a1d-es7-partial-application-js&quot;&gt;
+&lt;script src=&quot;https://gist.github.com/c64db36d16a2719d7a1d.js?file=es7-partial-application.js&quot;&gt;&lt;/script&gt;
+&lt;noscript&gt;
+&lt;pre&gt;const DEBUG1 = ::console.log(&amp;#39;DEBUG:&amp;#39;);
+// Currently calls the function back on the same receiver
+// var DEBUG1 = console.log.call(console, &amp;#39;DEBUG:&amp;#39;);
+ 
+const DEBUG2 = ::console.log[&amp;#39;DEBUG:&amp;#39;];
+// This clashes with existing [] semantics
+// var DEBUG2 = console.log[&amp;#39;DEBUG:&amp;#39;].bind(console);
+
+const DEBUG3 = ::console.log&amp;lt;&amp;#39;DEBUG:&amp;#39;&amp;gt;;
+// SyntaxError
+
+const DEBUG4 = ::console.log{&amp;#39;DEBUG:&amp;#39;};
+// SyntaxError
+
+function add(x, y) {
+  return x + y;
+}
+
+let add1 = ::add(1);
+// SyntaxError (we need a context for the bind operator)
+
+// ...&lt;/pre&gt;
+&lt;/noscript&gt;
+&lt;/div&gt;
+
+&lt;h2 id=&quot;conclusion&quot;&gt;Conclusion&lt;/h2&gt;
+
+&lt;p&gt;Despite my small gripes and wishes, I readily welcome this proposal for ES2016
+and hope the maintainers strongly consider its inclusion. This syntax opens up
+the door for writing cleaner and more expressive JavaScript.&lt;/p&gt;
+
+  &lt;p&gt;&lt;a href=&quot;http://blog.jeremyfairbank.com/javascript/javascript-es7-function-bind-syntax/&quot;&gt;JavaScript ES7 Function Bind Syntax&lt;/a&gt; was originally published by Jeremy Fairbank at &lt;a href=&quot;http://blog.jeremyfairbank.com&quot;&gt;Jeremy Fairbank Blog&lt;/a&gt; on May 30, 2015.&lt;/p&gt;</content>
+</entry>
 
 
   
