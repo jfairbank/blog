@@ -10,6 +10,7 @@ gem 'kramdown'
 gem 'rouge'
 
 group :jekyll_plugins do
+  gem 'octopress-codefence'
   gem 'octopress-gist'
   gem 'octopress-solarized'
 end

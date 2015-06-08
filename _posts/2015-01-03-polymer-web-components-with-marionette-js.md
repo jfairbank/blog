@@ -140,7 +140,7 @@ Our Marionette `PolymerView` will detect these changes by Backbone's event deleg
 Backbone's event delegation (via `delegateEvents`) is what is responsible for detecting
 DOM events in your Backbone views and responding to them with your own callback.
 
-{% highlight javascript linenos %}
+```js title:"myView.js"
 var MyView = Backbone.View.extend({
   events: {
     'click button': 'doThatThang'
@@ -150,7 +150,7 @@ var MyView = Backbone.View.extend({
     console.log('hashtag yolo');
   }
 });
-{% endhighlight %}
+```
 
 We capitalize on this functionality to respond to those custom `fire` events we defined.
 If you look at lines 26-36 of the `PolymerView` source above, you will see where we utilize

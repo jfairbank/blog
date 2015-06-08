@@ -163,6 +163,8 @@
   <li><a href="#building-a-name-tag-element" id="markdown-toc-building-a-name-tag-element">Building a Name Tag Element</a></li>
   <li><a href="#working-with-marionettejs" id="markdown-toc-working-with-marionettejs">Working with Marionette.js</a></li>
   <li><a href="#syncing-data-with-marionettejs" id="markdown-toc-syncing-data-with-marionettejs">Syncing Data with Marionette.js</a></li>
+  <li><a href="#all-together-now" id="markdown-toc-all-together-now">All Together Now</a></li>
+  <li><a href="#conclusion" id="markdown-toc-conclusion">Conclusion</a></li>
 </ul>
 
   </div>
@@ -398,43 +400,31 @@ part that will allow us to notify Marionette about changes inside the custom ele
 Backbone’s event delegation (via <code>delegateEvents</code>) is what is responsible for detecting
 DOM events in your Backbone views and responding to them with your own callback.</p>
 
-<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
-2
-3
-4
-5
-6
-7
-8
-9</pre></td><td class="code"><pre><span class="kd">var</span> <span class="nx">MyView</span> <span class="o">=</span> <span class="nx">Backbone</span><span class="p">.</span><span class="nx">View</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
-  <span class="na">events</span><span class="p">:</span> <span class="p">{</span>
-    <span class="s1">'click button'</span><span class="p">:</span> <span class="s1">'doThatThang'</span>
-  <span class="p">},</span>
+<figure class="code-highlight-figure"><figcaption class="code-highlight-caption"><span class="code-highlight-caption-title">myView.js</span></figcaption><div class="code-highlight"><pre class="code-highlight-pre"><div data-line="1" class="code-highlight-row numbered"><div class="code-highlight-line"><span class="kd">var</span> <span class="nx">MyView</span> <span class="o">=</span> <span class="nx">Backbone</span><span class="p">.</span><span class="nx">View</span><span class="p">.</span><span class="nx">extend</span><span class="p">(&#x7b;</span>
+</div></div><div data-line="2" class="code-highlight-row numbered"><div class="code-highlight-line">  <span class="na">events</span><span class="p">:</span> <span class="p">&#x7b;</span>
+</div></div><div data-line="3" class="code-highlight-row numbered"><div class="code-highlight-line">    <span class="s1">'click button'</span><span class="p">:</span> <span class="s1">'doThatThang'</span>
+</div></div><div data-line="4" class="code-highlight-row numbered"><div class="code-highlight-line">  <span class="p">&#x7d;,</span>
+</div></div><div data-line="5" class="code-highlight-row numbered"><div class="code-highlight-line"> </div></div><div data-line="6" class="code-highlight-row numbered"><div class="code-highlight-line">  <span class="na">doThatThang</span><span class="p">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">&#x7b;</span>
+</div></div><div data-line="7" class="code-highlight-row numbered"><div class="code-highlight-line">    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">'hashtag yolo'</span><span class="p">);</span>
+</div></div><div data-line="8" class="code-highlight-row numbered"><div class="code-highlight-line">  <span class="p">&#x7d;</span>
+</div></div><div data-line="9" class="code-highlight-row numbered"><div class="code-highlight-line"><span class="p">&#x7d;);</span></div></div></pre></div></figure>
 
-  <span class="na">doThatThang</span><span class="p">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">'hashtag yolo'</span><span class="p">);</span>
-  <span class="p">}</span>
-<span class="p">});</span><span class="w">
-</span></pre></td></tr></tbody></table>
+<p>We capitalize on this functionality to respond to those custom <code>fire</code> events we defined.
+If you look at lines 26-36 of the <code>PolymerView</code> source above, you will see where we utilize
+<code>delegateEvents</code> to listen for any attribute <code>fire</code> events. From there, we update our
+model data with the changes via the <code>_updateAttrFromEl</code> function.</p>
 
+<p>On the flip side, at lines 22-24, we listen for any changes on our model, and call
+<code>_updateElAttrsFromModel</code> to update our custom element with those changes.</p>
 
+<h2 id="all-together-now">All Together Now</h2>
 
-We capitalize on this functionality to respond to those custom `fire` events we defined.
-If you look at lines 26-36 of the `PolymerView` source above, you will see where we utilize
-`delegateEvents` to listen for any attribute `fire` events. From there, we update our
-model data with the changes via the `_updateAttrFromEl` function.
-
-On the flip side, at lines 22-24, we listen for any changes on our model, and call
-`_updateElAttrsFromModel` to update our custom element with those changes.
-
-## All Together Now
-
-Now we return to the original intent of this post. We want to show that the data is synced
-between a custom element instantiated with `PolymerView` and an unrelated Marionette view.
+<p>Now we return to the original intent of this post. We want to show that the data is synced
+between a custom element instantiated with <code>PolymerView</code> and an unrelated Marionette view.
 We will define two other Marionette views, one for displaying information about a person
-(basically like the name tag) and one for updating the person's name and job. We will
+(basically like the name tag) and one for updating the person’s name and job. We will
 also define a Marionette layout for organizing our views. Our views and their templates
-are below:
+are below:</p>
 
 <figure class="code-highlight-figure"><figcaption class="code-highlight-caption"><span class="code-highlight-caption-title">views-1.js</span><a class="code-highlight-caption-link" href="https://gist.github.com/3b857598c2f7b1e12747">link</a></figcaption><div class="code-highlight"><pre class="code-highlight-pre"><div data-line="1" class="code-highlight-row numbered"><div class="code-highlight-line"><span class="kd">var</span> <span class="nx">Layout</span> <span class="o">=</span> <span class="nx">Marionette</span><span class="p">.</span><span class="nx">LayoutView</span><span class="p">.</span><span class="nx">extend</span><span class="p">(&#x7b;</span>
 </div></div><div data-line="2" class="code-highlight-row numbered"><div class="code-highlight-line">  <span class="nx">el</span><span class="o">:</span> <span class="s1">&#39;#main&#39;</span><span class="p">,</span>
@@ -506,9 +496,9 @@ are below:
 </div></div><div data-line="24" class="code-highlight-row numbered"><div class="code-highlight-line">  <span class="o">&lt;</span><span class="nx">div</span><span class="o">&gt;</span><span class="nx">Job</span><span class="o">:</span> <span class="o">&lt;</span><span class="nx">input</span> <span class="nx">type</span><span class="o">=</span><span class="s2">&quot;text&quot;</span> <span class="nx">name</span><span class="o">=</span><span class="s2">&quot;job&quot;</span> <span class="nx">value</span><span class="o">=</span><span class="s2">&quot;&lt;%= job %&gt;&quot;</span><span class="o">&gt;&lt;</span><span class="err">/div&gt;</span>
 </div></div><div data-line="25" class="code-highlight-row numbered"><div class="code-highlight-line"><span class="nt">&lt;/script&gt;</span></div></div></pre></div></figure>
 
-Notice in our `views-1.js` that we again define a `NameTag` view from `PolymerView`. We
-also define a `PersonFormView` for editing the person model data and a `PersonView` for
-just displaying the person model data. Finally, we wire it all up:
+<p>Notice in our <code>views-1.js</code> that we again define a <code>NameTag</code> view from <code>PolymerView</code>. We
+also define a <code>PersonFormView</code> for editing the person model data and a <code>PersonView</code> for
+just displaying the person model data. Finally, we wire it all up:</p>
 
 <figure class="code-highlight-figure"><figcaption class="code-highlight-caption"><span class="code-highlight-caption-title">name-tag-usage-marionette-2.js</span><a class="code-highlight-caption-link" href="https://gist.github.com/3b857598c2f7b1e12747">link</a></figcaption><div class="code-highlight"><pre class="code-highlight-pre"><div data-line="1" class="code-highlight-row numbered"><div class="code-highlight-line"><span class="kd">var</span> <span class="nx">Person</span> <span class="o">=</span> <span class="nx">Backbone</span><span class="p">.</span><span class="nx">Model</span><span class="p">.</span><span class="nx">extend</span><span class="p">();</span>
 </div></div><div data-line="2" class="code-highlight-row numbered"><div class="code-highlight-line"> </div></div><div data-line="3" class="code-highlight-row numbered"><div class="code-highlight-line"><span class="kd">var</span> <span class="nx">person</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Person</span><span class="p">(&#x7b;</span>
@@ -530,29 +520,28 @@ just displaying the person model data. Finally, we wire it all up:
 </div></div><div data-line="24" class="code-highlight-row numbered"><div class="code-highlight-line"><span class="nx">layout</span><span class="p">.</span><span class="nx">getRegion</span><span class="p">(</span><span class="s1">&#39;personView&#39;</span><span class="p">).</span><span class="nx">show</span><span class="p">(</span><span class="nx">personView</span><span class="p">);</span>
 </div></div><div data-line="25" class="code-highlight-row numbered"><div class="code-highlight-line"><span class="nx">layout</span><span class="p">.</span><span class="nx">getRegion</span><span class="p">(</span><span class="s1">&#39;personForm&#39;</span><span class="p">).</span><span class="nx">show</span><span class="p">(</span><span class="nx">personFormView</span><span class="p">);</span></div></div></pre></div></figure>
 
-<a href="/demos/polymer-components-with-marionette-js/name-tag-usage-marionette-2.html" target="_blank" class="btn">DEMO</a>
+<p><a href="/demos/polymer-components-with-marionette-js/name-tag-usage-marionette-2.html" target="_blank" class="btn">DEMO</a></p>
 
-(Again, the demo may not work on mobile devices.) Try editing the name and job in both
-the `PolymerView` section and the `PersonFormView` section. You will see the name and job
-update for the other views regardless of where you update the data!
+<p>(Again, the demo may not work on mobile devices.) Try editing the name and job in both
+the <code>PolymerView</code> section and the <code>PersonFormView</code> section. You will see the name and job
+update for the other views regardless of where you update the data!</p>
 
-## Conclusion
+<h2 id="conclusion">Conclusion</h2>
 
-I know this is not anything groundbreaking. I do not doubt that someone has already done this.
+<p>I know this is not anything groundbreaking. I do not doubt that someone has already done this.
 Regardless, I think it shows the exciting possibilities of combining web technologies and
 opens the door to incorporating web components into JavaScript applications already built
 on existing frameworks. I hope this post ignites your curiosity and propels you
-to play around with web components and join the big ole' JavaScript playground that we
-love to have fun in from time to time.
+to play around with web components and join the big ole’ JavaScript playground that we
+love to have fun in from time to time.</p>
 
-If you have any trouble with the demo or ideas to improve this implementation, please
-let me know in the comments or make a pull request at the GitHub repo.
+<p>If you have any trouble with the demo or ideas to improve this implementation, please
+let me know in the comments or make a pull request at the GitHub repo.</p>
 
-**Notes:**<br />
-\* If you are a JavaScript developer, I encourage you to support, talk at, and attend
+<p><strong>Notes:</strong><br />
+* If you are a JavaScript developer, I encourage you to support, talk at, and attend
 <a href="http://www.nodevember.org" target="_blank">Nodevember</a>. The organizers did a fantastic job putting it together,
-and the caliber of speakers was spectacular.
-</code></pre></div>
+and the caliber of speakers was spectacular.</p>
 
       <div class="social-share">
   <ul class="inline-list">

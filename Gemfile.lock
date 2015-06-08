@@ -102,6 +102,9 @@ GEM
     octopress-code-highlighter (4.2.6)
       colorator (~> 0.1)
       octopress-hooks
+    octopress-codefence (1.6.1)
+      octopress-code-highlighter (~> 4.2)
+      octopress-hooks (~> 2.1)
     octopress-date-format (3.0.3)
       jekyll (>= 2.0)
     octopress-deploy (1.2.4)
@@ -192,6 +195,7 @@ DEPENDENCIES
   jekyll-sitemap
   kramdown
   octopress (~> 3.0.0.rc.12)
+  octopress-codefence
   octopress-gist
   octopress-solarized
   rouge

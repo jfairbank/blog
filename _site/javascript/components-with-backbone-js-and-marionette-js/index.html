@@ -160,6 +160,9 @@
   <li><a href="#building-and-maintaining-applications-with-components" id="markdown-toc-building-and-maintaining-applications-with-components">Building and Maintaining Applications with Components</a></li>
   <li><a href="#framework-components" id="markdown-toc-framework-components">Framework Components</a></li>
   <li><a href="#modularity-and-components-in-marionette" id="markdown-toc-modularity-and-components-in-marionette">Modularity and Components in Marionette</a></li>
+  <li><a href="#components-are-reusable" id="markdown-toc-components-are-reusable">Components Are Reusable</a></li>
+  <li><a href="#create-a-component-type" id="markdown-toc-create-a-component-type">Create A Component Type</a></li>
+  <li><a href="#conclusion" id="markdown-toc-conclusion">Conclusion</a></li>
 </ul>
 
   </div>
@@ -188,1019 +191,398 @@
 
 <p>However, we can use modules to act as components in Marionette. Let’s walk through building a datagrid component for an orders dashboard page. (If you’re unfamiliar with Marionette’s objects and syntax, I encourage you to look at the docs on the GitHub repo <a href="https://github.com/marionettejs/backbone.marionette">marionettejs/backbone.marionette</a> first.)</p>
 
-<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
-2
-3
-4
-5
-6
-7
-8
-9
-10
-11
-12
-13
-14
-15
-16
-17
-18
-19
-20
-21
-22
-23
-24
-25
-26
-27
-28
-29</pre></td><td class="code"><pre><span class="c1">// File: app.js</span>
-<span class="c1">// ------------</span>
-
-<span class="kd">var</span> <span class="nx">MyApp</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Marionette</span><span class="p">.</span><span class="nx">Application</span><span class="p">();</span>
-
-<span class="c1">// Helper for switching modules, or sub apps</span>
-<span class="nx">MyApp</span><span class="p">.</span><span class="nx">startSubApp</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">subApp</span><span class="p">)</span> <span class="p">{</span>
-  <span class="kd">var</span> <span class="nx">currentApp</span> <span class="o">=</span> <span class="nx">MyApp</span><span class="p">.</span><span class="nx">module</span><span class="p">(</span><span class="nx">subApp</span><span class="p">);</span>
-
-  <span class="k">if</span> <span class="p">(</span><span class="nx">MyApp</span><span class="p">.</span><span class="nx">currentApp</span> <span class="o">===</span> <span class="nx">currentApp</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">return</span><span class="p">;</span>
-  <span class="p">}</span>
-
-  <span class="k">if</span> <span class="p">(</span><span class="nx">MyApp</span><span class="p">.</span><span class="nx">currentApp</span><span class="p">)</span> <span class="p">{</span>
-    <span class="nx">MyApp</span><span class="p">.</span><span class="nx">currentApp</span><span class="p">.</span><span class="nx">stop</span><span class="p">();</span>
-  <span class="p">}</span>
-
-  <span class="nx">App</span><span class="p">.</span><span class="nx">currentApp</span> <span class="o">=</span> <span class="nx">currentApp</span><span class="p">;</span>
-
-  <span class="nx">currentApp</span><span class="p">.</span><span class="nx">start</span><span class="p">();</span>
-<span class="p">};</span>
-
-<span class="nx">MyApp</span><span class="p">.</span><span class="nx">addRegions</span><span class="p">({</span>
-  <span class="na">mainRegion</span><span class="p">:</span> <span class="s1">'#main'</span>
-<span class="p">});</span>
-
-<span class="nx">MyApp</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">'start'</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-  <span class="nx">Backbone</span><span class="p">.</span><span class="nx">history</span><span class="p">.</span><span class="nx">start</span><span class="p">();</span>
-<span class="p">});</span><span class="w">
-</span></pre></td></tr></tbody></table>
-
-
-
-Here we set up our base application called `MyApp`, attach an existing HTML element with id `#main` to the app's `mainRegion`, and listen for the app's `start` event to make sure Backbone history is running. We also add a simple helper method `startSubApp` for managing the currently running sub-application, or module.
-
-
-<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
-2
-3
-4
-5
-6
-7
-8
-9
-10
-11
-12
-13
-14
-15
-16
-17
-18
-19
-20
-21
-22
-23
-24
-25
-26
-27
-28
-29
-30
-31</pre></td><td class="code"><pre><span class="c1">// File: orders/orders.js</span>
-<span class="c1">// ----------------------</span>
-
-<span class="c1">// Define our orders module</span>
-<span class="nx">MyApp</span><span class="p">.</span><span class="nx">module</span><span class="p">(</span><span class="s1">'Orders'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">Orders</span><span class="p">,</span> <span class="nx">MyApp</span><span class="p">,</span> <span class="nx">Backbone</span><span class="p">,</span> <span class="nx">Marionette</span><span class="p">,</span> <span class="nx">$</span><span class="p">,</span> <span class="nx">_</span><span class="p">)</span> <span class="p">{</span>
-
-  <span class="c1">// Router</span>
-  <span class="nx">Orders</span><span class="p">.</span><span class="nx">Router</span> <span class="o">=</span> <span class="nx">Marionette</span><span class="p">.</span><span class="nx">AppRouter</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
-    <span class="na">appRoutes</span><span class="p">:</span> <span class="p">{</span>
-      <span class="s1">'orders/dashboard'</span><span class="p">:</span> <span class="s1">'ordersDashboard'</span>
-    <span class="p">}</span>
-  <span class="p">});</span>
-
-  <span class="c1">// Controller</span>
-  <span class="nx">Orders</span><span class="p">.</span><span class="nx">Controller</span> <span class="o">=</span> <span class="nx">Marionette</span><span class="p">.</span><span class="nx">Controller</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
-    <span class="na">ordersDashboard</span><span class="p">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-      <span class="nx">App</span><span class="p">.</span><span class="nx">startSubApp</span><span class="p">(</span><span class="s1">'Orders.Dashboard'</span><span class="p">);</span>
-      <span class="nx">Orders</span><span class="p">.</span><span class="nx">Dashboard</span><span class="p">.</span><span class="nx">controller</span><span class="p">.</span><span class="nx">show</span><span class="p">();</span>
-    <span class="p">}</span>
-  <span class="p">});</span>
-
-  <span class="c1">// Initializers</span>
-  <span class="nx">Orders</span><span class="p">.</span><span class="nx">addInitializer</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-    <span class="nx">Orders</span><span class="p">.</span><span class="nx">controller</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Orders</span><span class="p">.</span><span class="nx">Controller</span><span class="p">();</span>
-
-    <span class="nx">Orders</span><span class="p">.</span><span class="nx">router</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Orders</span><span class="p">.</span><span class="nx">Router</span><span class="p">({</span>
-      <span class="na">controller</span><span class="p">:</span> <span class="nx">Orders</span><span class="p">.</span><span class="nx">controller</span>
-    <span class="p">});</span>
-  <span class="p">});</span>
-
-<span class="p">});</span><span class="w">
-</span></pre></td></tr></tbody></table>
-
-
-
-This is our main orders module. We define the module, a router, and a controller for orders-related functionality. We ensure everything is properly wired up with a call to `addInitializer` on the module as well. Notice in `Orders.Controller#ordersDashboard` we start up and show the `Orders.Dashboard` submodule, which we define below.
-
-
-<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
-2
-3
-4
-5
-6
-7
-8
-9
-10
-11
-12
-13
-14
-15
-16
-17
-18
-19
-20
-21
-22
-23
-24
-25
-26
-27
-28
-29
-30
-31
-32
-33
-34
-35
-36
-37
-38
-39
-40
-41
-42
-43
-44
-45
-46
-47
-48
-49
-50
-51
-52
-53
-54
-55
-56
-57
-58
-59
-60
-61
-62
-63
-64
-65
-66
-67
-68
-69
-70
-71
-72
-73
-74
-75
-76
-77
-78
-79
-80
-81
-82
-83
-84
-85
-86
-87</pre></td><td class="code"><pre><span class="c1">// File: orders/dashboard/dashboard.js</span>
-<span class="c1">// -----------------------------------</span>
-
-<span class="c1">// Define our dashboard submodule</span>
-<span class="nx">MyApp</span><span class="p">.</span><span class="nx">module</span><span class="p">(</span><span class="s1">'Orders.Dashboard'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">Dashboard</span><span class="p">,</span> <span class="nx">MyApp</span><span class="p">,</span> <span class="nx">Backbone</span><span class="p">,</span> <span class="nx">Marionette</span><span class="p">,</span> <span class="nx">$</span><span class="p">,</span> <span class="nx">_</span><span class="p">)</span> <span class="p">{</span>
-
-  <span class="nx">Dashboard</span><span class="p">.</span><span class="nx">startWithParent</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
-
-  <span class="c1">// Model</span>
-  <span class="nx">Dashboard</span><span class="p">.</span><span class="nx">DashboardOrders</span> <span class="o">=</span> <span class="nx">Backbone</span><span class="p">.</span><span class="nx">Model</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
-    <span class="na">defaults</span><span class="p">:</span> <span class="p">{</span>
-      <span class="na">incompleteOrders</span><span class="p">:</span> <span class="p">[],</span>
-      <span class="na">submittedOrders</span><span class="p">:</span> <span class="p">[],</span>
-      <span class="na">shippedOrders</span><span class="p">:</span> <span class="p">[]</span>
-    <span class="p">},</span>
-
-    <span class="na">url</span><span class="p">:</span> <span class="s1">'/api/orders/dashboard'</span>
-  <span class="p">});</span>
-
-  <span class="c1">// LayoutView</span>
-  <span class="nx">Dashboard</span><span class="p">.</span><span class="nx">LayoutView</span> <span class="o">=</span> <span class="nx">Marionette</span><span class="p">.</span><span class="nx">LayoutView</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
-    <span class="na">template</span><span class="p">:</span> <span class="s1">'#orders-dashboard-layout-template'</span><span class="p">,</span>
-
-    <span class="na">regions</span><span class="p">:</span> <span class="p">{</span>
-      <span class="na">incompleteOrders</span><span class="p">:</span> <span class="s1">'#incomplete-orders'</span>
-    <span class="p">}</span>
-  <span class="p">});</span>
-
-  <span class="c1">// Controller</span>
-  <span class="nx">Dashboard</span><span class="p">.</span><span class="nx">Controller</span> <span class="o">=</span> <span class="nx">Marionette</span><span class="p">.</span><span class="nx">Controller</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
-    <span class="na">initialize</span><span class="p">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
-      <span class="k">this</span><span class="p">.</span><span class="nx">region</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">region</span><span class="p">;</span>
-    <span class="p">},</span>
-
-    <span class="na">show</span><span class="p">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-      <span class="k">this</span><span class="p">.</span><span class="nx">layout</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getLayout</span><span class="p">();</span>
-      <span class="k">this</span><span class="p">.</span><span class="nx">region</span><span class="p">.</span><span class="nx">show</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">layout</span><span class="p">);</span>
-    <span class="p">},</span>
-
-    <span class="na">getLayout</span><span class="p">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-      <span class="kd">var</span> <span class="nx">layout</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">LayoutView</span><span class="p">();</span>
-      <span class="k">this</span><span class="p">.</span><span class="nx">listenTo</span><span class="p">(</span><span class="nx">layout</span><span class="p">,</span> <span class="s1">'show'</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">showGrid</span><span class="p">);</span>
-      <span class="k">return</span> <span class="nx">layout</span><span class="p">;</span>
-    <span class="p">},</span>
-
-    <span class="na">showGrid</span><span class="p">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-      <span class="kd">var</span> <span class="nx">dashboardOrders</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Dashboard</span><span class="p">.</span><span class="nx">DashboardOrders</span><span class="p">();</span>
-
-      <span class="nx">dashboardOrders</span><span class="p">.</span><span class="nx">fetch</span><span class="p">().</span>
-        <span class="nx">then</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_showGridComponent</span><span class="p">(</span>
-          <span class="k">this</span><span class="p">.</span><span class="nx">layout</span><span class="p">.</span><span class="nx">incompleteOrders</span><span class="p">,</span>
-          <span class="nx">dashboardOrders</span><span class="p">.</span><span class="nx">incompleteOrders</span>
-        <span class="p">));</span>
-    <span class="p">},</span>
-
-    <span class="na">onDestroy</span><span class="p">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-      <span class="nx">Dashboard</span><span class="p">.</span><span class="nx">DataGrid</span><span class="p">.</span><span class="nx">stop</span><span class="p">();</span>
-    <span class="p">},</span>
-
-    <span class="na">_showGridComponent</span><span class="p">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">region</span><span class="p">,</span> <span class="nx">dashboardOrders</span><span class="p">)</span> <span class="p">{</span>
-      <span class="k">return</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-        <span class="nx">Dashboard</span><span class="p">.</span><span class="nx">DataGrid</span><span class="p">.</span><span class="nx">start</span><span class="p">({</span>
-          <span class="na">collection</span><span class="p">:</span> <span class="nx">dashboardOrders</span><span class="p">.</span><span class="nx">incompleteOrders</span><span class="p">,</span>
-          <span class="na">region</span><span class="p">:</span> <span class="nx">region</span>
-        <span class="p">});</span>
-
-        <span class="nx">Dashboard</span><span class="p">.</span><span class="nx">DataGrid</span><span class="p">.</span><span class="nx">controller</span><span class="p">.</span><span class="nx">show</span><span class="p">();</span>
-      <span class="p">};</span>
-    <span class="p">}</span>
-  <span class="p">});</span>
-
-  <span class="c1">// Initializers</span>
-  <span class="nx">Dashboard</span><span class="p">.</span><span class="nx">addInitializer</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
-    <span class="nx">Dashboard</span><span class="p">.</span><span class="nx">controller</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Dashboard</span><span class="p">.</span><span class="nx">Controller</span><span class="p">({</span>
-      <span class="na">region</span><span class="p">:</span> <span class="nx">MyApp</span><span class="p">.</span><span class="nx">mainRegion</span>
-    <span class="p">});</span>
-
-    <span class="nx">Dashboard</span><span class="p">.</span><span class="nx">controller</span><span class="p">.</span><span class="nx">show</span><span class="p">();</span>
-  <span class="p">});</span>
-
-  <span class="c1">// Finalizers</span>
-  <span class="nx">Dashboard</span><span class="p">.</span><span class="nx">addFinalizer</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-    <span class="nx">Dashboard</span><span class="p">.</span><span class="nx">controller</span><span class="p">.</span><span class="nx">destroy</span><span class="p">();</span>
-    <span class="k">delete</span> <span class="nx">Dashboard</span><span class="p">.</span><span class="nx">controller</span><span class="p">;</span>
-  <span class="p">});</span>
-
-<span class="p">});</span><span class="w">
-</span></pre></td></tr></tbody></table>
-
-
-
-This is our `Dashboard` submodule. Notice we set `Dashboard.startWithParent = false`. This prevents the module from automatically running because we will want it to start only when we need it. In the controller after we show the layout, we fetch the dashboard orders and display the incomplete orders in a datagrid component via `showGrid` and `_showGridComponent`. If our module is stopped, we make sure to also stop the datagrid component in `onDestroy`.
-
-
-<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
-2
-3
-4
-5
-6
-7
-8
-9
-10
-11
-12
-13
-14
-15
-16
-17
-18
-19
-20
-21
-22
-23
-24
-25
-26
-27
-28
-29
-30
-31
-32
-33
-34
-35
-36
-37
-38
-39
-40
-41
-42
-43
-44
-45
-46
-47
-48
-49
-50
-51
-52
-53
-54
-55
-56
-57
-58
-59
-60
-61
-62</pre></td><td class="code"><pre><span class="c1">// File: orders/dashboard/dataGrid.js</span>
-<span class="c1">// ----------------------------------</span>
-
-<span class="c1">// Define our datagrid module component</span>
-<span class="nx">MyApp</span><span class="p">.</span><span class="nx">module</span><span class="p">(</span><span class="s1">'Orders.Dashboard.DataGrid'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">DataGrid</span><span class="p">,</span> <span class="nx">MyApp</span><span class="p">,</span> <span class="nx">Backbone</span><span class="p">,</span> <span class="nx">Marionette</span><span class="p">,</span> <span class="nx">$</span><span class="p">,</span> <span class="nx">_</span><span class="p">)</span> <span class="p">{</span>
-
-  <span class="nx">DataGrid</span><span class="p">.</span><span class="nx">startWithParent</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
-
-  <span class="c1">// Views</span>
-  <span class="nx">DataGrid</span><span class="p">.</span><span class="nx">RowView</span> <span class="o">=</span> <span class="nx">Marionette</span><span class="p">.</span><span class="nx">ItemView</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
-    <span class="na">template</span><span class="p">:</span> <span class="s1">'#orders-dashboard-datagrid-row-template'</span><span class="p">,</span>
-    <span class="na">tagName</span><span class="p">:</span> <span class="s1">'tr'</span>
-  <span class="p">});</span>
-
-  <span class="nx">DataGrid</span><span class="p">.</span><span class="nx">GridView</span> <span class="o">=</span> <span class="nx">Marionette</span><span class="p">.</span><span class="nx">CompositeView</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
-    <span class="na">template</span><span class="p">:</span> <span class="s1">'#orders-dashboard-datagrid-template'</span><span class="p">,</span>
-    <span class="na">childView</span><span class="p">:</span> <span class="nx">DataGrid</span><span class="p">.</span><span class="nx">RowView</span><span class="p">,</span>
-    <span class="na">childViewContainer</span><span class="p">:</span> <span class="s1">'tbody'</span>
-  <span class="p">});</span>
-
-  <span class="c1">// Controller</span>
-  <span class="nx">DataGrid</span><span class="p">.</span><span class="nx">Controller</span> <span class="o">=</span> <span class="nx">Marionette</span><span class="p">.</span><span class="nx">Controller</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
-    <span class="na">initialize</span><span class="p">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
-      <span class="k">this</span><span class="p">.</span><span class="nx">region</span>     <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">region</span><span class="p">;</span>
-      <span class="k">this</span><span class="p">.</span><span class="nx">collection</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">collection</span><span class="p">;</span>
-    <span class="p">},</span>
-
-    <span class="na">show</span><span class="p">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-      <span class="k">this</span><span class="p">.</span><span class="nx">gridView</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getGridView</span><span class="p">();</span>
-      <span class="k">this</span><span class="p">.</span><span class="nx">region</span><span class="p">.</span><span class="nx">show</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">gridView</span><span class="p">);</span>
-    <span class="p">},</span>
-
-    <span class="na">getGridView</span><span class="p">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-      <span class="kd">var</span> <span class="nx">gridView</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">DataGrid</span><span class="p">.</span><span class="nx">GridView</span><span class="p">({</span>
-        <span class="na">collection</span><span class="p">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">collection</span>
-      <span class="p">});</span>
-
-      <span class="k">this</span><span class="p">.</span><span class="nx">listenTo</span><span class="p">(</span><span class="nx">gridView</span><span class="p">,</span> <span class="s1">'foo'</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">doBar</span><span class="p">);</span>
-
-      <span class="k">return</span> <span class="nx">gridView</span><span class="p">;</span>
-    <span class="p">},</span>
-
-    <span class="na">doBar</span><span class="p">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-      <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">'I did bar!'</span><span class="p">);</span>
-    <span class="p">}</span>
-  <span class="p">});</span>
-
-  <span class="c1">// Initializers</span>
-  <span class="nx">DataGrid</span><span class="p">.</span><span class="nx">addInitializer</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
-    <span class="nx">DataGrid</span><span class="p">.</span><span class="nx">controller</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">DataGrid</span><span class="p">.</span><span class="nx">Controller</span><span class="p">({</span>
-      <span class="na">region</span><span class="p">:</span> <span class="nx">options</span><span class="p">.</span><span class="nx">region</span><span class="p">,</span>
-      <span class="na">collection</span><span class="p">:</span> <span class="nx">options</span><span class="p">.</span><span class="nx">collection</span>
-    <span class="p">});</span>
-  <span class="p">});</span>
-
-  <span class="c1">// Finalizers</span>
-  <span class="nx">DataGrid</span><span class="p">.</span><span class="nx">addFinalizer</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-    <span class="nx">DataGrid</span><span class="p">.</span><span class="nx">controller</span><span class="p">.</span><span class="nx">destroy</span><span class="p">();</span>
-    <span class="k">delete</span> <span class="nx">DataGrid</span><span class="p">.</span><span class="nx">controller</span><span class="p">;</span>
-  <span class="p">});</span>
-
-<span class="p">});</span><span class="w">
-</span></pre></td></tr></tbody></table>
-
-
-
-This is our `DataGrid` module component. Notice, we've set it up similar to the `Dashboard` module. We can instantiate our component and use it with `DataGrid.start` followed by `DataGrid.controller.show`.
-
-
-<div class="highlight"><pre><code class="language-html" data-lang="html"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
-2
-3
-4
-5
-6
-7
-8
-9
-10
-11
-12
-13
-14
-15
-16
-17
-18
-19
-20
-21
-22
-23
-24
-25
-26
-27
-28
-29
-30
-31
-32
-33</pre></td><td class="code"><pre><span class="c">&lt;!-- Our view --&gt;</span>
-
-<span class="nt">&lt;script </span><span class="na">id=</span><span class="s">"orders-dashboard-layout-template"</span> <span class="na">type=</span><span class="s">"text/html"</span><span class="nt">&gt;</span>
-  <span class="o">&lt;</span><span class="nx">h1</span><span class="o">&gt;</span><span class="nx">Orders</span> <span class="nx">Dashboard</span><span class="o">&lt;</span><span class="sr">/h1</span><span class="err">&gt;
-</span>  <span class="o">&lt;</span><span class="nx">div</span> <span class="nx">id</span><span class="o">=</span><span class="s2">"incomplete-orders"</span><span class="o">&gt;&lt;</span><span class="sr">/div</span><span class="err">&gt;
-</span><span class="nt">&lt;/script&gt;</span>
-
-<span class="nt">&lt;script </span><span class="na">id=</span><span class="s">"orders-dashboard-datagrid-row-template"</span> <span class="na">type=</span><span class="s">"text/html"</span><span class="nt">&gt;</span>
-  <span class="o">&lt;</span><span class="nx">td</span><span class="o">&gt;&lt;%=</span> <span class="nx">id</span> <span class="o">%&gt;&lt;</span><span class="sr">/td</span><span class="err">&gt;
-</span>  <span class="o">&lt;</span><span class="nx">td</span><span class="o">&gt;&lt;%=</span> <span class="nx">total</span> <span class="o">%&gt;&lt;</span><span class="sr">/td</span><span class="err">&gt;
-</span><span class="nt">&lt;/script&gt;</span>
-
-<span class="nt">&lt;script </span><span class="na">id=</span><span class="s">"orders-dashboard-datagrid-template"</span> <span class="na">type=</span><span class="s">"text/html"</span><span class="nt">&gt;</span>
-  <span class="o">&lt;</span><span class="nx">table</span><span class="o">&gt;</span>
-    <span class="o">&lt;</span><span class="nx">thead</span><span class="o">&gt;</span>
-      <span class="o">&lt;</span><span class="nx">tr</span><span class="o">&gt;</span>
-        <span class="o">&lt;</span><span class="nx">th</span><span class="o">&gt;</span><span class="nx">ID</span><span class="o">&lt;</span><span class="sr">/th</span><span class="err">&gt;
-</span>        <span class="o">&lt;</span><span class="nx">th</span><span class="o">&gt;</span><span class="nx">Total</span><span class="o">&lt;</span><span class="sr">/th</span><span class="err">&gt;
-</span>      <span class="o">&lt;</span><span class="sr">/tr</span><span class="err">&gt;
-</span>    <span class="o">&lt;</span><span class="sr">/thead</span><span class="err">&gt;
-</span>    <span class="o">&lt;</span><span class="nx">tbody</span><span class="o">&gt;&lt;</span><span class="sr">/tbody</span><span class="err">&gt;
-</span>  <span class="o">&lt;</span><span class="sr">/table</span><span class="err">&gt;
-</span><span class="nt">&lt;/script&gt;</span>
-
-<span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">"main"</span><span class="nt">&gt;&lt;/div&gt;</span>
-
-<span class="nt">&lt;script </span><span class="na">src=</span><span class="s">"app.js"</span><span class="nt">&gt;&lt;/script&gt;</span>
-<span class="nt">&lt;script </span><span class="na">src=</span><span class="s">"orders/orders.js"</span><span class="nt">&gt;&lt;/script&gt;</span>
-<span class="nt">&lt;script </span><span class="na">src=</span><span class="s">"orders/dashboard/dashboard.js"</span><span class="nt">&gt;&lt;/script&gt;</span>
-<span class="nt">&lt;script </span><span class="na">src=</span><span class="s">"orders/dashboard/dataGrid.js"</span><span class="nt">&gt;&lt;/script&gt;</span>
-<span class="nt">&lt;script&gt;</span>
-  <span class="nx">MyApp</span><span class="p">.</span><span class="nx">start</span><span class="p">();</span>
-<span class="nt">&lt;/script&gt;</span><span class="w">
-</span></pre></td></tr></tbody></table>
-
-
-
-Finally, our HTML view.
-
-## Components Are Reusable
-
-So, the datagrid module works almost perfectly as a component. It has its own logic, state, and view, but something isn't right. Remember components are reusable. If we set up a datagrid component using a module and then want to use it multiple times, we would encounter a problem. We're locked down to one instance of the component at any one time by the `controller` property set in the `addInitializer` call. We need to tweak our module to allow for multiple instances.
-
-
-<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
-2
-3
-4
-5
-6
-7
-8
-9
-10
-11
-12
-13
-14
-15
-16
-17
-18
-19
-20
-21
-22
-23</pre></td><td class="code"><pre><span class="c1">// File: orders/dashboard/dataGrid.js</span>
-<span class="c1">// ----------------------------------</span>
-
-<span class="nx">MyApp</span><span class="p">.</span><span class="nx">module</span><span class="p">(</span><span class="s1">'Orders.Dashboard.DataGrid'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">DataGrid</span><span class="p">,</span> <span class="nx">MyApp</span><span class="p">,</span> <span class="nx">Backbone</span><span class="p">,</span> <span class="nx">Marionette</span><span class="p">,</span> <span class="nx">$</span><span class="p">,</span> <span class="nx">_</span><span class="p">)</span> <span class="p">{</span>
-
-  <span class="c1">// Let it start with parent now. This is usually the default for modules, but</span>
-  <span class="c1">// I'm explicity setting it to true this time to show the difference with our</span>
-  <span class="c1">// earlier version of this module.</span>
-  <span class="nx">DataGrid</span><span class="p">.</span><span class="nx">startWithParent</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
-
-  <span class="c1">// Definitions for views and controller go here...</span>
-
-  <span class="c1">// This time DON'T define initializers or finalizers. Instead we want to</span>
-  <span class="c1">// create an interface for instantiating multiple component instances.</span>
-
-  <span class="nx">DataGrid</span><span class="p">.</span><span class="nx">newComponent</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">return</span> <span class="k">new</span> <span class="nx">DataGrid</span><span class="p">.</span><span class="nx">Controller</span><span class="p">({</span>
-      <span class="na">region</span><span class="p">:</span> <span class="nx">options</span><span class="p">.</span><span class="nx">region</span><span class="p">,</span>
-      <span class="na">collection</span><span class="p">:</span> <span class="nx">options</span><span class="p">.</span><span class="nx">collection</span>
-    <span class="p">});</span>
-  <span class="p">};</span>
-
-<span class="p">});</span><span class="w">
-</span></pre></td></tr></tbody></table>
-
-
-
-Before, we depended on `DataGrid.start` to create a single instance of the component. Now, we have an interface for creating multiple component instances via our `DataGrid.newComponent` method. Therefore, we redefine our component module to automatically start with its parent, and we remove initializers and finalizers because we don't have to depend on `start` to use our component.
-
-
-<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
-2
-3
-4
-5
-6
-7
-8
-9
-10
-11
-12
-13
-14
-15
-16
-17
-18
-19
-20
-21
-22
-23
-24
-25
-26
-27
-28
-29
-30
-31
-32
-33
-34
-35
-36
-37
-38
-39
-40
-41
-42
-43
-44
-45
-46
-47
-48
-49
-50
-51
-52
-53
-54
-55
-56
-57
-58
-59
-60
-61
-62
-63
-64
-65
-66
-67
-68
-69
-70
-71
-72
-73
-74
-75
-76
-77
-78
-79
-80
-81
-82</pre></td><td class="code"><pre><span class="c1">// File: orders/dashboard/dashboard.js</span>
-<span class="c1">// -----------------------------------</span>
-
-<span class="nx">MyApp</span><span class="p">.</span><span class="nx">module</span><span class="p">(</span><span class="s1">'Orders.Dashboard'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">Dashboard</span><span class="p">,</span> <span class="nx">MyApp</span><span class="p">,</span> <span class="nx">Backbone</span><span class="p">,</span> <span class="nx">Marionette</span><span class="p">,</span> <span class="nx">$</span><span class="p">,</span> <span class="nx">_</span><span class="p">)</span> <span class="p">{</span>
-
-  <span class="c1">// Earlier definitions...</span>
-
-  <span class="c1">// LayoutView</span>
-  <span class="nx">Dashboard</span><span class="p">.</span><span class="nx">LayoutView</span> <span class="o">=</span> <span class="nx">Marionette</span><span class="p">.</span><span class="nx">LayoutView</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
-    <span class="na">template</span><span class="p">:</span> <span class="s1">'#orders-dashboard-layout-template'</span><span class="p">,</span>
-
-    <span class="na">regions</span><span class="p">:</span> <span class="p">{</span>
-      <span class="na">incompleteOrders</span><span class="p">:</span> <span class="s1">'#incomplete-orders'</span><span class="p">,</span>
-      <span class="na">submittedOrders</span><span class="p">:</span> <span class="s1">'#submitted-orders'</span><span class="p">,</span>
-      <span class="na">shippedOrders</span><span class="p">:</span> <span class="s1">'#shipped-orders'</span>
-    <span class="p">}</span>
-  <span class="p">});</span>
-
-  <span class="c1">// Controller</span>
-  <span class="nx">Dashboard</span><span class="p">.</span><span class="nx">Controller</span> <span class="o">=</span> <span class="nx">Marionette</span><span class="p">.</span><span class="nx">Controller</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
-    <span class="na">initialize</span><span class="p">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
-      <span class="k">this</span><span class="p">.</span><span class="nx">region</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">region</span><span class="p">;</span>
-    <span class="p">},</span>
-
-    <span class="na">show</span><span class="p">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-      <span class="k">this</span><span class="p">.</span><span class="nx">layout</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getLayout</span><span class="p">();</span>
-      <span class="k">this</span><span class="p">.</span><span class="nx">region</span><span class="p">.</span><span class="nx">show</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">layout</span><span class="p">);</span>
-    <span class="p">},</span>
-
-    <span class="na">getLayout</span><span class="p">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-      <span class="kd">var</span> <span class="nx">layout</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">LayoutView</span><span class="p">({</span>
-        <span class="na">model</span><span class="p">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">model</span>
-      <span class="p">});</span>
-
-      <span class="k">this</span><span class="p">.</span><span class="nx">listenTo</span><span class="p">(</span><span class="nx">layout</span><span class="p">,</span> <span class="s1">'show'</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">showGrids</span><span class="p">);</span>
-
-      <span class="k">return</span> <span class="nx">layout</span><span class="p">;</span>
-    <span class="p">},</span>
-
-    <span class="na">showGrids</span><span class="p">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-      <span class="kd">var</span> <span class="nx">dashboardOrders</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Dashboard</span><span class="p">.</span><span class="nx">DashboardOrders</span><span class="p">();</span>
-      <span class="nx">dashboardOrders</span><span class="p">.</span><span class="nx">fetch</span><span class="p">().</span><span class="nx">then</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_showGridComponents</span><span class="p">(</span><span class="nx">dashboardOrders</span><span class="p">));</span>
-    <span class="p">},</span>
-
-    <span class="na">onDestroy</span><span class="p">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-      <span class="nx">_</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_grids</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">grid</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">grid</span><span class="p">.</span><span class="nx">destroy</span><span class="p">();</span>
-      <span class="p">});</span>
-
-      <span class="k">delete</span> <span class="k">this</span><span class="p">.</span><span class="nx">_grids</span><span class="p">;</span>
-    <span class="p">},</span>
-
-    <span class="na">_showGridComponents</span><span class="p">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">dashboardOrders</span><span class="p">)</span> <span class="p">{</span>
-      <span class="kd">var</span> <span class="nx">self</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
-      <span class="kd">var</span> <span class="nx">layout</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">layout</span><span class="p">;</span>
-
-      <span class="k">return</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-        <span class="nx">self</span><span class="p">.</span><span class="nx">_showGridComponent</span><span class="p">(</span><span class="nx">layout</span><span class="p">.</span><span class="nx">incompleteOrders</span><span class="p">,</span> <span class="nx">dashboardOrders</span><span class="p">.</span><span class="nx">incompleteOrders</span><span class="p">);</span>
-        <span class="nx">self</span><span class="p">.</span><span class="nx">_showGridComponent</span><span class="p">(</span><span class="nx">layout</span><span class="p">.</span><span class="nx">submittedOrders</span><span class="p">,</span> <span class="nx">dashboardOrders</span><span class="p">.</span><span class="nx">submittedOrders</span><span class="p">);</span>
-        <span class="nx">self</span><span class="p">.</span><span class="nx">_showGridComponent</span><span class="p">(</span><span class="nx">layout</span><span class="p">.</span><span class="nx">shippedOrders</span><span class="p">,</span> <span class="nx">dashboardOrders</span><span class="p">.</span><span class="nx">shippedOrders</span><span class="p">);</span>
-      <span class="p">};</span>
-    <span class="p">},</span>
-
-    <span class="na">_showGridComponent</span><span class="p">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">region</span><span class="p">,</span> <span class="nx">orders</span><span class="p">)</span> <span class="p">{</span>
-      <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">_grids</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">_grids</span> <span class="o">=</span> <span class="p">[];</span>
-      <span class="p">}</span>
-
-      <span class="kd">var</span> <span class="nx">datagrid</span> <span class="o">=</span> <span class="nx">Dashboard</span><span class="p">.</span><span class="nx">DataGrid</span><span class="p">.</span><span class="nx">newComponent</span><span class="p">({</span>
-        <span class="na">collection</span><span class="p">:</span> <span class="nx">orders</span><span class="p">,</span>
-        <span class="na">region</span><span class="p">:</span> <span class="nx">region</span>
-      <span class="p">});</span>
-
-      <span class="k">this</span><span class="p">.</span><span class="nx">_grids</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">datagrid</span><span class="p">);</span>
-
-      <span class="nx">datagrid</span><span class="p">.</span><span class="nx">show</span><span class="p">();</span>
-    <span class="p">}</span>
-  <span class="p">});</span>
-
-  <span class="c1">// Define initializers and finalizers...</span>
-
-<span class="p">});</span><span class="w">
-</span></pre></td></tr></tbody></table>
-
-
-
-
-<div class="highlight"><pre><code class="language-html" data-lang="html"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
-2
-3
-4
-5
-6
-7</pre></td><td class="code"><pre><span class="c">&lt;!-- Add our other regions --&gt;</span>
-<span class="nt">&lt;script </span><span class="na">id=</span><span class="s">"orders-dashboard-layout-template"</span> <span class="na">type=</span><span class="s">"text/html"</span><span class="nt">&gt;</span>
-  <span class="o">&lt;</span><span class="nx">h1</span><span class="o">&gt;</span><span class="nx">Orders</span> <span class="nx">Dashboard</span><span class="o">&lt;</span><span class="sr">/h1</span><span class="err">&gt;
-</span>  <span class="o">&lt;</span><span class="nx">div</span> <span class="nx">id</span><span class="o">=</span><span class="s2">"incomplete-orders"</span><span class="o">&gt;&lt;</span><span class="sr">/div</span><span class="err">&gt;
-</span>  <span class="o">&lt;</span><span class="nx">div</span> <span class="nx">id</span><span class="o">=</span><span class="s2">"submitted-orders"</span><span class="o">&gt;&lt;</span><span class="sr">/div</span><span class="err">&gt;
-</span>  <span class="o">&lt;</span><span class="nx">div</span> <span class="nx">id</span><span class="o">=</span><span class="s2">"shipped-orders"</span><span class="o">&gt;&lt;</span><span class="sr">/div</span><span class="err">&gt;
-</span><span class="nt">&lt;/script&gt;</span><span class="w">
-</span></pre></td></tr></tbody></table>
-
-
-
-OK, now we have a component that is reusable. We instantiate our datagrid three times to display different categories of orders on our dashboard page. This seems to work well, but we can't deny the little bit of code smell.
-
-## Create A Component Type
-
-If we want to create more components in our application, we will have to repeat the same pattern of creating a new module and setting the `newComponent` method on it. We don't want to manually add the method to every module component. Yes, we could create a custom module with that method defined on its prototype and then let our module components inherit from it. But, that still doesn't address the issue of using modules for something they're not. All we've done is use a module as a glorified wrapper for other objects. In fact, our datagrid is really just two views and a controller. If all we really need to do is wrap other objects, then we should create a custom component type to use as our facade.
-
-
-<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
-2
-3
-4
-5
-6
-7
-8
-9
-10
-11
-12
-13
-14
-15
-16
-17
-18
-19
-20
-21
-22
-23
-24
-25
-26
-27
-28
-29
-30
-31
-32
-33
-34
-35
-36
-37
-38
-39
-40
-41
-42
-43
-44</pre></td><td class="code"><pre><span class="c1">// File: lib/marionette.component.js</span>
-<span class="c1">// ---------------------------------</span>
-
-<span class="nx">Marionette</span><span class="p">.</span><span class="nx">Application</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">component</span> <span class="o">=</span>
-<span class="nx">Marionette</span><span class="p">.</span><span class="nx">Module</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">component</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">name</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
-  <span class="kd">var</span> <span class="nx">Component</span> <span class="o">=</span> <span class="k">this</span><span class="p">[</span><span class="nx">name</span><span class="p">];</span>
-
-  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">Component</span><span class="p">)</span> <span class="p">{</span>
-    <span class="nx">Component</span> <span class="o">=</span> <span class="nx">Marionette</span><span class="p">.</span><span class="nx">Component</span><span class="p">.</span><span class="nx">extend</span><span class="p">(</span><span class="nx">options</span><span class="p">);</span>
-    <span class="k">this</span><span class="p">[</span><span class="nx">name</span><span class="p">]</span> <span class="o">=</span> <span class="nx">Component</span><span class="p">;</span>
-  <span class="p">}</span>
-
-  <span class="k">return</span> <span class="nx">Component</span><span class="p">;</span>
-<span class="p">};</span>
-
-<span class="nx">Marionette</span><span class="p">.</span><span class="nx">Component</span> <span class="o">=</span> <span class="nx">Marionette</span><span class="p">.</span><span class="nx">Controller</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
-  <span class="na">constructor</span><span class="p">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
-    <span class="nx">options</span> <span class="o">=</span> <span class="nx">options</span> <span class="o">||</span> <span class="p">{};</span>
-
-    <span class="k">this</span><span class="p">.</span><span class="nx">region</span>     <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">region</span><span class="p">;</span>
-    <span class="k">this</span><span class="p">.</span><span class="nx">model</span>      <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">model</span><span class="p">;</span>
-    <span class="k">this</span><span class="p">.</span><span class="nx">collection</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">collection</span><span class="p">;</span>
-
-    <span class="nx">Marionette</span><span class="p">.</span><span class="nx">Controller</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">constructor</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">);</span>
-  <span class="p">},</span>
-
-  <span class="na">show</span><span class="p">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-    <span class="k">this</span><span class="p">.</span><span class="nx">showView</span><span class="p">();</span>
-  <span class="p">},</span>
-
-  <span class="na">showView</span><span class="p">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-    <span class="kd">var</span> <span class="nx">view</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">view</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getView</span><span class="p">();</span>
-
-    <span class="k">this</span><span class="p">.</span><span class="nx">listenTo</span><span class="p">(</span><span class="nx">view</span><span class="p">,</span> <span class="s1">'show'</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-      <span class="k">this</span><span class="p">.</span><span class="nx">triggerMethod</span><span class="p">(</span><span class="s1">'show:view'</span><span class="p">);</span>
-    <span class="p">});</span>
-
-    <span class="k">this</span><span class="p">.</span><span class="nx">region</span><span class="p">.</span><span class="nx">show</span><span class="p">(</span><span class="nx">view</span><span class="p">);</span>
-  <span class="p">}</span>
-<span class="p">});</span>
-
-<span class="nx">Marionette</span><span class="p">.</span><span class="nx">Component</span><span class="p">.</span><span class="nx">define</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
-  <span class="nx">_</span><span class="p">.</span><span class="nx">extend</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">prototype</span><span class="p">,</span> <span class="nx">options</span><span class="p">);</span>
-<span class="p">};</span><span class="w">
-</span></pre></td></tr></tbody></table>
-
-
-
-So, we've defined a new type: `Marionette.Component`. This component type is based off work Derick Bailey did when he and I developed together on a project. To actually create or use a component, we call `component` on an instance of a Marionette application or module. It attaches the component to the receiver and takes in options to add to the component prototype. We can also call `define` on our component type to add other properties to the prototype.
-
-Notice the component type makes some assumptions about how it will be used. It takes a region for displaying itself along with a model and/or a collection. It has a `show` method, where it calls `showView`. Notice that `showView` calls `getView` but doesn't define it. When you create your own custom component type through this interface, you need to supply a `getView` method that returns your custom view instance (item view, collection view, layout view, etc.).
-
-The component also listens for the `show` event on the view and triggers an `onShowView` method via the `this.triggerMethod('show:view')` call. So, you can also define an `onShowView` method if you need to do additional work after the view is displayed. Finally, the component displays the view in the supplied region.
-
-Let's use our new component type to redefine our datagrid component.
-
-
-<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
-2
-3
-4
-5
-6
-7
-8
-9
-10
-11
-12
-13
-14
-15
-16
-17
-18
-19
-20
-21
-22
-23
-24
-25
-26
-27
-28
-29</pre></td><td class="code"><pre><span class="c1">// File: orders/dashboard/dataGrid.js</span>
-<span class="c1">// ----------------------------------</span>
-
-<span class="c1">// Define the component under the dashboard module now</span>
-<span class="nx">MyApp</span><span class="p">.</span><span class="nx">module</span><span class="p">(</span><span class="s1">'Orders.Dashboard'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">Dashboard</span><span class="p">,</span> <span class="nx">MyApp</span><span class="p">,</span> <span class="nx">Backbone</span><span class="p">,</span> <span class="nx">Marionette</span><span class="p">,</span> <span class="nx">$</span><span class="p">,</span> <span class="nx">_</span><span class="p">)</span> <span class="p">{</span>
-
-  <span class="c1">// Instead of a controller, use our module `component` method</span>
-  <span class="kd">var</span> <span class="nx">DataGrid</span> <span class="o">=</span> <span class="nx">Dashboard</span><span class="p">.</span><span class="nx">component</span><span class="p">(</span><span class="s1">'DataGrid'</span><span class="p">);</span>
-
-  <span class="c1">// Views stay the same from the previous version...</span>
-
-  <span class="c1">// Define the actual component type</span>
-  <span class="nx">DataGrid</span><span class="p">.</span><span class="nx">define</span><span class="p">({</span>
-    <span class="na">getView</span><span class="p">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-      <span class="kd">var</span> <span class="nx">gridView</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">DataGrid</span><span class="p">.</span><span class="nx">GridView</span><span class="p">({</span>
-        <span class="na">collection</span><span class="p">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">collection</span>
-      <span class="p">});</span>
-
-      <span class="k">this</span><span class="p">.</span><span class="nx">listenTo</span><span class="p">(</span><span class="nx">gridView</span><span class="p">,</span> <span class="s1">'foo'</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">doBar</span><span class="p">);</span>
-
-      <span class="k">return</span> <span class="nx">gridView</span><span class="p">;</span>
-    <span class="p">},</span>
-
-    <span class="na">doBar</span><span class="p">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-      <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">'I did bar!'</span><span class="p">);</span>
-    <span class="p">}</span>
-  <span class="p">});</span>
-
-<span class="p">});</span><span class="w">
-</span></pre></td></tr></tbody></table>
-
-
-
-Notice that we still define the component within a module, but we're just reopening up our dashboard module to create the datagrid component on it. We still define the views in the same way, and then we define the datagrid type. Since we made assumptions about how components should be used (for example, take some basic options in their constructor and provide a `show` method), all we need to define is our `getView` method and any other custom logic we require.
-
-
-<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
-2
-3
-4
-5
-6
-7
-8
-9
-10
-11
-12
-13
-14
-15
-16
-17
-18
-19
-20
-21
-22
-23
-24
-25
-26
-27
-28
-29
-30</pre></td><td class="code"><pre><span class="c1">// File: orders/dashboard/dashboard.js</span>
-<span class="c1">// -----------------------------------</span>
-
-<span class="nx">MyApp</span><span class="p">.</span><span class="nx">module</span><span class="p">(</span><span class="s1">'Orders.Dashboard'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">Dashboard</span><span class="p">,</span> <span class="nx">MyApp</span><span class="p">,</span> <span class="nx">Backbone</span><span class="p">,</span> <span class="nx">Marionette</span><span class="p">,</span> <span class="nx">$</span><span class="p">,</span> <span class="nx">_</span><span class="p">)</span> <span class="p">{</span>
-
-  <span class="c1">// Earlier definitions...</span>
-
-  <span class="c1">// Redefine our controller method for showing a grid</span>
-  <span class="nx">Dashboard</span><span class="p">.</span><span class="nx">Controller</span> <span class="o">=</span> <span class="nx">Marionette</span><span class="p">.</span><span class="nx">Controller</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
-    <span class="c1">// Earlier method definitions...</span>
-
-    <span class="na">_showGridComponent</span><span class="p">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">region</span><span class="p">,</span> <span class="nx">order</span><span class="p">)</span> <span class="p">{</span>
-      <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">_grids</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">_grids</span> <span class="o">=</span> <span class="p">[];</span>
-      <span class="p">}</span>
-
-      <span class="kd">var</span> <span class="nx">datagrid</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Dashboard</span><span class="p">.</span><span class="nx">DataGrid</span><span class="p">({</span>
-        <span class="na">collection</span><span class="p">:</span> <span class="nx">orders</span><span class="p">,</span>
-        <span class="na">region</span><span class="p">:</span> <span class="nx">region</span>
-      <span class="p">});</span>
-
-      <span class="k">this</span><span class="p">.</span><span class="nx">_grids</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">datagrid</span><span class="p">);</span>
-
-      <span class="nx">datagrid</span><span class="p">.</span><span class="nx">show</span><span class="p">();</span>
-    <span class="p">}</span>
-  <span class="p">});</span>
-
-  <span class="c1">// Define initializers and finalizers...</span>
-
-<span class="p">});</span><span class="w">
-</span></pre></td></tr></tbody></table>
-
-
-
-We make sure to update our dashboard controller to instantiate the datagrid components with the new component type constructor.
-
-
-<div class="highlight"><pre><code class="language-html" data-lang="html"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
-2
-3
-4
-5</pre></td><td class="code"><pre><span class="nt">&lt;script </span><span class="na">src=</span><span class="s">"app.js"</span><span class="nt">&gt;&lt;/script&gt;</span>
-<span class="nt">&lt;script </span><span class="na">src=</span><span class="s">"lib/marionette.component.js"</span><span class="nt">&gt;&lt;/script&gt;</span>
-<span class="nt">&lt;script </span><span class="na">src=</span><span class="s">"orders/orders.js"</span><span class="nt">&gt;&lt;/script&gt;</span>
-<span class="nt">&lt;script </span><span class="na">src=</span><span class="s">"orders/dashboard/dashboard.js"</span><span class="nt">&gt;&lt;/script&gt;</span>
-<span class="nt">&lt;script </span><span class="na">src=</span><span class="s">"orders/dashboard/dataGrid.js"</span><span class="nt">&gt;&lt;/script&gt;</span><span class="w">
-</span></pre></td></tr></tbody></table>
-
-
-
-Finally, we add the component source file to our loaded scripts.
-
-## Conclusion
-
-So, we now understand how to build reusable components in Backbone.js and Marionette.js. We've learned that components allow us to reduce the amount of code we need to write and afford us more scaleable applications. I think this simple approach to components in Marionette can go a long way toward building modular applications. I'm sure there are ways to improve our component type and reduce even more repeated patterns. I know our method of defining and using modules could use some refactoring, possibly incorporating some of the same ideas we used to make our custom component type.
-
-I hope you enjoyed this post, and I look forward to any questions or feedback!
-</code></pre></div></code></pre></div></code></pre></div></code></pre></div></code></pre></div></code></pre></div></code></pre></div></code></pre></div></code></pre></div></code></pre></div></code></pre></div></code></pre></div>
+<figure class="code-highlight-figure"><figcaption class="code-highlight-caption"><span class="code-highlight-caption-title">app.js</span></figcaption><div class="code-highlight"><pre class="code-highlight-pre"><div data-line="1" class="code-highlight-row numbered"><div class="code-highlight-line"><span class="kd">var</span> <span class="nx">MyApp</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Marionette</span><span class="p">.</span><span class="nx">Application</span><span class="p">();</span>
+</div></div><div data-line="2" class="code-highlight-row numbered"><div class="code-highlight-line"> </div></div><div data-line="3" class="code-highlight-row numbered"><div class="code-highlight-line"><span class="c1">// Helper for switching modules, or sub apps</span>
+</div></div><div data-line="4" class="code-highlight-row numbered"><div class="code-highlight-line"><span class="nx">MyApp</span><span class="p">.</span><span class="nx">startSubApp</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">subApp</span><span class="p">)</span> <span class="p">&#x7b;</span>
+</div></div><div data-line="5" class="code-highlight-row numbered"><div class="code-highlight-line">  <span class="kd">var</span> <span class="nx">currentApp</span> <span class="o">=</span> <span class="nx">MyApp</span><span class="p">.</span><span class="nx">module</span><span class="p">(</span><span class="nx">subApp</span><span class="p">);</span>
+</div></div><div data-line="6" class="code-highlight-row numbered"><div class="code-highlight-line"> </div></div><div data-line="7" class="code-highlight-row numbered"><div class="code-highlight-line">  <span class="k">if</span> <span class="p">(</span><span class="nx">MyApp</span><span class="p">.</span><span class="nx">currentApp</span> <span class="o">===</span> <span class="nx">currentApp</span><span class="p">)</span> <span class="p">&#x7b;</span>
+</div></div><div data-line="8" class="code-highlight-row numbered"><div class="code-highlight-line">    <span class="k">return</span><span class="p">;</span>
+</div></div><div data-line="9" class="code-highlight-row numbered"><div class="code-highlight-line">  <span class="p">&#x7d;</span>
+</div></div><div data-line="10" class="code-highlight-row numbered"><div class="code-highlight-line"> </div></div><div data-line="11" class="code-highlight-row numbered"><div class="code-highlight-line">  <span class="k">if</span> <span class="p">(</span><span class="nx">MyApp</span><span class="p">.</span><span class="nx">currentApp</span><span class="p">)</span> <span class="p">&#x7b;</span>
+</div></div><div data-line="12" class="code-highlight-row numbered"><div class="code-highlight-line">    <span class="nx">MyApp</span><span class="p">.</span><span class="nx">currentApp</span><span class="p">.</span><span class="nx">stop</span><span class="p">();</span>
+</div></div><div data-line="13" class="code-highlight-row numbered"><div class="code-highlight-line">  <span class="p">&#x7d;</span>
+</div></div><div data-line="14" class="code-highlight-row numbered"><div class="code-highlight-line"> </div></div><div data-line="15" class="code-highlight-row numbered"><div class="code-highlight-line">  <span class="nx">App</span><span class="p">.</span><span class="nx">currentApp</span> <span class="o">=</span> <span class="nx">currentApp</span><span class="p">;</span>
+</div></div><div data-line="16" class="code-highlight-row numbered"><div class="code-highlight-line"> </div></div><div data-line="17" class="code-highlight-row numbered"><div class="code-highlight-line">  <span class="nx">currentApp</span><span class="p">.</span><span class="nx">start</span><span class="p">();</span>
+</div></div><div data-line="18" class="code-highlight-row numbered"><div class="code-highlight-line"><span class="p">&#x7d;;</span>
+</div></div><div data-line="19" class="code-highlight-row numbered"><div class="code-highlight-line"> </div></div><div data-line="20" class="code-highlight-row numbered"><div class="code-highlight-line"><span class="nx">MyApp</span><span class="p">.</span><span class="nx">addRegions</span><span class="p">(&#x7b;</span>
+</div></div><div data-line="21" class="code-highlight-row numbered"><div class="code-highlight-line">  <span class="na">mainRegion</span><span class="p">:</span> <span class="s1">'#main'</span>
+</div></div><div data-line="22" class="code-highlight-row numbered"><div class="code-highlight-line"><span class="p">&#x7d;);</span>
+</div></div><div data-line="23" class="code-highlight-row numbered"><div class="code-highlight-line"> </div></div><div data-line="24" class="code-highlight-row numbered"><div class="code-highlight-line"><span class="nx">MyApp</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">'start'</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">&#x7b;</span>
+</div></div><div data-line="25" class="code-highlight-row numbered"><div class="code-highlight-line">  <span class="nx">Backbone</span><span class="p">.</span><span class="nx">history</span><span class="p">.</span><span class="nx">start</span><span class="p">();</span>
+</div></div><div data-line="26" class="code-highlight-row numbered"><div class="code-highlight-line"><span class="p">&#x7d;);</span></div></div></pre></div></figure>
+
+<p>Here we set up our base application called <code>MyApp</code>, attach an existing HTML element with id <code>#main</code> to the app’s <code>mainRegion</code>, and listen for the app’s <code>start</code> event to make sure Backbone history is running. We also add a simple helper method <code>startSubApp</code> for managing the currently running sub-application, or module.</p>
+
+<figure class="code-highlight-figure"><figcaption class="code-highlight-caption"><span class="code-highlight-caption-title">orders/orders.js</span></figcaption><div class="code-highlight"><pre class="code-highlight-pre"><div data-line="1" class="code-highlight-row numbered"><div class="code-highlight-line"><span class="c1">// Define our orders module</span>
+</div></div><div data-line="2" class="code-highlight-row numbered"><div class="code-highlight-line"><span class="nx">MyApp</span><span class="p">.</span><span class="nx">module</span><span class="p">(</span><span class="s1">'Orders'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">Orders</span><span class="p">,</span> <span class="nx">MyApp</span><span class="p">,</span> <span class="nx">Backbone</span><span class="p">,</span> <span class="nx">Marionette</span><span class="p">,</span> <span class="nx">$</span><span class="p">,</span> <span class="nx">_</span><span class="p">)</span> <span class="p">&#x7b;</span>
+</div></div><div data-line="3" class="code-highlight-row numbered"><div class="code-highlight-line"> </div></div><div data-line="4" class="code-highlight-row numbered"><div class="code-highlight-line">  <span class="c1">// Router</span>
+</div></div><div data-line="5" class="code-highlight-row numbered"><div class="code-highlight-line">  <span class="nx">Orders</span><span class="p">.</span><span class="nx">Router</span> <span class="o">=</span> <span class="nx">Marionette</span><span class="p">.</span><span class="nx">AppRouter</span><span class="p">.</span><span class="nx">extend</span><span class="p">(&#x7b;</span>
+</div></div><div data-line="6" class="code-highlight-row numbered"><div class="code-highlight-line">    <span class="na">appRoutes</span><span class="p">:</span> <span class="p">&#x7b;</span>
+</div></div><div data-line="7" class="code-highlight-row numbered"><div class="code-highlight-line">      <span class="s1">'orders/dashboard'</span><span class="p">:</span> <span class="s1">'ordersDashboard'</span>
+</div></div><div data-line="8" class="code-highlight-row numbered"><div class="code-highlight-line">    <span class="p">&#x7d;</span>
+</div></div><div data-line="9" class="code-highlight-row numbered"><div class="code-highlight-line">  <span class="p">&#x7d;);</span>
+</div></div><div data-line="10" class="code-highlight-row numbered"><div class="code-highlight-line"> </div></div><div data-line="11" class="code-highlight-row numbered"><div class="code-highlight-line">  <span class="c1">// Controller</span>
+</div></div><div data-line="12" class="code-highlight-row numbered"><div class="code-highlight-line">  <span class="nx">Orders</span><span class="p">.</span><span class="nx">Controller</span> <span class="o">=</span> <span class="nx">Marionette</span><span class="p">.</span><span class="nx">Controller</span><span class="p">.</span><span class="nx">extend</span><span class="p">(&#x7b;</span>
+</div></div><div data-line="13" class="code-highlight-row numbered"><div class="code-highlight-line">    <span class="na">ordersDashboard</span><span class="p">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">&#x7b;</span>
+</div></div><div data-line="14" class="code-highlight-row numbered"><div class="code-highlight-line">      <span class="nx">App</span><span class="p">.</span><span class="nx">startSubApp</span><span class="p">(</span><span class="s1">'Orders.Dashboard'</span><span class="p">);</span>
+</div></div><div data-line="15" class="code-highlight-row numbered"><div class="code-highlight-line">      <span class="nx">Orders</span><span class="p">.</span><span class="nx">Dashboard</span><span class="p">.</span><span class="nx">controller</span><span class="p">.</span><span class="nx">show</span><span class="p">();</span>
+</div></div><div data-line="16" class="code-highlight-row numbered"><div class="code-highlight-line">    <span class="p">&#x7d;</span>
+</div></div><div data-line="17" class="code-highlight-row numbered"><div class="code-highlight-line">  <span class="p">&#x7d;);</span>
+</div></div><div data-line="18" class="code-highlight-row numbered"><div class="code-highlight-line"> </div></div><div data-line="19" class="code-highlight-row numbered"><div class="code-highlight-line">  <span class="c1">// Initializers</span>
+</div></div><div data-line="20" class="code-highlight-row numbered"><div class="code-highlight-line">  <span class="nx">Orders</span><span class="p">.</span><span class="nx">addInitializer</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">&#x7b;</span>
+</div></div><div data-line="21" class="code-highlight-row numbered"><div class="code-highlight-line">    <span class="nx">Orders</span><span class="p">.</span><span class="nx">controller</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Orders</span><span class="p">.</span><span class="nx">Controller</span><span class="p">();</span>
+</div></div><div data-line="22" class="code-highlight-row numbered"><div class="code-highlight-line"> </div></div><div data-line="23" class="code-highlight-row numbered"><div class="code-highlight-line">    <span class="nx">Orders</span><span class="p">.</span><span class="nx">router</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Orders</span><span class="p">.</span><span class="nx">Router</span><span class="p">(&#x7b;</span>
+</div></div><div data-line="24" class="code-highlight-row numbered"><div class="code-highlight-line">      <span class="na">controller</span><span class="p">:</span> <span class="nx">Orders</span><span class="p">.</span><span class="nx">controller</span>
+</div></div><div data-line="25" class="code-highlight-row numbered"><div class="code-highlight-line">    <span class="p">&#x7d;);</span>
+</div></div><div data-line="26" class="code-highlight-row numbered"><div class="code-highlight-line">  <span class="p">&#x7d;);</span>
+</div></div><div data-line="27" class="code-highlight-row numbered"><div class="code-highlight-line"> </div></div><div data-line="28" class="code-highlight-row numbered"><div class="code-highlight-line"><span class="p">&#x7d;);</span></div></div></pre></div></figure>
+
+<p>This is our main orders module. We define the module, a router, and a controller for orders-related functionality. We ensure everything is properly wired up with a call to <code>addInitializer</code> on the module as well. Notice in <code>Orders.Controller#ordersDashboard</code> we start up and show the <code>Orders.Dashboard</code> submodule, which we define below.</p>
+
+<figure class="code-highlight-figure"><figcaption class="code-highlight-caption"><span class="code-highlight-caption-title">orders/dashboard/dashboard.js</span></figcaption><div class="code-highlight"><pre class="code-highlight-pre"><div data-line="1" class="code-highlight-row numbered"><div class="code-highlight-line"><span class="c1">// Define our dashboard submodule</span>
+</div></div><div data-line="2" class="code-highlight-row numbered"><div class="code-highlight-line"><span class="nx">MyApp</span><span class="p">.</span><span class="nx">module</span><span class="p">(</span><span class="s1">'Orders.Dashboard'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">Dashboard</span><span class="p">,</span> <span class="nx">MyApp</span><span class="p">,</span> <span class="nx">Backbone</span><span class="p">,</span> <span class="nx">Marionette</span><span class="p">,</span> <span class="nx">$</span><span class="p">,</span> <span class="nx">_</span><span class="p">)</span> <span class="p">&#x7b;</span>
+</div></div><div data-line="3" class="code-highlight-row numbered"><div class="code-highlight-line"> </div></div><div data-line="4" class="code-highlight-row numbered"><div class="code-highlight-line">  <span class="nx">Dashboard</span><span class="p">.</span><span class="nx">startWithParent</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+</div></div><div data-line="5" class="code-highlight-row numbered"><div class="code-highlight-line"> </div></div><div data-line="6" class="code-highlight-row numbered"><div class="code-highlight-line">  <span class="c1">// Model</span>
+</div></div><div data-line="7" class="code-highlight-row numbered"><div class="code-highlight-line">  <span class="nx">Dashboard</span><span class="p">.</span><span class="nx">DashboardOrders</span> <span class="o">=</span> <span class="nx">Backbone</span><span class="p">.</span><span class="nx">Model</span><span class="p">.</span><span class="nx">extend</span><span class="p">(&#x7b;</span>
+</div></div><div data-line="8" class="code-highlight-row numbered"><div class="code-highlight-line">    <span class="na">defaults</span><span class="p">:</span> <span class="p">&#x7b;</span>
+</div></div><div data-line="9" class="code-highlight-row numbered"><div class="code-highlight-line">      <span class="na">incompleteOrders</span><span class="p">:</span> <span class="p">[],</span>
+</div></div><div data-line="10" class="code-highlight-row numbered"><div class="code-highlight-line">      <span class="na">submittedOrders</span><span class="p">:</span> <span class="p">[],</span>
+</div></div><div data-line="11" class="code-highlight-row numbered"><div class="code-highlight-line">      <span class="na">shippedOrders</span><span class="p">:</span> <span class="p">[]</span>
+</div></div><div data-line="12" class="code-highlight-row numbered"><div class="code-highlight-line">    <span class="p">&#x7d;,</span>
+</div></div><div data-line="13" class="code-highlight-row numbered"><div class="code-highlight-line"> </div></div><div data-line="14" class="code-highlight-row numbered"><div class="code-highlight-line">    <span class="na">url</span><span class="p">:</span> <span class="s1">'/api/orders/dashboard'</span>
+</div></div><div data-line="15" class="code-highlight-row numbered"><div class="code-highlight-line">  <span class="p">&#x7d;);</span>
+</div></div><div data-line="16" class="code-highlight-row numbered"><div class="code-highlight-line"> </div></div><div data-line="17" class="code-highlight-row numbered"><div class="code-highlight-line">  <span class="c1">// LayoutView</span>
+</div></div><div data-line="18" class="code-highlight-row numbered"><div class="code-highlight-line">  <span class="nx">Dashboard</span><span class="p">.</span><span class="nx">LayoutView</span> <span class="o">=</span> <span class="nx">Marionette</span><span class="p">.</span><span class="nx">LayoutView</span><span class="p">.</span><span class="nx">extend</span><span class="p">(&#x7b;</span>
+</div></div><div data-line="19" class="code-highlight-row numbered"><div class="code-highlight-line">    <span class="na">template</span><span class="p">:</span> <span class="s1">'#orders-dashboard-layout-template'</span><span class="p">,</span>
+</div></div><div data-line="20" class="code-highlight-row numbered"><div class="code-highlight-line"> </div></div><div data-line="21" class="code-highlight-row numbered"><div class="code-highlight-line">    <span class="na">regions</span><span class="p">:</span> <span class="p">&#x7b;</span>
+</div></div><div data-line="22" class="code-highlight-row numbered"><div class="code-highlight-line">      <span class="na">incompleteOrders</span><span class="p">:</span> <span class="s1">'#incomplete-orders'</span>
+</div></div><div data-line="23" class="code-highlight-row numbered"><div class="code-highlight-line">    <span class="p">&#x7d;</span>
+</div></div><div data-line="24" class="code-highlight-row numbered"><div class="code-highlight-line">  <span class="p">&#x7d;);</span>
+</div></div><div data-line="25" class="code-highlight-row numbered"><div class="code-highlight-line"> </div></div><div data-line="26" class="code-highlight-row numbered"><div class="code-highlight-line">  <span class="c1">// Controller</span>
+</div></div><div data-line="27" class="code-highlight-row numbered"><div class="code-highlight-line">  <span class="nx">Dashboard</span><span class="p">.</span><span class="nx">Controller</span> <span class="o">=</span> <span class="nx">Marionette</span><span class="p">.</span><span class="nx">Controller</span><span class="p">.</span><span class="nx">extend</span><span class="p">(&#x7b;</span>
+</div></div><div data-line="28" class="code-highlight-row numbered"><div class="code-highlight-line">    <span class="na">initialize</span><span class="p">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">options</span><span class="p">)</span> <span class="p">&#x7b;</span>
+</div></div><div data-line="29" class="code-highlight-row numbered"><div class="code-highlight-line">      <span class="k">this</span><span class="p">.</span><span class="nx">region</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">region</span><span class="p">;</span>
+</div></div><div data-line="30" class="code-highlight-row numbered"><div class="code-highlight-line">    <span class="p">&#x7d;,</span>
+</div></div><div data-line="31" class="code-highlight-row numbered"><div class="code-highlight-line"> </div></div><div data-line="32" class="code-highlight-row numbered"><div class="code-highlight-line">    <span class="na">show</span><span class="p">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">&#x7b;</span>
+</div></div><div data-line="33" class="code-highlight-row numbered"><div class="code-highlight-line">      <span class="k">this</span><span class="p">.</span><span class="nx">layout</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getLayout</span><span class="p">();</span>
+</div></div><div data-line="34" class="code-highlight-row numbered"><div class="code-highlight-line">      <span class="k">this</span><span class="p">.</span><span class="nx">region</span><span class="p">.</span><span class="nx">show</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">layout</span><span class="p">);</span>
+</div></div><div data-line="35" class="code-highlight-row numbered"><div class="code-highlight-line">    <span class="p">&#x7d;,</span>
+</div></div><div data-line="36" class="code-highlight-row numbered"><div class="code-highlight-line"> </div></div><div data-line="37" class="code-highlight-row numbered"><div class="code-highlight-line">    <span class="na">getLayout</span><span class="p">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">&#x7b;</span>
+</div></div><div data-line="38" class="code-highlight-row numbered"><div class="code-highlight-line">      <span class="kd">var</span> <span class="nx">layout</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">LayoutView</span><span class="p">();</span>
+</div></div><div data-line="39" class="code-highlight-row numbered"><div class="code-highlight-line">      <span class="k">this</span><span class="p">.</span><span class="nx">listenTo</span><span class="p">(</span><span class="nx">layout</span><span class="p">,</span> <span class="s1">'show'</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">showGrid</span><span class="p">);</span>
+</div></div><div data-line="40" class="code-highlight-row numbered"><div class="code-highlight-line">      <span class="k">return</span> <span class="nx">layout</span><span class="p">;</span>
+</div></div><div data-line="41" class="code-highlight-row numbered"><div class="code-highlight-line">    <span class="p">&#x7d;,</span>
+</div></div><div data-line="42" class="code-highlight-row numbered"><div class="code-highlight-line"> </div></div><div data-line="43" class="code-highlight-row numbered"><div class="code-highlight-line">    <span class="na">showGrid</span><span class="p">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">&#x7b;</span>
+</div></div><div data-line="44" class="code-highlight-row numbered"><div class="code-highlight-line">      <span class="kd">var</span> <span class="nx">dashboardOrders</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Dashboard</span><span class="p">.</span><span class="nx">DashboardOrders</span><span class="p">();</span>
+</div></div><div data-line="45" class="code-highlight-row numbered"><div class="code-highlight-line"> </div></div><div data-line="46" class="code-highlight-row numbered"><div class="code-highlight-line">      <span class="nx">dashboardOrders</span><span class="p">.</span><span class="nx">fetch</span><span class="p">().</span>
+</div></div><div data-line="47" class="code-highlight-row numbered"><div class="code-highlight-line">        <span class="nx">then</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_showGridComponent</span><span class="p">(</span>
+</div></div><div data-line="48" class="code-highlight-row numbered"><div class="code-highlight-line">          <span class="k">this</span><span class="p">.</span><span class="nx">layout</span><span class="p">.</span><span class="nx">incompleteOrders</span><span class="p">,</span>
+</div></div><div data-line="49" class="code-highlight-row numbered"><div class="code-highlight-line">          <span class="nx">dashboardOrders</span><span class="p">.</span><span class="nx">incompleteOrders</span>
+</div></div><div data-line="50" class="code-highlight-row numbered"><div class="code-highlight-line">        <span class="p">));</span>
+</div></div><div data-line="51" class="code-highlight-row numbered"><div class="code-highlight-line">    <span class="p">&#x7d;,</span>
+</div></div><div data-line="52" class="code-highlight-row numbered"><div class="code-highlight-line"> </div></div><div data-line="53" class="code-highlight-row numbered"><div class="code-highlight-line">    <span class="na">onDestroy</span><span class="p">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">&#x7b;</span>
+</div></div><div data-line="54" class="code-highlight-row numbered"><div class="code-highlight-line">      <span class="nx">Dashboard</span><span class="p">.</span><span class="nx">DataGrid</span><span class="p">.</span><span class="nx">stop</span><span class="p">();</span>
+</div></div><div data-line="55" class="code-highlight-row numbered"><div class="code-highlight-line">    <span class="p">&#x7d;,</span>
+</div></div><div data-line="56" class="code-highlight-row numbered"><div class="code-highlight-line"> </div></div><div data-line="57" class="code-highlight-row numbered"><div class="code-highlight-line">    <span class="na">_showGridComponent</span><span class="p">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">region</span><span class="p">,</span> <span class="nx">dashboardOrders</span><span class="p">)</span> <span class="p">&#x7b;</span>
+</div></div><div data-line="58" class="code-highlight-row numbered"><div class="code-highlight-line">      <span class="k">return</span> <span class="kd">function</span><span class="p">()</span> <span class="p">&#x7b;</span>
+</div></div><div data-line="59" class="code-highlight-row numbered"><div class="code-highlight-line">        <span class="nx">Dashboard</span><span class="p">.</span><span class="nx">DataGrid</span><span class="p">.</span><span class="nx">start</span><span class="p">(&#x7b;</span>
+</div></div><div data-line="60" class="code-highlight-row numbered"><div class="code-highlight-line">          <span class="na">collection</span><span class="p">:</span> <span class="nx">dashboardOrders</span><span class="p">.</span><span class="nx">incompleteOrders</span><span class="p">,</span>
+</div></div><div data-line="61" class="code-highlight-row numbered"><div class="code-highlight-line">          <span class="na">region</span><span class="p">:</span> <span class="nx">region</span>
+</div></div><div data-line="62" class="code-highlight-row numbered"><div class="code-highlight-line">        <span class="p">&#x7d;);</span>
+</div></div><div data-line="63" class="code-highlight-row numbered"><div class="code-highlight-line"> </div></div><div data-line="64" class="code-highlight-row numbered"><div class="code-highlight-line">        <span class="nx">Dashboard</span><span class="p">.</span><span class="nx">DataGrid</span><span class="p">.</span><span class="nx">controller</span><span class="p">.</span><span class="nx">show</span><span class="p">();</span>
+</div></div><div data-line="65" class="code-highlight-row numbered"><div class="code-highlight-line">      <span class="p">&#x7d;;</span>
+</div></div><div data-line="66" class="code-highlight-row numbered"><div class="code-highlight-line">    <span class="p">&#x7d;</span>
+</div></div><div data-line="67" class="code-highlight-row numbered"><div class="code-highlight-line">  <span class="p">&#x7d;);</span>
+</div></div><div data-line="68" class="code-highlight-row numbered"><div class="code-highlight-line"> </div></div><div data-line="69" class="code-highlight-row numbered"><div class="code-highlight-line">  <span class="c1">// Initializers</span>
+</div></div><div data-line="70" class="code-highlight-row numbered"><div class="code-highlight-line">  <span class="nx">Dashboard</span><span class="p">.</span><span class="nx">addInitializer</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">options</span><span class="p">)</span> <span class="p">&#x7b;</span>
+</div></div><div data-line="71" class="code-highlight-row numbered"><div class="code-highlight-line">    <span class="nx">Dashboard</span><span class="p">.</span><span class="nx">controller</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Dashboard</span><span class="p">.</span><span class="nx">Controller</span><span class="p">(&#x7b;</span>
+</div></div><div data-line="72" class="code-highlight-row numbered"><div class="code-highlight-line">      <span class="na">region</span><span class="p">:</span> <span class="nx">MyApp</span><span class="p">.</span><span class="nx">mainRegion</span>
+</div></div><div data-line="73" class="code-highlight-row numbered"><div class="code-highlight-line">    <span class="p">&#x7d;);</span>
+</div></div><div data-line="74" class="code-highlight-row numbered"><div class="code-highlight-line"> </div></div><div data-line="75" class="code-highlight-row numbered"><div class="code-highlight-line">    <span class="nx">Dashboard</span><span class="p">.</span><span class="nx">controller</span><span class="p">.</span><span class="nx">show</span><span class="p">();</span>
+</div></div><div data-line="76" class="code-highlight-row numbered"><div class="code-highlight-line">  <span class="p">&#x7d;);</span>
+</div></div><div data-line="77" class="code-highlight-row numbered"><div class="code-highlight-line"> </div></div><div data-line="78" class="code-highlight-row numbered"><div class="code-highlight-line">  <span class="c1">// Finalizers</span>
+</div></div><div data-line="79" class="code-highlight-row numbered"><div class="code-highlight-line">  <span class="nx">Dashboard</span><span class="p">.</span><span class="nx">addFinalizer</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">&#x7b;</span>
+</div></div><div data-line="80" class="code-highlight-row numbered"><div class="code-highlight-line">    <span class="nx">Dashboard</span><span class="p">.</span><span class="nx">controller</span><span class="p">.</span><span class="nx">destroy</span><span class="p">();</span>
+</div></div><div data-line="81" class="code-highlight-row numbered"><div class="code-highlight-line">    <span class="k">delete</span> <span class="nx">Dashboard</span><span class="p">.</span><span class="nx">controller</span><span class="p">;</span>
+</div></div><div data-line="82" class="code-highlight-row numbered"><div class="code-highlight-line">  <span class="p">&#x7d;);</span>
+</div></div><div data-line="83" class="code-highlight-row numbered"><div class="code-highlight-line"> </div></div><div data-line="84" class="code-highlight-row numbered"><div class="code-highlight-line"><span class="p">&#x7d;);</span></div></div></pre></div></figure>
+
+<p>This is our <code>Dashboard</code> submodule. Notice we set <code>Dashboard.startWithParent = false</code>. This prevents the module from automatically running because we will want it to start only when we need it. In the controller after we show the layout, we fetch the dashboard orders and display the incomplete orders in a datagrid component via <code>showGrid</code> and <code>_showGridComponent</code>. If our module is stopped, we make sure to also stop the datagrid component in <code>onDestroy</code>.</p>
+
+<figure class="code-highlight-figure"><figcaption class="code-highlight-caption"><span class="code-highlight-caption-title">orders/dashboard/dataGrid.js</span></figcaption><div class="code-highlight"><pre class="code-highlight-pre"><div data-line="1" class="code-highlight-row numbered"><div class="code-highlight-line"><span class="c1">// Define our datagrid module component</span>
+</div></div><div data-line="2" class="code-highlight-row numbered"><div class="code-highlight-line"><span class="nx">MyApp</span><span class="p">.</span><span class="nx">module</span><span class="p">(</span><span class="s1">'Orders.Dashboard.DataGrid'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">DataGrid</span><span class="p">,</span> <span class="nx">MyApp</span><span class="p">,</span> <span class="nx">Backbone</span><span class="p">,</span> <span class="nx">Marionette</span><span class="p">,</span> <span class="nx">$</span><span class="p">,</span> <span class="nx">_</span><span class="p">)</span> <span class="p">&#x7b;</span>
+</div></div><div data-line="3" class="code-highlight-row numbered"><div class="code-highlight-line"> </div></div><div data-line="4" class="code-highlight-row numbered"><div class="code-highlight-line">  <span class="nx">DataGrid</span><span class="p">.</span><span class="nx">startWithParent</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+</div></div><div data-line="5" class="code-highlight-row numbered"><div class="code-highlight-line"> </div></div><div data-line="6" class="code-highlight-row numbered"><div class="code-highlight-line">  <span class="c1">// Views</span>
+</div></div><div data-line="7" class="code-highlight-row numbered"><div class="code-highlight-line">  <span class="nx">DataGrid</span><span class="p">.</span><span class="nx">RowView</span> <span class="o">=</span> <span class="nx">Marionette</span><span class="p">.</span><span class="nx">ItemView</span><span class="p">.</span><span class="nx">extend</span><span class="p">(&#x7b;</span>
+</div></div><div data-line="8" class="code-highlight-row numbered"><div class="code-highlight-line">    <span class="na">template</span><span class="p">:</span> <span class="s1">'#orders-dashboard-datagrid-row-template'</span><span class="p">,</span>
+</div></div><div data-line="9" class="code-highlight-row numbered"><div class="code-highlight-line">    <span class="na">tagName</span><span class="p">:</span> <span class="s1">'tr'</span>
+</div></div><div data-line="10" class="code-highlight-row numbered"><div class="code-highlight-line">  <span class="p">&#x7d;);</span>
+</div></div><div data-line="11" class="code-highlight-row numbered"><div class="code-highlight-line"> </div></div><div data-line="12" class="code-highlight-row numbered"><div class="code-highlight-line">  <span class="nx">DataGrid</span><span class="p">.</span><span class="nx">GridView</span> <span class="o">=</span> <span class="nx">Marionette</span><span class="p">.</span><span class="nx">CompositeView</span><span class="p">.</span><span class="nx">extend</span><span class="p">(&#x7b;</span>
+</div></div><div data-line="13" class="code-highlight-row numbered"><div class="code-highlight-line">    <span class="na">template</span><span class="p">:</span> <span class="s1">'#orders-dashboard-datagrid-template'</span><span class="p">,</span>
+</div></div><div data-line="14" class="code-highlight-row numbered"><div class="code-highlight-line">    <span class="na">childView</span><span class="p">:</span> <span class="nx">DataGrid</span><span class="p">.</span><span class="nx">RowView</span><span class="p">,</span>
+</div></div><div data-line="15" class="code-highlight-row numbered"><div class="code-highlight-line">    <span class="na">childViewContainer</span><span class="p">:</span> <span class="s1">'tbody'</span>
+</div></div><div data-line="16" class="code-highlight-row numbered"><div class="code-highlight-line">  <span class="p">&#x7d;);</span>
+</div></div><div data-line="17" class="code-highlight-row numbered"><div class="code-highlight-line"> </div></div><div data-line="18" class="code-highlight-row numbered"><div class="code-highlight-line">  <span class="c1">// Controller</span>
+</div></div><div data-line="19" class="code-highlight-row numbered"><div class="code-highlight-line">  <span class="nx">DataGrid</span><span class="p">.</span><span class="nx">Controller</span> <span class="o">=</span> <span class="nx">Marionette</span><span class="p">.</span><span class="nx">Controller</span><span class="p">.</span><span class="nx">extend</span><span class="p">(&#x7b;</span>
+</div></div><div data-line="20" class="code-highlight-row numbered"><div class="code-highlight-line">    <span class="na">initialize</span><span class="p">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">options</span><span class="p">)</span> <span class="p">&#x7b;</span>
+</div></div><div data-line="21" class="code-highlight-row numbered"><div class="code-highlight-line">      <span class="k">this</span><span class="p">.</span><span class="nx">region</span>     <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">region</span><span class="p">;</span>
+</div></div><div data-line="22" class="code-highlight-row numbered"><div class="code-highlight-line">      <span class="k">this</span><span class="p">.</span><span class="nx">collection</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">collection</span><span class="p">;</span>
+</div></div><div data-line="23" class="code-highlight-row numbered"><div class="code-highlight-line">    <span class="p">&#x7d;,</span>
+</div></div><div data-line="24" class="code-highlight-row numbered"><div class="code-highlight-line"> </div></div><div data-line="25" class="code-highlight-row numbered"><div class="code-highlight-line">    <span class="na">show</span><span class="p">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">&#x7b;</span>
+</div></div><div data-line="26" class="code-highlight-row numbered"><div class="code-highlight-line">      <span class="k">this</span><span class="p">.</span><span class="nx">gridView</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getGridView</span><span class="p">();</span>
+</div></div><div data-line="27" class="code-highlight-row numbered"><div class="code-highlight-line">      <span class="k">this</span><span class="p">.</span><span class="nx">region</span><span class="p">.</span><span class="nx">show</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">gridView</span><span class="p">);</span>
+</div></div><div data-line="28" class="code-highlight-row numbered"><div class="code-highlight-line">    <span class="p">&#x7d;,</span>
+</div></div><div data-line="29" class="code-highlight-row numbered"><div class="code-highlight-line"> </div></div><div data-line="30" class="code-highlight-row numbered"><div class="code-highlight-line">    <span class="na">getGridView</span><span class="p">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">&#x7b;</span>
+</div></div><div data-line="31" class="code-highlight-row numbered"><div class="code-highlight-line">      <span class="kd">var</span> <span class="nx">gridView</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">DataGrid</span><span class="p">.</span><span class="nx">GridView</span><span class="p">(&#x7b;</span>
+</div></div><div data-line="32" class="code-highlight-row numbered"><div class="code-highlight-line">        <span class="na">collection</span><span class="p">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">collection</span>
+</div></div><div data-line="33" class="code-highlight-row numbered"><div class="code-highlight-line">      <span class="p">&#x7d;);</span>
+</div></div><div data-line="34" class="code-highlight-row numbered"><div class="code-highlight-line"> </div></div><div data-line="35" class="code-highlight-row numbered"><div class="code-highlight-line">      <span class="k">this</span><span class="p">.</span><span class="nx">listenTo</span><span class="p">(</span><span class="nx">gridView</span><span class="p">,</span> <span class="s1">'foo'</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">doBar</span><span class="p">);</span>
+</div></div><div data-line="36" class="code-highlight-row numbered"><div class="code-highlight-line"> </div></div><div data-line="37" class="code-highlight-row numbered"><div class="code-highlight-line">      <span class="k">return</span> <span class="nx">gridView</span><span class="p">;</span>
+</div></div><div data-line="38" class="code-highlight-row numbered"><div class="code-highlight-line">    <span class="p">&#x7d;,</span>
+</div></div><div data-line="39" class="code-highlight-row numbered"><div class="code-highlight-line"> </div></div><div data-line="40" class="code-highlight-row numbered"><div class="code-highlight-line">    <span class="na">doBar</span><span class="p">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">&#x7b;</span>
+</div></div><div data-line="41" class="code-highlight-row numbered"><div class="code-highlight-line">      <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">'I did bar!'</span><span class="p">);</span>
+</div></div><div data-line="42" class="code-highlight-row numbered"><div class="code-highlight-line">    <span class="p">&#x7d;</span>
+</div></div><div data-line="43" class="code-highlight-row numbered"><div class="code-highlight-line">  <span class="p">&#x7d;);</span>
+</div></div><div data-line="44" class="code-highlight-row numbered"><div class="code-highlight-line"> </div></div><div data-line="45" class="code-highlight-row numbered"><div class="code-highlight-line">  <span class="c1">// Initializers</span>
+</div></div><div data-line="46" class="code-highlight-row numbered"><div class="code-highlight-line">  <span class="nx">DataGrid</span><span class="p">.</span><span class="nx">addInitializer</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">options</span><span class="p">)</span> <span class="p">&#x7b;</span>
+</div></div><div data-line="47" class="code-highlight-row numbered"><div class="code-highlight-line">    <span class="nx">DataGrid</span><span class="p">.</span><span class="nx">controller</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">DataGrid</span><span class="p">.</span><span class="nx">Controller</span><span class="p">(&#x7b;</span>
+</div></div><div data-line="48" class="code-highlight-row numbered"><div class="code-highlight-line">      <span class="na">region</span><span class="p">:</span> <span class="nx">options</span><span class="p">.</span><span class="nx">region</span><span class="p">,</span>
+</div></div><div data-line="49" class="code-highlight-row numbered"><div class="code-highlight-line">      <span class="na">collection</span><span class="p">:</span> <span class="nx">options</span><span class="p">.</span><span class="nx">collection</span>
+</div></div><div data-line="50" class="code-highlight-row numbered"><div class="code-highlight-line">    <span class="p">&#x7d;);</span>
+</div></div><div data-line="51" class="code-highlight-row numbered"><div class="code-highlight-line">  <span class="p">&#x7d;);</span>
+</div></div><div data-line="52" class="code-highlight-row numbered"><div class="code-highlight-line"> </div></div><div data-line="53" class="code-highlight-row numbered"><div class="code-highlight-line">  <span class="c1">// Finalizers</span>
+</div></div><div data-line="54" class="code-highlight-row numbered"><div class="code-highlight-line">  <span class="nx">DataGrid</span><span class="p">.</span><span class="nx">addFinalizer</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">&#x7b;</span>
+</div></div><div data-line="55" class="code-highlight-row numbered"><div class="code-highlight-line">    <span class="nx">DataGrid</span><span class="p">.</span><span class="nx">controller</span><span class="p">.</span><span class="nx">destroy</span><span class="p">();</span>
+</div></div><div data-line="56" class="code-highlight-row numbered"><div class="code-highlight-line">    <span class="k">delete</span> <span class="nx">DataGrid</span><span class="p">.</span><span class="nx">controller</span><span class="p">;</span>
+</div></div><div data-line="57" class="code-highlight-row numbered"><div class="code-highlight-line">  <span class="p">&#x7d;);</span>
+</div></div><div data-line="58" class="code-highlight-row numbered"><div class="code-highlight-line"> </div></div><div data-line="59" class="code-highlight-row numbered"><div class="code-highlight-line"><span class="p">&#x7d;);</span></div></div></pre></div></figure>
+
+<p>This is our <code>DataGrid</code> module component. Notice, we’ve set it up similar to the <code>Dashboard</code> module. We can instantiate our component and use it with <code>DataGrid.start</code> followed by <code>DataGrid.controller.show</code>.</p>
+
+<figure class="code-highlight-figure"><figcaption class="code-highlight-caption"><span class="code-highlight-caption-title">view</span></figcaption><div class="code-highlight"><pre class="code-highlight-pre"><div data-line="1" class="code-highlight-row numbered"><div class="code-highlight-line"><span class="nt">&lt;script </span><span class="na">id=</span><span class="s">"orders-dashboard-layout-template"</span> <span class="na">type=</span><span class="s">"text/html"</span><span class="nt">&gt;</span>
+</div></div><div data-line="2" class="code-highlight-row numbered"><div class="code-highlight-line">  <span class="o">&lt;</span><span class="nx">h1</span><span class="o">&gt;</span><span class="nx">Orders</span> <span class="nx">Dashboard</span><span class="o">&lt;</span><span class="sr">/h1</span><span class="err">&gt;</span>
+</div></div><div data-line="3" class="code-highlight-row numbered"><div class="code-highlight-line">  <span class="o">&lt;</span><span class="nx">div</span> <span class="nx">id</span><span class="o">=</span><span class="s2">"incomplete-orders"</span><span class="o">&gt;&lt;</span><span class="sr">/div</span><span class="err">&gt;</span>
+</div></div><div data-line="4" class="code-highlight-row numbered"><div class="code-highlight-line"><span class="nt">&lt;/script&gt;</span>
+</div></div><div data-line="5" class="code-highlight-row numbered"><div class="code-highlight-line"> </div></div><div data-line="6" class="code-highlight-row numbered"><div class="code-highlight-line"><span class="nt">&lt;script </span><span class="na">id=</span><span class="s">"orders-dashboard-datagrid-row-template"</span> <span class="na">type=</span><span class="s">"text/html"</span><span class="nt">&gt;</span>
+</div></div><div data-line="7" class="code-highlight-row numbered"><div class="code-highlight-line">  <span class="o">&lt;</span><span class="nx">td</span><span class="o">&gt;&lt;%=</span> <span class="nx">id</span> <span class="o">%&gt;&lt;</span><span class="sr">/td</span><span class="err">&gt;</span>
+</div></div><div data-line="8" class="code-highlight-row numbered"><div class="code-highlight-line">  <span class="o">&lt;</span><span class="nx">td</span><span class="o">&gt;&lt;%=</span> <span class="nx">total</span> <span class="o">%&gt;&lt;</span><span class="sr">/td</span><span class="err">&gt;</span>
+</div></div><div data-line="9" class="code-highlight-row numbered"><div class="code-highlight-line"><span class="nt">&lt;/script&gt;</span>
+</div></div><div data-line="10" class="code-highlight-row numbered"><div class="code-highlight-line"> </div></div><div data-line="11" class="code-highlight-row numbered"><div class="code-highlight-line"><span class="nt">&lt;script </span><span class="na">id=</span><span class="s">"orders-dashboard-datagrid-template"</span> <span class="na">type=</span><span class="s">"text/html"</span><span class="nt">&gt;</span>
+</div></div><div data-line="12" class="code-highlight-row numbered"><div class="code-highlight-line">  <span class="o">&lt;</span><span class="nx">table</span><span class="o">&gt;</span>
+</div></div><div data-line="13" class="code-highlight-row numbered"><div class="code-highlight-line">    <span class="o">&lt;</span><span class="nx">thead</span><span class="o">&gt;</span>
+</div></div><div data-line="14" class="code-highlight-row numbered"><div class="code-highlight-line">      <span class="o">&lt;</span><span class="nx">tr</span><span class="o">&gt;</span>
+</div></div><div data-line="15" class="code-highlight-row numbered"><div class="code-highlight-line">        <span class="o">&lt;</span><span class="nx">th</span><span class="o">&gt;</span><span class="nx">ID</span><span class="o">&lt;</span><span class="sr">/th</span><span class="err">&gt;</span>
+</div></div><div data-line="16" class="code-highlight-row numbered"><div class="code-highlight-line">        <span class="o">&lt;</span><span class="nx">th</span><span class="o">&gt;</span><span class="nx">Total</span><span class="o">&lt;</span><span class="sr">/th</span><span class="err">&gt;</span>
+</div></div><div data-line="17" class="code-highlight-row numbered"><div class="code-highlight-line">      <span class="o">&lt;</span><span class="sr">/tr</span><span class="err">&gt;</span>
+</div></div><div data-line="18" class="code-highlight-row numbered"><div class="code-highlight-line">    <span class="o">&lt;</span><span class="sr">/thead</span><span class="err">&gt;</span>
+</div></div><div data-line="19" class="code-highlight-row numbered"><div class="code-highlight-line">    <span class="o">&lt;</span><span class="nx">tbody</span><span class="o">&gt;&lt;</span><span class="sr">/tbody</span><span class="err">&gt;</span>
+</div></div><div data-line="20" class="code-highlight-row numbered"><div class="code-highlight-line">  <span class="o">&lt;</span><span class="sr">/table</span><span class="err">&gt;</span>
+</div></div><div data-line="21" class="code-highlight-row numbered"><div class="code-highlight-line"><span class="nt">&lt;/script&gt;</span>
+</div></div><div data-line="22" class="code-highlight-row numbered"><div class="code-highlight-line"> </div></div><div data-line="23" class="code-highlight-row numbered"><div class="code-highlight-line"><span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">"main"</span><span class="nt">&gt;&lt;/div&gt;</span>
+</div></div><div data-line="24" class="code-highlight-row numbered"><div class="code-highlight-line"> </div></div><div data-line="25" class="code-highlight-row numbered"><div class="code-highlight-line"><span class="nt">&lt;script </span><span class="na">src=</span><span class="s">"app.js"</span><span class="nt">&gt;&lt;/script&gt;</span>
+</div></div><div data-line="26" class="code-highlight-row numbered"><div class="code-highlight-line"><span class="nt">&lt;script </span><span class="na">src=</span><span class="s">"orders/orders.js"</span><span class="nt">&gt;&lt;/script&gt;</span>
+</div></div><div data-line="27" class="code-highlight-row numbered"><div class="code-highlight-line"><span class="nt">&lt;script </span><span class="na">src=</span><span class="s">"orders/dashboard/dashboard.js"</span><span class="nt">&gt;&lt;/script&gt;</span>
+</div></div><div data-line="28" class="code-highlight-row numbered"><div class="code-highlight-line"><span class="nt">&lt;script </span><span class="na">src=</span><span class="s">"orders/dashboard/dataGrid.js"</span><span class="nt">&gt;&lt;/script&gt;</span>
+</div></div><div data-line="29" class="code-highlight-row numbered"><div class="code-highlight-line"><span class="nt">&lt;script&gt;</span>
+</div></div><div data-line="30" class="code-highlight-row numbered"><div class="code-highlight-line">  <span class="nx">MyApp</span><span class="p">.</span><span class="nx">start</span><span class="p">();</span>
+</div></div><div data-line="31" class="code-highlight-row numbered"><div class="code-highlight-line"><span class="nt">&lt;/script&gt;</span></div></div></pre></div></figure>
+
+<p>Finally, our HTML view.</p>
+
+<h2 id="components-are-reusable">Components Are Reusable</h2>
+
+<p>So, the datagrid module works almost perfectly as a component. It has its own logic, state, and view, but something isn’t right. Remember components are reusable. If we set up a datagrid component using a module and then want to use it multiple times, we would encounter a problem. We’re locked down to one instance of the component at any one time by the <code>controller</code> property set in the <code>addInitializer</code> call. We need to tweak our module to allow for multiple instances.</p>
+
+<figure class="code-highlight-figure"><figcaption class="code-highlight-caption"><span class="code-highlight-caption-title">orders/dashboard/dataGrid.js</span></figcaption><div class="code-highlight"><pre class="code-highlight-pre"><div data-line="1" class="code-highlight-row numbered"><div class="code-highlight-line"><span class="nx">MyApp</span><span class="p">.</span><span class="nx">module</span><span class="p">(</span><span class="s1">'Orders.Dashboard.DataGrid'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">DataGrid</span><span class="p">,</span> <span class="nx">MyApp</span><span class="p">,</span> <span class="nx">Backbone</span><span class="p">,</span> <span class="nx">Marionette</span><span class="p">,</span> <span class="nx">$</span><span class="p">,</span> <span class="nx">_</span><span class="p">)</span> <span class="p">&#x7b;</span>
+</div></div><div data-line="2" class="code-highlight-row numbered"><div class="code-highlight-line"> </div></div><div data-line="3" class="code-highlight-row numbered"><div class="code-highlight-line">  <span class="c1">// Let it start with parent now. This is usually the default for modules, but</span>
+</div></div><div data-line="4" class="code-highlight-row numbered"><div class="code-highlight-line">  <span class="c1">// I'm explicity setting it to true this time to show the difference with our</span>
+</div></div><div data-line="5" class="code-highlight-row numbered"><div class="code-highlight-line">  <span class="c1">// earlier version of this module.</span>
+</div></div><div data-line="6" class="code-highlight-row numbered"><div class="code-highlight-line">  <span class="nx">DataGrid</span><span class="p">.</span><span class="nx">startWithParent</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+</div></div><div data-line="7" class="code-highlight-row numbered"><div class="code-highlight-line"> </div></div><div data-line="8" class="code-highlight-row numbered"><div class="code-highlight-line">  <span class="c1">// Definitions for views and controller go here...</span>
+</div></div><div data-line="9" class="code-highlight-row numbered"><div class="code-highlight-line"> </div></div><div data-line="10" class="code-highlight-row numbered"><div class="code-highlight-line">  <span class="c1">// This time DON'T define initializers or finalizers. Instead we want to</span>
+</div></div><div data-line="11" class="code-highlight-row numbered"><div class="code-highlight-line">  <span class="c1">// create an interface for instantiating multiple component instances.</span>
+</div></div><div data-line="12" class="code-highlight-row numbered"><div class="code-highlight-line"> </div></div><div data-line="13" class="code-highlight-row numbered"><div class="code-highlight-line">  <span class="nx">DataGrid</span><span class="p">.</span><span class="nx">newComponent</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">options</span><span class="p">)</span> <span class="p">&#x7b;</span>
+</div></div><div data-line="14" class="code-highlight-row numbered"><div class="code-highlight-line">    <span class="k">return</span> <span class="k">new</span> <span class="nx">DataGrid</span><span class="p">.</span><span class="nx">Controller</span><span class="p">(&#x7b;</span>
+</div></div><div data-line="15" class="code-highlight-row numbered"><div class="code-highlight-line">      <span class="na">region</span><span class="p">:</span> <span class="nx">options</span><span class="p">.</span><span class="nx">region</span><span class="p">,</span>
+</div></div><div data-line="16" class="code-highlight-row numbered"><div class="code-highlight-line">      <span class="na">collection</span><span class="p">:</span> <span class="nx">options</span><span class="p">.</span><span class="nx">collection</span>
+</div></div><div data-line="17" class="code-highlight-row numbered"><div class="code-highlight-line">    <span class="p">&#x7d;);</span>
+</div></div><div data-line="18" class="code-highlight-row numbered"><div class="code-highlight-line">  <span class="p">&#x7d;;</span>
+</div></div><div data-line="19" class="code-highlight-row numbered"><div class="code-highlight-line"> </div></div><div data-line="20" class="code-highlight-row numbered"><div class="code-highlight-line"><span class="p">&#x7d;);</span></div></div></pre></div></figure>
+
+<p>Before, we depended on <code>DataGrid.start</code> to create a single instance of the component. Now, we have an interface for creating multiple component instances via our <code>DataGrid.newComponent</code> method. Therefore, we redefine our component module to automatically start with its parent, and we remove initializers and finalizers because we don’t have to depend on <code>start</code> to use our component.</p>
+
+<figure class="code-highlight-figure"><figcaption class="code-highlight-caption"><span class="code-highlight-caption-title">orders/dashboard/dashboard.js</span></figcaption><div class="code-highlight"><pre class="code-highlight-pre"><div data-line="1" class="code-highlight-row numbered"><div class="code-highlight-line"><span class="nx">MyApp</span><span class="p">.</span><span class="nx">module</span><span class="p">(</span><span class="s1">'Orders.Dashboard'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">Dashboard</span><span class="p">,</span> <span class="nx">MyApp</span><span class="p">,</span> <span class="nx">Backbone</span><span class="p">,</span> <span class="nx">Marionette</span><span class="p">,</span> <span class="nx">$</span><span class="p">,</span> <span class="nx">_</span><span class="p">)</span> <span class="p">&#x7b;</span>
+</div></div><div data-line="2" class="code-highlight-row numbered"><div class="code-highlight-line"> </div></div><div data-line="3" class="code-highlight-row numbered"><div class="code-highlight-line">  <span class="c1">// Earlier definitions...</span>
+</div></div><div data-line="4" class="code-highlight-row numbered"><div class="code-highlight-line"> </div></div><div data-line="5" class="code-highlight-row numbered"><div class="code-highlight-line">  <span class="c1">// LayoutView</span>
+</div></div><div data-line="6" class="code-highlight-row numbered"><div class="code-highlight-line">  <span class="nx">Dashboard</span><span class="p">.</span><span class="nx">LayoutView</span> <span class="o">=</span> <span class="nx">Marionette</span><span class="p">.</span><span class="nx">LayoutView</span><span class="p">.</span><span class="nx">extend</span><span class="p">(&#x7b;</span>
+</div></div><div data-line="7" class="code-highlight-row numbered"><div class="code-highlight-line">    <span class="na">template</span><span class="p">:</span> <span class="s1">'#orders-dashboard-layout-template'</span><span class="p">,</span>
+</div></div><div data-line="8" class="code-highlight-row numbered"><div class="code-highlight-line"> </div></div><div data-line="9" class="code-highlight-row numbered"><div class="code-highlight-line">    <span class="na">regions</span><span class="p">:</span> <span class="p">&#x7b;</span>
+</div></div><div data-line="10" class="code-highlight-row numbered"><div class="code-highlight-line">      <span class="na">incompleteOrders</span><span class="p">:</span> <span class="s1">'#incomplete-orders'</span><span class="p">,</span>
+</div></div><div data-line="11" class="code-highlight-row numbered"><div class="code-highlight-line">      <span class="na">submittedOrders</span><span class="p">:</span> <span class="s1">'#submitted-orders'</span><span class="p">,</span>
+</div></div><div data-line="12" class="code-highlight-row numbered"><div class="code-highlight-line">      <span class="na">shippedOrders</span><span class="p">:</span> <span class="s1">'#shipped-orders'</span>
+</div></div><div data-line="13" class="code-highlight-row numbered"><div class="code-highlight-line">    <span class="p">&#x7d;</span>
+</div></div><div data-line="14" class="code-highlight-row numbered"><div class="code-highlight-line">  <span class="p">&#x7d;);</span>
+</div></div><div data-line="15" class="code-highlight-row numbered"><div class="code-highlight-line"> </div></div><div data-line="16" class="code-highlight-row numbered"><div class="code-highlight-line">  <span class="c1">// Controller</span>
+</div></div><div data-line="17" class="code-highlight-row numbered"><div class="code-highlight-line">  <span class="nx">Dashboard</span><span class="p">.</span><span class="nx">Controller</span> <span class="o">=</span> <span class="nx">Marionette</span><span class="p">.</span><span class="nx">Controller</span><span class="p">.</span><span class="nx">extend</span><span class="p">(&#x7b;</span>
+</div></div><div data-line="18" class="code-highlight-row numbered"><div class="code-highlight-line">    <span class="na">initialize</span><span class="p">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">options</span><span class="p">)</span> <span class="p">&#x7b;</span>
+</div></div><div data-line="19" class="code-highlight-row numbered"><div class="code-highlight-line">      <span class="k">this</span><span class="p">.</span><span class="nx">region</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">region</span><span class="p">;</span>
+</div></div><div data-line="20" class="code-highlight-row numbered"><div class="code-highlight-line">    <span class="p">&#x7d;,</span>
+</div></div><div data-line="21" class="code-highlight-row numbered"><div class="code-highlight-line"> </div></div><div data-line="22" class="code-highlight-row numbered"><div class="code-highlight-line">    <span class="na">show</span><span class="p">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">&#x7b;</span>
+</div></div><div data-line="23" class="code-highlight-row numbered"><div class="code-highlight-line">      <span class="k">this</span><span class="p">.</span><span class="nx">layout</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getLayout</span><span class="p">();</span>
+</div></div><div data-line="24" class="code-highlight-row numbered"><div class="code-highlight-line">      <span class="k">this</span><span class="p">.</span><span class="nx">region</span><span class="p">.</span><span class="nx">show</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">layout</span><span class="p">);</span>
+</div></div><div data-line="25" class="code-highlight-row numbered"><div class="code-highlight-line">    <span class="p">&#x7d;,</span>
+</div></div><div data-line="26" class="code-highlight-row numbered"><div class="code-highlight-line"> </div></div><div data-line="27" class="code-highlight-row numbered"><div class="code-highlight-line">    <span class="na">getLayout</span><span class="p">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">&#x7b;</span>
+</div></div><div data-line="28" class="code-highlight-row numbered"><div class="code-highlight-line">      <span class="kd">var</span> <span class="nx">layout</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">LayoutView</span><span class="p">(&#x7b;</span>
+</div></div><div data-line="29" class="code-highlight-row numbered"><div class="code-highlight-line">        <span class="na">model</span><span class="p">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">model</span>
+</div></div><div data-line="30" class="code-highlight-row numbered"><div class="code-highlight-line">      <span class="p">&#x7d;);</span>
+</div></div><div data-line="31" class="code-highlight-row numbered"><div class="code-highlight-line"> </div></div><div data-line="32" class="code-highlight-row numbered"><div class="code-highlight-line">      <span class="k">this</span><span class="p">.</span><span class="nx">listenTo</span><span class="p">(</span><span class="nx">layout</span><span class="p">,</span> <span class="s1">'show'</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">showGrids</span><span class="p">);</span>
+</div></div><div data-line="33" class="code-highlight-row numbered"><div class="code-highlight-line"> </div></div><div data-line="34" class="code-highlight-row numbered"><div class="code-highlight-line">      <span class="k">return</span> <span class="nx">layout</span><span class="p">;</span>
+</div></div><div data-line="35" class="code-highlight-row numbered"><div class="code-highlight-line">    <span class="p">&#x7d;,</span>
+</div></div><div data-line="36" class="code-highlight-row numbered"><div class="code-highlight-line"> </div></div><div data-line="37" class="code-highlight-row numbered"><div class="code-highlight-line">    <span class="na">showGrids</span><span class="p">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">&#x7b;</span>
+</div></div><div data-line="38" class="code-highlight-row numbered"><div class="code-highlight-line">      <span class="kd">var</span> <span class="nx">dashboardOrders</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Dashboard</span><span class="p">.</span><span class="nx">DashboardOrders</span><span class="p">();</span>
+</div></div><div data-line="39" class="code-highlight-row numbered"><div class="code-highlight-line">      <span class="nx">dashboardOrders</span><span class="p">.</span><span class="nx">fetch</span><span class="p">().</span><span class="nx">then</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_showGridComponents</span><span class="p">(</span><span class="nx">dashboardOrders</span><span class="p">));</span>
+</div></div><div data-line="40" class="code-highlight-row numbered"><div class="code-highlight-line">    <span class="p">&#x7d;,</span>
+</div></div><div data-line="41" class="code-highlight-row numbered"><div class="code-highlight-line"> </div></div><div data-line="42" class="code-highlight-row numbered"><div class="code-highlight-line">    <span class="na">onDestroy</span><span class="p">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">&#x7b;</span>
+</div></div><div data-line="43" class="code-highlight-row numbered"><div class="code-highlight-line">      <span class="nx">_</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_grids</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">grid</span><span class="p">)</span> <span class="p">&#x7b;</span>
+</div></div><div data-line="44" class="code-highlight-row numbered"><div class="code-highlight-line">        <span class="nx">grid</span><span class="p">.</span><span class="nx">destroy</span><span class="p">();</span>
+</div></div><div data-line="45" class="code-highlight-row numbered"><div class="code-highlight-line">      <span class="p">&#x7d;);</span>
+</div></div><div data-line="46" class="code-highlight-row numbered"><div class="code-highlight-line"> </div></div><div data-line="47" class="code-highlight-row numbered"><div class="code-highlight-line">      <span class="k">delete</span> <span class="k">this</span><span class="p">.</span><span class="nx">_grids</span><span class="p">;</span>
+</div></div><div data-line="48" class="code-highlight-row numbered"><div class="code-highlight-line">    <span class="p">&#x7d;,</span>
+</div></div><div data-line="49" class="code-highlight-row numbered"><div class="code-highlight-line"> </div></div><div data-line="50" class="code-highlight-row numbered"><div class="code-highlight-line">    <span class="na">_showGridComponents</span><span class="p">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">dashboardOrders</span><span class="p">)</span> <span class="p">&#x7b;</span>
+</div></div><div data-line="51" class="code-highlight-row numbered"><div class="code-highlight-line">      <span class="kd">var</span> <span class="nx">self</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+</div></div><div data-line="52" class="code-highlight-row numbered"><div class="code-highlight-line">      <span class="kd">var</span> <span class="nx">layout</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">layout</span><span class="p">;</span>
+</div></div><div data-line="53" class="code-highlight-row numbered"><div class="code-highlight-line"> </div></div><div data-line="54" class="code-highlight-row numbered"><div class="code-highlight-line">      <span class="k">return</span> <span class="kd">function</span><span class="p">()</span> <span class="p">&#x7b;</span>
+</div></div><div data-line="55" class="code-highlight-row numbered"><div class="code-highlight-line">        <span class="nx">self</span><span class="p">.</span><span class="nx">_showGridComponent</span><span class="p">(</span><span class="nx">layout</span><span class="p">.</span><span class="nx">incompleteOrders</span><span class="p">,</span> <span class="nx">dashboardOrders</span><span class="p">.</span><span class="nx">incompleteOrders</span><span class="p">);</span>
+</div></div><div data-line="56" class="code-highlight-row numbered"><div class="code-highlight-line">        <span class="nx">self</span><span class="p">.</span><span class="nx">_showGridComponent</span><span class="p">(</span><span class="nx">layout</span><span class="p">.</span><span class="nx">submittedOrders</span><span class="p">,</span> <span class="nx">dashboardOrders</span><span class="p">.</span><span class="nx">submittedOrders</span><span class="p">);</span>
+</div></div><div data-line="57" class="code-highlight-row numbered"><div class="code-highlight-line">        <span class="nx">self</span><span class="p">.</span><span class="nx">_showGridComponent</span><span class="p">(</span><span class="nx">layout</span><span class="p">.</span><span class="nx">shippedOrders</span><span class="p">,</span> <span class="nx">dashboardOrders</span><span class="p">.</span><span class="nx">shippedOrders</span><span class="p">);</span>
+</div></div><div data-line="58" class="code-highlight-row numbered"><div class="code-highlight-line">      <span class="p">&#x7d;;</span>
+</div></div><div data-line="59" class="code-highlight-row numbered"><div class="code-highlight-line">    <span class="p">&#x7d;,</span>
+</div></div><div data-line="60" class="code-highlight-row numbered"><div class="code-highlight-line"> </div></div><div data-line="61" class="code-highlight-row numbered"><div class="code-highlight-line">    <span class="na">_showGridComponent</span><span class="p">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">region</span><span class="p">,</span> <span class="nx">orders</span><span class="p">)</span> <span class="p">&#x7b;</span>
+</div></div><div data-line="62" class="code-highlight-row numbered"><div class="code-highlight-line">      <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">_grids</span><span class="p">)</span> <span class="p">&#x7b;</span>
+</div></div><div data-line="63" class="code-highlight-row numbered"><div class="code-highlight-line">        <span class="k">this</span><span class="p">.</span><span class="nx">_grids</span> <span class="o">=</span> <span class="p">[];</span>
+</div></div><div data-line="64" class="code-highlight-row numbered"><div class="code-highlight-line">      <span class="p">&#x7d;</span>
+</div></div><div data-line="65" class="code-highlight-row numbered"><div class="code-highlight-line"> </div></div><div data-line="66" class="code-highlight-row numbered"><div class="code-highlight-line">      <span class="kd">var</span> <span class="nx">datagrid</span> <span class="o">=</span> <span class="nx">Dashboard</span><span class="p">.</span><span class="nx">DataGrid</span><span class="p">.</span><span class="nx">newComponent</span><span class="p">(&#x7b;</span>
+</div></div><div data-line="67" class="code-highlight-row numbered"><div class="code-highlight-line">        <span class="na">collection</span><span class="p">:</span> <span class="nx">orders</span><span class="p">,</span>
+</div></div><div data-line="68" class="code-highlight-row numbered"><div class="code-highlight-line">        <span class="na">region</span><span class="p">:</span> <span class="nx">region</span>
+</div></div><div data-line="69" class="code-highlight-row numbered"><div class="code-highlight-line">      <span class="p">&#x7d;);</span>
+</div></div><div data-line="70" class="code-highlight-row numbered"><div class="code-highlight-line"> </div></div><div data-line="71" class="code-highlight-row numbered"><div class="code-highlight-line">      <span class="k">this</span><span class="p">.</span><span class="nx">_grids</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">datagrid</span><span class="p">);</span>
+</div></div><div data-line="72" class="code-highlight-row numbered"><div class="code-highlight-line"> </div></div><div data-line="73" class="code-highlight-row numbered"><div class="code-highlight-line">      <span class="nx">datagrid</span><span class="p">.</span><span class="nx">show</span><span class="p">();</span>
+</div></div><div data-line="74" class="code-highlight-row numbered"><div class="code-highlight-line">    <span class="p">&#x7d;</span>
+</div></div><div data-line="75" class="code-highlight-row numbered"><div class="code-highlight-line">  <span class="p">&#x7d;);</span>
+</div></div><div data-line="76" class="code-highlight-row numbered"><div class="code-highlight-line"> </div></div><div data-line="77" class="code-highlight-row numbered"><div class="code-highlight-line">  <span class="c1">// Define initializers and finalizers...</span>
+</div></div><div data-line="78" class="code-highlight-row numbered"><div class="code-highlight-line"> </div></div><div data-line="79" class="code-highlight-row numbered"><div class="code-highlight-line"><span class="p">&#x7d;);</span></div></div></pre></div></figure>
+
+<figure class="code-highlight-figure"><figcaption class="code-highlight-caption"><span class="code-highlight-caption-title">html</span></figcaption><div class="code-highlight"><pre class="code-highlight-pre"><div data-line="1" class="code-highlight-row numbered"><div class="code-highlight-line"><span class="c">&lt;!-- Add our other regions --&gt;</span>
+</div></div><div data-line="2" class="code-highlight-row numbered"><div class="code-highlight-line"><span class="nt">&lt;script </span><span class="na">id=</span><span class="s">"orders-dashboard-layout-template"</span> <span class="na">type=</span><span class="s">"text/html"</span><span class="nt">&gt;</span>
+</div></div><div data-line="3" class="code-highlight-row numbered"><div class="code-highlight-line">  <span class="o">&lt;</span><span class="nx">h1</span><span class="o">&gt;</span><span class="nx">Orders</span> <span class="nx">Dashboard</span><span class="o">&lt;</span><span class="sr">/h1</span><span class="err">&gt;</span>
+</div></div><div data-line="4" class="code-highlight-row numbered"><div class="code-highlight-line">  <span class="o">&lt;</span><span class="nx">div</span> <span class="nx">id</span><span class="o">=</span><span class="s2">"incomplete-orders"</span><span class="o">&gt;&lt;</span><span class="sr">/div</span><span class="err">&gt;</span>
+</div></div><div data-line="5" class="code-highlight-row numbered"><div class="code-highlight-line">  <span class="o">&lt;</span><span class="nx">div</span> <span class="nx">id</span><span class="o">=</span><span class="s2">"submitted-orders"</span><span class="o">&gt;&lt;</span><span class="sr">/div</span><span class="err">&gt;</span>
+</div></div><div data-line="6" class="code-highlight-row numbered"><div class="code-highlight-line">  <span class="o">&lt;</span><span class="nx">div</span> <span class="nx">id</span><span class="o">=</span><span class="s2">"shipped-orders"</span><span class="o">&gt;&lt;</span><span class="sr">/div</span><span class="err">&gt;</span>
+</div></div><div data-line="7" class="code-highlight-row numbered"><div class="code-highlight-line"><span class="nt">&lt;/script&gt;</span></div></div></pre></div></figure>
+
+<p>OK, now we have a component that is reusable. We instantiate our datagrid three times to display different categories of orders on our dashboard page. This seems to work well, but we can’t deny the little bit of code smell.</p>
+
+<h2 id="create-a-component-type">Create A Component Type</h2>
+
+<p>If we want to create more components in our application, we will have to repeat the same pattern of creating a new module and setting the <code>newComponent</code> method on it. We don’t want to manually add the method to every module component. Yes, we could create a custom module with that method defined on its prototype and then let our module components inherit from it. But, that still doesn’t address the issue of using modules for something they’re not. All we’ve done is use a module as a glorified wrapper for other objects. In fact, our datagrid is really just two views and a controller. If all we really need to do is wrap other objects, then we should create a custom component type to use as our facade.</p>
+
+<figure class="code-highlight-figure"><figcaption class="code-highlight-caption"><span class="code-highlight-caption-title">lib/marionette.component.js</span></figcaption><div class="code-highlight"><pre class="code-highlight-pre"><div data-line="1" class="code-highlight-row numbered"><div class="code-highlight-line"><span class="nx">Marionette</span><span class="p">.</span><span class="nx">Application</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">component</span> <span class="o">=</span>
+</div></div><div data-line="2" class="code-highlight-row numbered"><div class="code-highlight-line"><span class="nx">Marionette</span><span class="p">.</span><span class="nx">Module</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">component</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">name</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span> <span class="p">&#x7b;</span>
+</div></div><div data-line="3" class="code-highlight-row numbered"><div class="code-highlight-line">  <span class="kd">var</span> <span class="nx">Component</span> <span class="o">=</span> <span class="k">this</span><span class="p">[</span><span class="nx">name</span><span class="p">];</span>
+</div></div><div data-line="4" class="code-highlight-row numbered"><div class="code-highlight-line"> </div></div><div data-line="5" class="code-highlight-row numbered"><div class="code-highlight-line">  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">Component</span><span class="p">)</span> <span class="p">&#x7b;</span>
+</div></div><div data-line="6" class="code-highlight-row numbered"><div class="code-highlight-line">    <span class="nx">Component</span> <span class="o">=</span> <span class="nx">Marionette</span><span class="p">.</span><span class="nx">Component</span><span class="p">.</span><span class="nx">extend</span><span class="p">(</span><span class="nx">options</span><span class="p">);</span>
+</div></div><div data-line="7" class="code-highlight-row numbered"><div class="code-highlight-line">    <span class="k">this</span><span class="p">[</span><span class="nx">name</span><span class="p">]</span> <span class="o">=</span> <span class="nx">Component</span><span class="p">;</span>
+</div></div><div data-line="8" class="code-highlight-row numbered"><div class="code-highlight-line">  <span class="p">&#x7d;</span>
+</div></div><div data-line="9" class="code-highlight-row numbered"><div class="code-highlight-line"> </div></div><div data-line="10" class="code-highlight-row numbered"><div class="code-highlight-line">  <span class="k">return</span> <span class="nx">Component</span><span class="p">;</span>
+</div></div><div data-line="11" class="code-highlight-row numbered"><div class="code-highlight-line"><span class="p">&#x7d;;</span>
+</div></div><div data-line="12" class="code-highlight-row numbered"><div class="code-highlight-line"> </div></div><div data-line="13" class="code-highlight-row numbered"><div class="code-highlight-line"><span class="nx">Marionette</span><span class="p">.</span><span class="nx">Component</span> <span class="o">=</span> <span class="nx">Marionette</span><span class="p">.</span><span class="nx">Controller</span><span class="p">.</span><span class="nx">extend</span><span class="p">(&#x7b;</span>
+</div></div><div data-line="14" class="code-highlight-row numbered"><div class="code-highlight-line">  <span class="na">constructor</span><span class="p">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">options</span><span class="p">)</span> <span class="p">&#x7b;</span>
+</div></div><div data-line="15" class="code-highlight-row numbered"><div class="code-highlight-line">    <span class="nx">options</span> <span class="o">=</span> <span class="nx">options</span> <span class="o">||</span> <span class="p">&#x7b;&#x7d;;</span>
+</div></div><div data-line="16" class="code-highlight-row numbered"><div class="code-highlight-line"> </div></div><div data-line="17" class="code-highlight-row numbered"><div class="code-highlight-line">    <span class="k">this</span><span class="p">.</span><span class="nx">region</span>     <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">region</span><span class="p">;</span>
+</div></div><div data-line="18" class="code-highlight-row numbered"><div class="code-highlight-line">    <span class="k">this</span><span class="p">.</span><span class="nx">model</span>      <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">model</span><span class="p">;</span>
+</div></div><div data-line="19" class="code-highlight-row numbered"><div class="code-highlight-line">    <span class="k">this</span><span class="p">.</span><span class="nx">collection</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">collection</span><span class="p">;</span>
+</div></div><div data-line="20" class="code-highlight-row numbered"><div class="code-highlight-line"> </div></div><div data-line="21" class="code-highlight-row numbered"><div class="code-highlight-line">    <span class="nx">Marionette</span><span class="p">.</span><span class="nx">Controller</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">constructor</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">);</span>
+</div></div><div data-line="22" class="code-highlight-row numbered"><div class="code-highlight-line">  <span class="p">&#x7d;,</span>
+</div></div><div data-line="23" class="code-highlight-row numbered"><div class="code-highlight-line"> </div></div><div data-line="24" class="code-highlight-row numbered"><div class="code-highlight-line">  <span class="na">show</span><span class="p">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">&#x7b;</span>
+</div></div><div data-line="25" class="code-highlight-row numbered"><div class="code-highlight-line">    <span class="k">this</span><span class="p">.</span><span class="nx">showView</span><span class="p">();</span>
+</div></div><div data-line="26" class="code-highlight-row numbered"><div class="code-highlight-line">  <span class="p">&#x7d;,</span>
+</div></div><div data-line="27" class="code-highlight-row numbered"><div class="code-highlight-line"> </div></div><div data-line="28" class="code-highlight-row numbered"><div class="code-highlight-line">  <span class="na">showView</span><span class="p">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">&#x7b;</span>
+</div></div><div data-line="29" class="code-highlight-row numbered"><div class="code-highlight-line">    <span class="kd">var</span> <span class="nx">view</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">view</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getView</span><span class="p">();</span>
+</div></div><div data-line="30" class="code-highlight-row numbered"><div class="code-highlight-line"> </div></div><div data-line="31" class="code-highlight-row numbered"><div class="code-highlight-line">    <span class="k">this</span><span class="p">.</span><span class="nx">listenTo</span><span class="p">(</span><span class="nx">view</span><span class="p">,</span> <span class="s1">'show'</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">&#x7b;</span>
+</div></div><div data-line="32" class="code-highlight-row numbered"><div class="code-highlight-line">      <span class="k">this</span><span class="p">.</span><span class="nx">triggerMethod</span><span class="p">(</span><span class="s1">'show:view'</span><span class="p">);</span>
+</div></div><div data-line="33" class="code-highlight-row numbered"><div class="code-highlight-line">    <span class="p">&#x7d;);</span>
+</div></div><div data-line="34" class="code-highlight-row numbered"><div class="code-highlight-line"> </div></div><div data-line="35" class="code-highlight-row numbered"><div class="code-highlight-line">    <span class="k">this</span><span class="p">.</span><span class="nx">region</span><span class="p">.</span><span class="nx">show</span><span class="p">(</span><span class="nx">view</span><span class="p">);</span>
+</div></div><div data-line="36" class="code-highlight-row numbered"><div class="code-highlight-line">  <span class="p">&#x7d;</span>
+</div></div><div data-line="37" class="code-highlight-row numbered"><div class="code-highlight-line"><span class="p">&#x7d;);</span>
+</div></div><div data-line="38" class="code-highlight-row numbered"><div class="code-highlight-line"> </div></div><div data-line="39" class="code-highlight-row numbered"><div class="code-highlight-line"><span class="nx">Marionette</span><span class="p">.</span><span class="nx">Component</span><span class="p">.</span><span class="nx">define</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">options</span><span class="p">)</span> <span class="p">&#x7b;</span>
+</div></div><div data-line="40" class="code-highlight-row numbered"><div class="code-highlight-line">  <span class="nx">_</span><span class="p">.</span><span class="nx">extend</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">prototype</span><span class="p">,</span> <span class="nx">options</span><span class="p">);</span>
+</div></div><div data-line="41" class="code-highlight-row numbered"><div class="code-highlight-line"><span class="p">&#x7d;;</span></div></div></pre></div></figure>
+
+<p>So, we’ve defined a new type: <code>Marionette.Component</code>. This component type is based off work Derick Bailey did when he and I developed together on a project. To actually create or use a component, we call <code>component</code> on an instance of a Marionette application or module. It attaches the component to the receiver and takes in options to add to the component prototype. We can also call <code>define</code> on our component type to add other properties to the prototype.</p>
+
+<p>Notice the component type makes some assumptions about how it will be used. It takes a region for displaying itself along with a model and/or a collection. It has a <code>show</code> method, where it calls <code>showView</code>. Notice that <code>showView</code> calls <code>getView</code> but doesn’t define it. When you create your own custom component type through this interface, you need to supply a <code>getView</code> method that returns your custom view instance (item view, collection view, layout view, etc.).</p>
+
+<p>The component also listens for the <code>show</code> event on the view and triggers an <code>onShowView</code> method via the <code>this.triggerMethod('show:view')</code> call. So, you can also define an <code>onShowView</code> method if you need to do additional work after the view is displayed. Finally, the component displays the view in the supplied region.</p>
+
+<p>Let’s use our new component type to redefine our datagrid component.</p>
+
+<figure class="code-highlight-figure"><figcaption class="code-highlight-caption"><span class="code-highlight-caption-title">orders/dashboard/dataGrid.js</span></figcaption><div class="code-highlight"><pre class="code-highlight-pre"><div data-line="1" class="code-highlight-row numbered"><div class="code-highlight-line"><span class="c1">// Define the component under the dashboard module now</span>
+</div></div><div data-line="2" class="code-highlight-row numbered"><div class="code-highlight-line"><span class="nx">MyApp</span><span class="p">.</span><span class="nx">module</span><span class="p">(</span><span class="s1">'Orders.Dashboard'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">Dashboard</span><span class="p">,</span> <span class="nx">MyApp</span><span class="p">,</span> <span class="nx">Backbone</span><span class="p">,</span> <span class="nx">Marionette</span><span class="p">,</span> <span class="nx">$</span><span class="p">,</span> <span class="nx">_</span><span class="p">)</span> <span class="p">&#x7b;</span>
+</div></div><div data-line="3" class="code-highlight-row numbered"><div class="code-highlight-line"> </div></div><div data-line="4" class="code-highlight-row numbered"><div class="code-highlight-line">  <span class="c1">// Instead of a controller, use our module `component` method</span>
+</div></div><div data-line="5" class="code-highlight-row numbered"><div class="code-highlight-line">  <span class="kd">var</span> <span class="nx">DataGrid</span> <span class="o">=</span> <span class="nx">Dashboard</span><span class="p">.</span><span class="nx">component</span><span class="p">(</span><span class="s1">'DataGrid'</span><span class="p">);</span>
+</div></div><div data-line="6" class="code-highlight-row numbered"><div class="code-highlight-line"> </div></div><div data-line="7" class="code-highlight-row numbered"><div class="code-highlight-line">  <span class="c1">// Views stay the same from the previous version...</span>
+</div></div><div data-line="8" class="code-highlight-row numbered"><div class="code-highlight-line"> </div></div><div data-line="9" class="code-highlight-row numbered"><div class="code-highlight-line">  <span class="c1">// Define the actual component type</span>
+</div></div><div data-line="10" class="code-highlight-row numbered"><div class="code-highlight-line">  <span class="nx">DataGrid</span><span class="p">.</span><span class="nx">define</span><span class="p">(&#x7b;</span>
+</div></div><div data-line="11" class="code-highlight-row numbered"><div class="code-highlight-line">    <span class="na">getView</span><span class="p">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">&#x7b;</span>
+</div></div><div data-line="12" class="code-highlight-row numbered"><div class="code-highlight-line">      <span class="kd">var</span> <span class="nx">gridView</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">DataGrid</span><span class="p">.</span><span class="nx">GridView</span><span class="p">(&#x7b;</span>
+</div></div><div data-line="13" class="code-highlight-row numbered"><div class="code-highlight-line">        <span class="na">collection</span><span class="p">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">collection</span>
+</div></div><div data-line="14" class="code-highlight-row numbered"><div class="code-highlight-line">      <span class="p">&#x7d;);</span>
+</div></div><div data-line="15" class="code-highlight-row numbered"><div class="code-highlight-line"> </div></div><div data-line="16" class="code-highlight-row numbered"><div class="code-highlight-line">      <span class="k">this</span><span class="p">.</span><span class="nx">listenTo</span><span class="p">(</span><span class="nx">gridView</span><span class="p">,</span> <span class="s1">'foo'</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">doBar</span><span class="p">);</span>
+</div></div><div data-line="17" class="code-highlight-row numbered"><div class="code-highlight-line"> </div></div><div data-line="18" class="code-highlight-row numbered"><div class="code-highlight-line">      <span class="k">return</span> <span class="nx">gridView</span><span class="p">;</span>
+</div></div><div data-line="19" class="code-highlight-row numbered"><div class="code-highlight-line">    <span class="p">&#x7d;,</span>
+</div></div><div data-line="20" class="code-highlight-row numbered"><div class="code-highlight-line"> </div></div><div data-line="21" class="code-highlight-row numbered"><div class="code-highlight-line">    <span class="na">doBar</span><span class="p">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">&#x7b;</span>
+</div></div><div data-line="22" class="code-highlight-row numbered"><div class="code-highlight-line">      <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">'I did bar!'</span><span class="p">);</span>
+</div></div><div data-line="23" class="code-highlight-row numbered"><div class="code-highlight-line">    <span class="p">&#x7d;</span>
+</div></div><div data-line="24" class="code-highlight-row numbered"><div class="code-highlight-line">  <span class="p">&#x7d;);</span>
+</div></div><div data-line="25" class="code-highlight-row numbered"><div class="code-highlight-line"> </div></div><div data-line="26" class="code-highlight-row numbered"><div class="code-highlight-line"><span class="p">&#x7d;);</span></div></div></pre></div></figure>
+
+<p>Notice that we still define the component within a module, but we’re just reopening up our dashboard module to create the datagrid component on it. We still define the views in the same way, and then we define the datagrid type. Since we made assumptions about how components should be used (for example, take some basic options in their constructor and provide a <code>show</code> method), all we need to define is our <code>getView</code> method and any other custom logic we require.</p>
+
+<figure class="code-highlight-figure"><figcaption class="code-highlight-caption"><span class="code-highlight-caption-title">orders/dashboard/dashboard.js</span></figcaption><div class="code-highlight"><pre class="code-highlight-pre"><div data-line="1" class="code-highlight-row numbered"><div class="code-highlight-line"><span class="nx">MyApp</span><span class="p">.</span><span class="nx">module</span><span class="p">(</span><span class="s1">'Orders.Dashboard'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">Dashboard</span><span class="p">,</span> <span class="nx">MyApp</span><span class="p">,</span> <span class="nx">Backbone</span><span class="p">,</span> <span class="nx">Marionette</span><span class="p">,</span> <span class="nx">$</span><span class="p">,</span> <span class="nx">_</span><span class="p">)</span> <span class="p">&#x7b;</span>
+</div></div><div data-line="2" class="code-highlight-row numbered"><div class="code-highlight-line"> </div></div><div data-line="3" class="code-highlight-row numbered"><div class="code-highlight-line">  <span class="c1">// Earlier definitions...</span>
+</div></div><div data-line="4" class="code-highlight-row numbered"><div class="code-highlight-line"> </div></div><div data-line="5" class="code-highlight-row numbered"><div class="code-highlight-line">  <span class="c1">// Redefine our controller method for showing a grid</span>
+</div></div><div data-line="6" class="code-highlight-row numbered"><div class="code-highlight-line">  <span class="nx">Dashboard</span><span class="p">.</span><span class="nx">Controller</span> <span class="o">=</span> <span class="nx">Marionette</span><span class="p">.</span><span class="nx">Controller</span><span class="p">.</span><span class="nx">extend</span><span class="p">(&#x7b;</span>
+</div></div><div data-line="7" class="code-highlight-row numbered"><div class="code-highlight-line">    <span class="c1">// Earlier method definitions...</span>
+</div></div><div data-line="8" class="code-highlight-row numbered"><div class="code-highlight-line"> </div></div><div data-line="9" class="code-highlight-row numbered"><div class="code-highlight-line">    <span class="na">_showGridComponent</span><span class="p">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">region</span><span class="p">,</span> <span class="nx">order</span><span class="p">)</span> <span class="p">&#x7b;</span>
+</div></div><div data-line="10" class="code-highlight-row numbered"><div class="code-highlight-line">      <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">_grids</span><span class="p">)</span> <span class="p">&#x7b;</span>
+</div></div><div data-line="11" class="code-highlight-row numbered"><div class="code-highlight-line">        <span class="k">this</span><span class="p">.</span><span class="nx">_grids</span> <span class="o">=</span> <span class="p">[];</span>
+</div></div><div data-line="12" class="code-highlight-row numbered"><div class="code-highlight-line">      <span class="p">&#x7d;</span>
+</div></div><div data-line="13" class="code-highlight-row numbered"><div class="code-highlight-line"> </div></div><div data-line="14" class="code-highlight-row numbered"><div class="code-highlight-line">      <span class="kd">var</span> <span class="nx">datagrid</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Dashboard</span><span class="p">.</span><span class="nx">DataGrid</span><span class="p">(&#x7b;</span>
+</div></div><div data-line="15" class="code-highlight-row numbered"><div class="code-highlight-line">        <span class="na">collection</span><span class="p">:</span> <span class="nx">orders</span><span class="p">,</span>
+</div></div><div data-line="16" class="code-highlight-row numbered"><div class="code-highlight-line">        <span class="na">region</span><span class="p">:</span> <span class="nx">region</span>
+</div></div><div data-line="17" class="code-highlight-row numbered"><div class="code-highlight-line">      <span class="p">&#x7d;);</span>
+</div></div><div data-line="18" class="code-highlight-row numbered"><div class="code-highlight-line"> </div></div><div data-line="19" class="code-highlight-row numbered"><div class="code-highlight-line">      <span class="k">this</span><span class="p">.</span><span class="nx">_grids</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">datagrid</span><span class="p">);</span>
+</div></div><div data-line="20" class="code-highlight-row numbered"><div class="code-highlight-line"> </div></div><div data-line="21" class="code-highlight-row numbered"><div class="code-highlight-line">      <span class="nx">datagrid</span><span class="p">.</span><span class="nx">show</span><span class="p">();</span>
+</div></div><div data-line="22" class="code-highlight-row numbered"><div class="code-highlight-line">    <span class="p">&#x7d;</span>
+</div></div><div data-line="23" class="code-highlight-row numbered"><div class="code-highlight-line">  <span class="p">&#x7d;);</span>
+</div></div><div data-line="24" class="code-highlight-row numbered"><div class="code-highlight-line"> </div></div><div data-line="25" class="code-highlight-row numbered"><div class="code-highlight-line">  <span class="c1">// Define initializers and finalizers...</span>
+</div></div><div data-line="26" class="code-highlight-row numbered"><div class="code-highlight-line"> </div></div><div data-line="27" class="code-highlight-row numbered"><div class="code-highlight-line"><span class="p">&#x7d;);</span></div></div></pre></div></figure>
+
+<p>We make sure to update our dashboard controller to instantiate the datagrid components with the new component type constructor.</p>
+
+<figure class="code-highlight-figure"><figcaption class="code-highlight-caption"><span class="code-highlight-caption-title">scripts</span></figcaption><div class="code-highlight"><pre class="code-highlight-pre"><div data-line="1" class="code-highlight-row numbered"><div class="code-highlight-line"><span class="nt">&lt;script </span><span class="na">src=</span><span class="s">"app.js"</span><span class="nt">&gt;&lt;/script&gt;</span>
+</div></div><div data-line="2" class="code-highlight-row numbered"><div class="code-highlight-line"><span class="nt">&lt;script </span><span class="na">src=</span><span class="s">"lib/marionette.component.js"</span><span class="nt">&gt;&lt;/script&gt;</span>
+</div></div><div data-line="3" class="code-highlight-row numbered"><div class="code-highlight-line"><span class="nt">&lt;script </span><span class="na">src=</span><span class="s">"orders/orders.js"</span><span class="nt">&gt;&lt;/script&gt;</span>
+</div></div><div data-line="4" class="code-highlight-row numbered"><div class="code-highlight-line"><span class="nt">&lt;script </span><span class="na">src=</span><span class="s">"orders/dashboard/dashboard.js"</span><span class="nt">&gt;&lt;/script&gt;</span>
+</div></div><div data-line="5" class="code-highlight-row numbered"><div class="code-highlight-line"><span class="nt">&lt;script </span><span class="na">src=</span><span class="s">"orders/dashboard/dataGrid.js"</span><span class="nt">&gt;&lt;/script&gt;</span></div></div></pre></div></figure>
+
+<p>Finally, we add the component source file to our loaded scripts.</p>
+
+<h2 id="conclusion">Conclusion</h2>
+
+<p>So, we now understand how to build reusable components in Backbone.js and Marionette.js. We’ve learned that components allow us to reduce the amount of code we need to write and afford us more scaleable applications. I think this simple approach to components in Marionette can go a long way toward building modular applications. I’m sure there are ways to improve our component type and reduce even more repeated patterns. I know our method of defining and using modules could use some refactoring, possibly incorporating some of the same ideas we used to make our custom component type.</p>
+
+<p>I hope you enjoyed this post, and I look forward to any questions or feedback!</p>
 
       <div class="social-share">
   <ul class="inline-list">

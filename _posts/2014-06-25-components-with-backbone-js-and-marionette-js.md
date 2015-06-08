@@ -31,10 +31,7 @@ As previously stated, Marionette offers modules, which are our go-to objects for
 
 However, we can use modules to act as components in Marionette. Let's walk through building a datagrid component for an orders dashboard page. (If you're unfamiliar with Marionette's objects and syntax, I encourage you to look at the docs on the GitHub repo [marionettejs/backbone.marionette](https://github.com/marionettejs/backbone.marionette) first.)
 
-{% highlight javascript linenos %}
-// File: app.js
-// ------------
-
+```js title:"app.js"
 var MyApp = new Marionette.Application();
 
 // Helper for switching modules, or sub apps
@@ -61,14 +58,11 @@ MyApp.addRegions({
 MyApp.on('start', function() {
   Backbone.history.start();
 });
-{% endhighlight %}
+```
 
 Here we set up our base application called `MyApp`, attach an existing HTML element with id `#main` to the app's `mainRegion`, and listen for the app's `start` event to make sure Backbone history is running. We also add a simple helper method `startSubApp` for managing the currently running sub-application, or module.
 
-{% highlight javascript linenos %}
-// File: orders/orders.js
-// ----------------------
-
+```js title:"orders/orders.js"
 // Define our orders module
 MyApp.module('Orders', function(Orders, MyApp, Backbone, Marionette, $, _) {
 
@@ -97,14 +91,11 @@ MyApp.module('Orders', function(Orders, MyApp, Backbone, Marionette, $, _) {
   });
 
 });
-{% endhighlight %}
+```
 
 This is our main orders module. We define the module, a router, and a controller for orders-related functionality. We ensure everything is properly wired up with a call to `addInitializer` on the module as well. Notice in `Orders.Controller#ordersDashboard` we start up and show the `Orders.Dashboard` submodule, which we define below.
 
-{% highlight javascript linenos %}
-// File: orders/dashboard/dashboard.js
-// -----------------------------------
-
+```js title:"orders/dashboard/dashboard.js"
 // Define our dashboard submodule
 MyApp.module('Orders.Dashboard', function(Dashboard, MyApp, Backbone, Marionette, $, _) {
 
@@ -189,14 +180,11 @@ MyApp.module('Orders.Dashboard', function(Dashboard, MyApp, Backbone, Marionette
   });
 
 });
-{% endhighlight %}
+```
 
 This is our `Dashboard` submodule. Notice we set `Dashboard.startWithParent = false`. This prevents the module from automatically running because we will want it to start only when we need it. In the controller after we show the layout, we fetch the dashboard orders and display the incomplete orders in a datagrid component via `showGrid` and `_showGridComponent`. If our module is stopped, we make sure to also stop the datagrid component in `onDestroy`.
 
-{% highlight javascript linenos %}
-// File: orders/dashboard/dataGrid.js
-// ----------------------------------
-
+```js title:"orders/dashboard/dataGrid.js"
 // Define our datagrid module component
 MyApp.module('Orders.Dashboard.DataGrid', function(DataGrid, MyApp, Backbone, Marionette, $, _) {
 
@@ -256,13 +244,11 @@ MyApp.module('Orders.Dashboard.DataGrid', function(DataGrid, MyApp, Backbone, Ma
   });
 
 });
-{% endhighlight %}
+```
 
 This is our `DataGrid` module component. Notice, we've set it up similar to the `Dashboard` module. We can instantiate our component and use it with `DataGrid.start` followed by `DataGrid.controller.show`.
 
-{% highlight html linenos %}
-<!-- Our view -->
-
+```html title:"view"
 <script id="orders-dashboard-layout-template" type="text/html">
   <h1>Orders Dashboard</h1>
   <div id="incomplete-orders"></div>
@@ -294,7 +280,7 @@ This is our `DataGrid` module component. Notice, we've set it up similar to the 
 <script>
   MyApp.start();
 </script>
-{% endhighlight %}
+```
 
 Finally, our HTML view.
 
@@ -302,10 +288,7 @@ Finally, our HTML view.
 
 So, the datagrid module works almost perfectly as a component. It has its own logic, state, and view, but something isn't right. Remember components are reusable. If we set up a datagrid component using a module and then want to use it multiple times, we would encounter a problem. We're locked down to one instance of the component at any one time by the `controller` property set in the `addInitializer` call. We need to tweak our module to allow for multiple instances.
 
-{% highlight javascript linenos %}
-// File: orders/dashboard/dataGrid.js
-// ----------------------------------
-
+```js title:"orders/dashboard/dataGrid.js"
 MyApp.module('Orders.Dashboard.DataGrid', function(DataGrid, MyApp, Backbone, Marionette, $, _) {
 
   // Let it start with parent now. This is usually the default for modules, but
@@ -326,14 +309,11 @@ MyApp.module('Orders.Dashboard.DataGrid', function(DataGrid, MyApp, Backbone, Ma
   };
 
 });
-{% endhighlight %}
+```
 
 Before, we depended on `DataGrid.start` to create a single instance of the component. Now, we have an interface for creating multiple component instances via our `DataGrid.newComponent` method. Therefore, we redefine our component module to automatically start with its parent, and we remove initializers and finalizers because we don't have to depend on `start` to use our component.
 
-{% highlight javascript linenos %}
-// File: orders/dashboard/dashboard.js
-// -----------------------------------
-
+```js title:"orders/dashboard/dashboard.js"
 MyApp.module('Orders.Dashboard', function(Dashboard, MyApp, Backbone, Marionette, $, _) {
 
   // Earlier definitions...
@@ -413,9 +393,9 @@ MyApp.module('Orders.Dashboard', function(Dashboard, MyApp, Backbone, Marionette
   // Define initializers and finalizers...
 
 });
-{% endhighlight %}
+```
 
-{% highlight html linenos %}
+```html title:"html"
 <!-- Add our other regions -->
 <script id="orders-dashboard-layout-template" type="text/html">
   <h1>Orders Dashboard</h1>
@@ -423,7 +403,7 @@ MyApp.module('Orders.Dashboard', function(Dashboard, MyApp, Backbone, Marionette
   <div id="submitted-orders"></div>
   <div id="shipped-orders"></div>
 </script>
-{% endhighlight %}
+```
 
 OK, now we have a component that is reusable. We instantiate our datagrid three times to display different categories of orders on our dashboard page. This seems to work well, but we can't deny the little bit of code smell.
 
@@ -431,10 +411,7 @@ OK, now we have a component that is reusable. We instantiate our datagrid three 
 
 If we want to create more components in our application, we will have to repeat the same pattern of creating a new module and setting the `newComponent` method on it. We don't want to manually add the method to every module component. Yes, we could create a custom module with that method defined on its prototype and then let our module components inherit from it. But, that still doesn't address the issue of using modules for something they're not. All we've done is use a module as a glorified wrapper for other objects. In fact, our datagrid is really just two views and a controller. If all we really need to do is wrap other objects, then we should create a custom component type to use as our facade.
 
-{% highlight javascript linenos %}
-// File: lib/marionette.component.js
-// ---------------------------------
-
+```js title:"lib/marionette.component.js"
 Marionette.Application.prototype.component =
 Marionette.Module.prototype.component = function(name, options) {
   var Component = this[name];
@@ -476,7 +453,7 @@ Marionette.Component = Marionette.Controller.extend({
 Marionette.Component.define = function(options) {
   _.extend(this.prototype, options);
 };
-{% endhighlight %}
+```
 
 So, we've defined a new type: `Marionette.Component`. This component type is based off work Derick Bailey did when he and I developed together on a project. To actually create or use a component, we call `component` on an instance of a Marionette application or module. It attaches the component to the receiver and takes in options to add to the component prototype. We can also call `define` on our component type to add other properties to the prototype.
 
@@ -486,10 +463,7 @@ The component also listens for the `show` event on the view and triggers an `onS
 
 Let's use our new component type to redefine our datagrid component.
 
-{% highlight javascript linenos %}
-// File: orders/dashboard/dataGrid.js
-// ----------------------------------
-
+```js title:"orders/dashboard/dataGrid.js"
 // Define the component under the dashboard module now
 MyApp.module('Orders.Dashboard', function(Dashboard, MyApp, Backbone, Marionette, $, _) {
 
@@ -516,14 +490,11 @@ MyApp.module('Orders.Dashboard', function(Dashboard, MyApp, Backbone, Marionette
   });
 
 });
-{% endhighlight %}
+```
 
 Notice that we still define the component within a module, but we're just reopening up our dashboard module to create the datagrid component on it. We still define the views in the same way, and then we define the datagrid type. Since we made assumptions about how components should be used (for example, take some basic options in their constructor and provide a `show` method), all we need to define is our `getView` method and any other custom logic we require.
 
-{% highlight javascript linenos %}
-// File: orders/dashboard/dashboard.js
-// -----------------------------------
-
+```js title:"orders/dashboard/dashboard.js"
 MyApp.module('Orders.Dashboard', function(Dashboard, MyApp, Backbone, Marionette, $, _) {
 
   // Earlier definitions...
@@ -551,17 +522,17 @@ MyApp.module('Orders.Dashboard', function(Dashboard, MyApp, Backbone, Marionette
   // Define initializers and finalizers...
 
 });
-{% endhighlight %}
+```
 
 We make sure to update our dashboard controller to instantiate the datagrid components with the new component type constructor.
 
-{% highlight html linenos %}
+```html title:"scripts"
 <script src="app.js"></script>
 <script src="lib/marionette.component.js"></script>
 <script src="orders/orders.js"></script>
 <script src="orders/dashboard/dashboard.js"></script>
 <script src="orders/dashboard/dataGrid.js"></script>
-{% endhighlight %}
+```
 
 Finally, we add the component source file to our loaded scripts.
 
