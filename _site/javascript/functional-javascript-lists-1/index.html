@@ -31,8 +31,6 @@
 
 
 
-
-
 <link rel="canonical" href="http://blog.jeremyfairbank.com/javascript/functional-javascript-lists-1/">
 <link href="http://blog.jeremyfairbank.com/feed.xml" type="application/atom+xml" rel="alternate" title="Jeremy Fairbank Blog Feed">
 <link rel="author" href="http://plus.google.com/+JeremyFairbank?rel=author">
@@ -43,6 +41,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <!-- For all browsers -->
+<link href='/stylesheets/all-b8c2da235318df18791e8ddcdf81de63.css' media='all' rel='stylesheet' type='text/css'>
 <link rel="stylesheet" href="http://blog.jeremyfairbank.com/assets/css/main.css">
 
 <meta http-equiv="cleartype" content="on">
@@ -71,7 +70,6 @@
 <link rel="apple-touch-icon-precomposed" sizes="114x114" href="http://blog.jeremyfairbank.com/images/apple-touch-icon-114x114-precomposed.png">
 <!-- 144x144 (precomposed) for iPad 3rd and 4th generation -->
 <link rel="apple-touch-icon-precomposed" sizes="144x144" href="http://blog.jeremyfairbank.com/images/apple-touch-icon-144x144-precomposed.png">
-
 </head>
 
 <body class="post">
@@ -105,10 +103,7 @@
 
 <div id="main" role="main">
   <div class="article-author-side">
-    
-
-
-<div itemscope itemtype="http://data-vocabulary.org/Person">
+    <div itemscope itemtype="http://data-vocabulary.org/Person">
   
     <img itemprop="photo" src="http://blog.jeremyfairbank.com/images/bio-photo-1.jpg" class="bio-photo" alt="Jeremy Fairbank bio photo">
   
@@ -135,7 +130,6 @@
   
   
 </div>
-
   </div>
   <article class="post">
     <div class="headline-wrap">
@@ -157,22 +151,21 @@
     </li>
   </ul>
 </div>
-
       <section id="table-of-contents" class="toc">
   <header>
     <h3>Contents</h3>
   </header>
 <div id="drawer">
 <ul id="markdown-toc">
-  <li><a href="#recursion-and-immutability">Recursion and Immutability</a></li>
-  <li><a href="#the-list">The List</a></li>
-  <li><a href="#implementing-the-list">Implementing the List</a></li>
-  <li><a href="#implementing-map-and-reduce">Implementing Map and Reduce</a>    <ul>
-      <li><a href="#map">Map</a></li>
-      <li><a href="#reduce">Reduce</a></li>
+  <li><a href="#recursion-and-immutability" id="markdown-toc-recursion-and-immutability">Recursion and Immutability</a></li>
+  <li><a href="#the-list" id="markdown-toc-the-list">The List</a></li>
+  <li><a href="#implementing-the-list" id="markdown-toc-implementing-the-list">Implementing the List</a></li>
+  <li><a href="#implementing-map-and-reduce" id="markdown-toc-implementing-map-and-reduce">Implementing Map and Reduce</a>    <ul>
+      <li><a href="#map" id="markdown-toc-map">Map</a></li>
+      <li><a href="#reduce" id="markdown-toc-reduce">Reduce</a></li>
     </ul>
   </li>
-  <li><a href="#wrapping-it-up">Wrapping It Up</a></li>
+  <li><a href="#wrapping-it-up" id="markdown-toc-wrapping-it-up">Wrapping It Up</a></li>
 </ul>
 
   </div>
@@ -204,37 +197,23 @@ upon them for a minute.</p>
 OK… but what does that accomplish? Well, one classic example is implementing
 a function to calculate the value of the Fibonacci sequence at a given number <code>n</code>:</p>
 
-<div id="gist-4cdab1438cd8b66ef090-fib-js">
-<script src="https://gist.github.com/4cdab1438cd8b66ef090.js?file=fib.js"></script>
-<noscript>
-<pre>function fib(n) {
-  if (n === 0) {
-    return 0;
-  }
-  
-  if (n === 1) {
-    return 1;
-  }
-  
-  return fib(n - 1) + fib(n - 2);
-}</pre>
-</noscript>
-</div>
+<figure class="code-highlight-figure"><figcaption class="code-highlight-caption"><span class="code-highlight-caption-title">fib.js</span><a class="code-highlight-caption-link" href="https://gist.github.com/4cdab1438cd8b66ef090">link</a></figcaption><div class="code-highlight"><pre class="code-highlight-pre"><div data-line="1" class="code-highlight-row numbered"><div class="code-highlight-line"><span class="kd">function</span> <span class="nx">fib</span><span class="p">(</span><span class="nx">n</span><span class="p">)</span> <span class="p">&#x7b;</span>
+</div></div><div data-line="2" class="code-highlight-row numbered"><div class="code-highlight-line">  <span class="k">if</span> <span class="p">(</span><span class="nx">n</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">)</span> <span class="p">&#x7b;</span>
+</div></div><div data-line="3" class="code-highlight-row numbered"><div class="code-highlight-line">    <span class="k">return</span> <span class="nx">n</span><span class="p">;</span>
+</div></div><div data-line="4" class="code-highlight-row numbered"><div class="code-highlight-line">  <span class="p">&#x7d;</span>
+</div></div><div data-line="5" class="code-highlight-row numbered"><div class="code-highlight-line"> </div></div><div data-line="6" class="code-highlight-row numbered"><div class="code-highlight-line">  <span class="k">return</span> <span class="nx">fib</span><span class="p">(</span><span class="nx">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="nx">fib</span><span class="p">(</span><span class="nx">n</span> <span class="o">-</span> <span class="mi">2</span><span class="p">);</span>
+</div></div><div data-line="7" class="code-highlight-row numbered"><div class="code-highlight-line"><span class="p">&#x7d;</span></div></div></pre></div></figure>
 
 <p>Notice that we call our <code>fib</code> function inside itself for inputs <code>n &gt; 1</code>. We return
 the result of <code>fib(n - 1) + fib(n - 2)</code> to get the final answer. If we were to
 trace calls to <code>fib</code> for <code>n = 4</code>, we would see something like this:</p>
 
-<div id="gist-4cdab1438cd8b66ef090-fib-calls-js">
-<script src="https://gist.github.com/4cdab1438cd8b66ef090.js?file=fib-calls.js"></script>
-<noscript>
-<pre>fib(4)
-fib(3) + fib(2)
-fib(2) + fib(1) + fib(1) + fib(0)
-fib(1) + fib(0) + 1 + 1 + 0
-1 + 0 + 1 + 1 + 0</pre>
-</noscript>
-</div>
+<figure class="code-highlight-figure"><figcaption class="code-highlight-caption"><span class="code-highlight-caption-title">fib-calls.js</span><a class="code-highlight-caption-link" href="https://gist.github.com/4cdab1438cd8b66ef090">link</a></figcaption><div class="code-highlight"><pre class="code-highlight-pre"><div data-line="1" class="code-highlight-row numbered"><div class="code-highlight-line"><span class="nx">fib</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+</div></div><div data-line="2" class="code-highlight-row numbered"><div class="code-highlight-line"><span class="nx">fib</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span> <span class="o">+</span> <span class="nx">fib</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+</div></div><div data-line="3" class="code-highlight-row numbered"><div class="code-highlight-line"><span class="nx">fib</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="nx">fib</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="nx">fib</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="nx">fib</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+</div></div><div data-line="4" class="code-highlight-row numbered"><div class="code-highlight-line"><span class="nx">fib</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="nx">fib</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">+</span> <span class="mi">0</span>
+</div></div><div data-line="5" class="code-highlight-row numbered"><div class="code-highlight-line"><span class="mi">1</span> <span class="o">+</span> <span class="mi">0</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">+</span> <span class="mi">0</span>
+</div></div><div data-line="6" class="code-highlight-row numbered"><div class="code-highlight-line"><span class="mi">3</span></div></div></pre></div></figure>
 
 <p>Notice something interesting? At the next to last line, all that is left is addition
 with <code>1's</code> and <code>0's</code> to yield <code>3</code>. This is the power of recursion, <strong>the base case</strong>.</p>
@@ -254,28 +233,20 @@ of <code>n = 4</code>.</p>
 
 <p>Now compare this to an imperative approach with dynamic programming:</p>
 
-<div id="gist-4cdab1438cd8b66ef090-fib-imperative-js">
-<script src="https://gist.github.com/4cdab1438cd8b66ef090.js?file=fib-imperative.js"></script>
-<noscript>
-<pre>function fib(n) {
-  if (n &lt; 2) {
-    return n;
-  }
-
-  var n0 = 0;
-  var n1 = 1;
-  var ans = 0;
-
-  for (var i = 2; i &lt;= n; i++) {
-    ans = n0 + n1;
-    n0 = n1;
-    n1 = ans;
-  }
-
-  return ans;
-}</pre>
-</noscript>
-</div>
+<figure class="code-highlight-figure"><figcaption class="code-highlight-caption"><span class="code-highlight-caption-title">fib-imperative.js</span><a class="code-highlight-caption-link" href="https://gist.github.com/4cdab1438cd8b66ef090">link</a></figcaption><div class="code-highlight"><pre class="code-highlight-pre"><div data-line="1" class="code-highlight-row numbered"><div class="code-highlight-line"><span class="kd">function</span> <span class="nx">fib</span><span class="p">(</span><span class="nx">n</span><span class="p">)</span> <span class="p">&#x7b;</span>
+</div></div><div data-line="2" class="code-highlight-row numbered"><div class="code-highlight-line">  <span class="k">if</span> <span class="p">(</span><span class="nx">n</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">)</span> <span class="p">&#x7b;</span>
+</div></div><div data-line="3" class="code-highlight-row numbered"><div class="code-highlight-line">    <span class="k">return</span> <span class="nx">n</span><span class="p">;</span>
+</div></div><div data-line="4" class="code-highlight-row numbered"><div class="code-highlight-line">  <span class="p">&#x7d;</span>
+</div></div><div data-line="5" class="code-highlight-row numbered"><div class="code-highlight-line"> </div></div><div data-line="6" class="code-highlight-row numbered"><div class="code-highlight-line">  <span class="kd">var</span> <span class="nx">n0</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</div></div><div data-line="7" class="code-highlight-row numbered"><div class="code-highlight-line">  <span class="kd">var</span> <span class="nx">n1</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+</div></div><div data-line="8" class="code-highlight-row numbered"><div class="code-highlight-line">  <span class="kd">var</span> <span class="nx">ans</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</div></div><div data-line="9" class="code-highlight-row numbered"><div class="code-highlight-line"> </div></div><div data-line="10" class="code-highlight-row numbered"><div class="code-highlight-line">  <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;=</span> <span class="nx">n</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">&#x7b;</span>
+</div></div><div data-line="11" class="code-highlight-row numbered"><div class="code-highlight-line">    <span class="nx">ans</span> <span class="o">=</span> <span class="nx">n0</span> <span class="o">+</span> <span class="nx">n1</span><span class="p">;</span>
+</div></div><div data-line="12" class="code-highlight-row numbered"><div class="code-highlight-line">    <span class="nx">n0</span> <span class="o">=</span> <span class="nx">n1</span><span class="p">;</span>
+</div></div><div data-line="13" class="code-highlight-row numbered"><div class="code-highlight-line">    <span class="nx">n1</span> <span class="o">=</span> <span class="nx">ans</span><span class="p">;</span>
+</div></div><div data-line="14" class="code-highlight-row numbered"><div class="code-highlight-line">  <span class="p">&#x7d;</span>
+</div></div><div data-line="15" class="code-highlight-row numbered"><div class="code-highlight-line"> </div></div><div data-line="16" class="code-highlight-row numbered"><div class="code-highlight-line">  <span class="k">return</span> <span class="nx">ans</span><span class="p">;</span>
+</div></div><div data-line="17" class="code-highlight-row numbered"><div class="code-highlight-line"><span class="p">&#x7d;</span></div></div></pre></div></figure>
 
 <p>That is a little less understandable, albeit <strong>FAAAARRR</strong> more performant. If we
 compare the imperative approach with the functional approach, we find that the
@@ -348,34 +319,21 @@ implementations of them for our list.</p>
 <p>First, we need to create our list data structure. To accomplish this, we actually
 need to implement the cons cell and nil, the empty list.</p>
 
-<div id="gist-4cdab1438cd8b66ef090-cons-1-js">
-<script src="https://gist.github.com/4cdab1438cd8b66ef090.js?file=cons-1.js"></script>
-<noscript>
-<pre>var Cons = function(head, tail) {
-  this.head = head;
-  this.tail = tail;
-};
+<figure class="code-highlight-figure"><figcaption class="code-highlight-caption"><span class="code-highlight-caption-title">cons-1.js</span><a class="code-highlight-caption-link" href="https://gist.github.com/4cdab1438cd8b66ef090">link</a></figcaption><div class="code-highlight"><pre class="code-highlight-pre"><div data-line="1" class="code-highlight-row numbered"><div class="code-highlight-line"><span class="kd">var</span> <span class="nx">Cons</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">head</span><span class="p">,</span> <span class="nx">tail</span><span class="p">)</span> <span class="p">&#x7b;</span>
+</div></div><div data-line="2" class="code-highlight-row numbered"><div class="code-highlight-line">  <span class="k">this</span><span class="p">.</span><span class="nx">head</span> <span class="o">=</span> <span class="nx">head</span><span class="p">;</span>
+</div></div><div data-line="3" class="code-highlight-row numbered"><div class="code-highlight-line">  <span class="k">this</span><span class="p">.</span><span class="nx">tail</span> <span class="o">=</span> <span class="nx">tail</span><span class="p">;</span>
+</div></div><div data-line="4" class="code-highlight-row numbered"><div class="code-highlight-line"><span class="p">&#x7d;;</span>
+</div></div><div data-line="5" class="code-highlight-row numbered"><div class="code-highlight-line"> </div></div><div data-line="6" class="code-highlight-row numbered"><div class="code-highlight-line"><span class="nx">Cons</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">isEmpty</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span></div></div></pre></div></figure>
 
-Cons.prototype.isEmpty = false;</pre>
-</noscript>
-</div>
-
-<div id="gist-4cdab1438cd8b66ef090-nil-1-js">
-<script src="https://gist.github.com/4cdab1438cd8b66ef090.js?file=nil-1.js"></script>
-<noscript>
-<pre>var Nil = {
-  isEmpty: true,
-
-  get head() {
-    throw new Error(&#39;Accessing head on empty list.&#39;);
-  },
-  
-  get tail() {
-    throw new Error(&#39;Accessing tail on empty list.&#39;);
-  }
-};</pre>
-</noscript>
-</div>
+<figure class="code-highlight-figure"><figcaption class="code-highlight-caption"><span class="code-highlight-caption-title">nil-1.js</span><a class="code-highlight-caption-link" href="https://gist.github.com/4cdab1438cd8b66ef090">link</a></figcaption><div class="code-highlight"><pre class="code-highlight-pre"><div data-line="1" class="code-highlight-row numbered"><div class="code-highlight-line"><span class="kd">var</span> <span class="nx">Nil</span> <span class="o">=</span> <span class="p">&#x7b;</span>
+</div></div><div data-line="2" class="code-highlight-row numbered"><div class="code-highlight-line">  <span class="nx">isEmpty</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
+</div></div><div data-line="3" class="code-highlight-row numbered"><div class="code-highlight-line"> </div></div><div data-line="4" class="code-highlight-row numbered"><div class="code-highlight-line">  <span class="nx">get</span> <span class="nx">head</span><span class="p">()</span> <span class="p">&#x7b;</span>
+</div></div><div data-line="5" class="code-highlight-row numbered"><div class="code-highlight-line">    <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;Accessing head on empty list.&#39;</span><span class="p">);</span>
+</div></div><div data-line="6" class="code-highlight-row numbered"><div class="code-highlight-line">  <span class="p">&#x7d;,</span>
+</div></div><div data-line="7" class="code-highlight-row numbered"><div class="code-highlight-line"> </div></div><div data-line="8" class="code-highlight-row numbered"><div class="code-highlight-line">  <span class="nx">get</span> <span class="nx">tail</span><span class="p">()</span> <span class="p">&#x7b;</span>
+</div></div><div data-line="9" class="code-highlight-row numbered"><div class="code-highlight-line">    <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;Accessing tail on empty list.&#39;</span><span class="p">);</span>
+</div></div><div data-line="10" class="code-highlight-row numbered"><div class="code-highlight-line">  <span class="p">&#x7d;</span>
+</div></div><div data-line="11" class="code-highlight-row numbered"><div class="code-highlight-line"><span class="p">&#x7d;;</span></div></div></pre></div></figure>
 
 <p>So, <code>Cons</code> has a <code>head</code> property, a <code>tail</code> property, and <code>isEmpty = false</code>.
 Notice that <code>Nil</code> is an object literal instead of a constructor function. It
@@ -386,26 +344,15 @@ errors if you try to access <code>head</code> or <code>tail</code> on it.</p>
 
 <p>So, if we wanted to build a list, we could do this then:</p>
 
-<div id="gist-4cdab1438cd8b66ef090-build-list-1-js">
-<script src="https://gist.github.com/4cdab1438cd8b66ef090.js?file=build-list-1.js"></script>
-<noscript>
-<pre>var list = new Cons(1, new Cons(3, new Cons(42, new Cons(28, Nil))));</pre>
-</noscript>
-</div>
+<figure class="code-highlight-figure"><figcaption class="code-highlight-caption"><span class="code-highlight-caption-title">build-list-1.js</span><a class="code-highlight-caption-link" href="https://gist.github.com/4cdab1438cd8b66ef090">link</a></figcaption><div class="code-highlight"><pre class="code-highlight-pre"><div data-line="1" class="code-highlight-row numbered"><div class="code-highlight-line"><span class="kd">var</span> <span class="nx">list</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Cons</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="k">new</span> <span class="nx">Cons</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="k">new</span> <span class="nx">Cons</span><span class="p">(</span><span class="mi">42</span><span class="p">,</span> <span class="k">new</span> <span class="nx">Cons</span><span class="p">(</span><span class="mi">28</span><span class="p">,</span> <span class="nx">Nil</span><span class="p">))));</span></div></div></pre></div></figure>
 
 <p>That is unsightly, though. We should at least introduce a helper function to
 clean it up a little:</p>
 
-<div id="gist-4cdab1438cd8b66ef090-build-list-2-js">
-<script src="https://gist.github.com/4cdab1438cd8b66ef090.js?file=build-list-2.js"></script>
-<noscript>
-<pre>var cons = function(head, tail) {
-  return new Cons(head, tail);
-};
-
-var list = cons(1, cons(3, cons(42, cons(28, Nil))));</pre>
-</noscript>
-</div>
+<figure class="code-highlight-figure"><figcaption class="code-highlight-caption"><span class="code-highlight-caption-title">build-list-2.js</span><a class="code-highlight-caption-link" href="https://gist.github.com/4cdab1438cd8b66ef090">link</a></figcaption><div class="code-highlight"><pre class="code-highlight-pre"><div data-line="1" class="code-highlight-row numbered"><div class="code-highlight-line"><span class="kd">var</span> <span class="nx">cons</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">head</span><span class="p">,</span> <span class="nx">tail</span><span class="p">)</span> <span class="p">&#x7b;</span>
+</div></div><div data-line="2" class="code-highlight-row numbered"><div class="code-highlight-line">  <span class="k">return</span> <span class="k">new</span> <span class="nx">Cons</span><span class="p">(</span><span class="nx">head</span><span class="p">,</span> <span class="nx">tail</span><span class="p">);</span>
+</div></div><div data-line="3" class="code-highlight-row numbered"><div class="code-highlight-line"><span class="p">&#x7d;;</span>
+</div></div><div data-line="4" class="code-highlight-row numbered"><div class="code-highlight-line"> </div></div><div data-line="5" class="code-highlight-row numbered"><div class="code-highlight-line"><span class="kd">var</span> <span class="nx">list</span> <span class="o">=</span> <span class="nx">cons</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nx">cons</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="nx">cons</span><span class="p">(</span><span class="mi">42</span><span class="p">,</span> <span class="nx">cons</span><span class="p">(</span><span class="mi">28</span><span class="p">,</span> <span class="nx">Nil</span><span class="p">))));</span></div></div></pre></div></figure>
 
 <p>That is better; we will create an even nicer-looking function later on, but we will
 use this for now.</p>
@@ -429,18 +376,12 @@ then as methods of our <code>Cons</code> and <code>Nil</code> objects. First, le
 
 <h3 id="map">Map</h3>
 
-<div id="gist-4cdab1438cd8b66ef090-map-js">
-<script src="https://gist.github.com/4cdab1438cd8b66ef090.js?file=map.js"></script>
-<noscript>
-<pre>var map = function(list, fn) {
-  if (list.isEmpty) {
-    return list;
-  }
-
-  return cons(fn(list.head), map(list.tail, fn));
-};</pre>
-</noscript>
-</div>
+<figure class="code-highlight-figure"><figcaption class="code-highlight-caption"><span class="code-highlight-caption-title">map.js</span><a class="code-highlight-caption-link" href="https://gist.github.com/4cdab1438cd8b66ef090">link</a></figcaption><div class="code-highlight"><pre class="code-highlight-pre"><div data-line="1" class="code-highlight-row numbered"><div class="code-highlight-line"><span class="kd">var</span> <span class="nx">map</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">list</span><span class="p">,</span> <span class="nx">fn</span><span class="p">)</span> <span class="p">&#x7b;</span>
+</div></div><div data-line="2" class="code-highlight-row numbered"><div class="code-highlight-line">  <span class="k">if</span> <span class="p">(</span><span class="nx">list</span><span class="p">.</span><span class="nx">isEmpty</span><span class="p">)</span> <span class="p">&#x7b;</span>
+</div></div><div data-line="3" class="code-highlight-row numbered"><div class="code-highlight-line">    <span class="k">return</span> <span class="nx">list</span><span class="p">;</span>
+</div></div><div data-line="4" class="code-highlight-row numbered"><div class="code-highlight-line">  <span class="p">&#x7d;</span>
+</div></div><div data-line="5" class="code-highlight-row numbered"><div class="code-highlight-line"> </div></div><div data-line="6" class="code-highlight-row numbered"><div class="code-highlight-line">  <span class="k">return</span> <span class="nx">cons</span><span class="p">(</span><span class="nx">fn</span><span class="p">(</span><span class="nx">list</span><span class="p">.</span><span class="nx">head</span><span class="p">),</span> <span class="nx">map</span><span class="p">(</span><span class="nx">list</span><span class="p">.</span><span class="nx">tail</span><span class="p">,</span> <span class="nx">fn</span><span class="p">));</span>
+</div></div><div data-line="7" class="code-highlight-row numbered"><div class="code-highlight-line"><span class="p">&#x7d;;</span></div></div></pre></div></figure>
 
 <p>So what is going on here? Just like our functional <code>fib</code> implementation and with
 almost any FP function, we need a base case. Remember that this is the root from
@@ -462,38 +403,25 @@ we finally get to <code>Nil</code>. Once we return it, we can begin to return th
 for each remaining frame in the stack until the first call returns the new list.
 Here is how the list will get built with each call below:</p>
 
-<div id="gist-4cdab1438cd8b66ef090-map-call-1-js">
-<script src="https://gist.github.com/4cdab1438cd8b66ef090.js?file=map-call-1.js"></script>
-<noscript>
-<pre>var list = cons(1, cons(2, cons(3, Nil)));
-var double = (n) =&gt; n * 2;
-
-map(list, double); // which equals:
-
-cons(2,
-  cons(4,
-    cons(6,
-      Nil)))</pre>
-</noscript>
-</div>
+<figure class="code-highlight-figure"><figcaption class="code-highlight-caption"><span class="code-highlight-caption-title">map-call-1.js</span><a class="code-highlight-caption-link" href="https://gist.github.com/4cdab1438cd8b66ef090">link</a></figcaption><div class="code-highlight"><pre class="code-highlight-pre"><div data-line="1" class="code-highlight-row numbered"><div class="code-highlight-line"><span class="kd">var</span> <span class="nx">list</span> <span class="o">=</span> <span class="nx">cons</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nx">cons</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="nx">cons</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="nx">Nil</span><span class="p">)));</span>
+</div></div><div data-line="2" class="code-highlight-row numbered"><div class="code-highlight-line"><span class="kd">var</span> <span class="kr">double</span> <span class="o">=</span> <span class="p">(</span><span class="nx">n</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">n</span> <span class="o">*</span> <span class="mi">2</span><span class="p">;</span>
+</div></div><div data-line="3" class="code-highlight-row numbered"><div class="code-highlight-line"> </div></div><div data-line="4" class="code-highlight-row numbered"><div class="code-highlight-line"><span class="nx">map</span><span class="p">(</span><span class="nx">list</span><span class="p">,</span> <span class="kr">double</span><span class="p">);</span> <span class="c1">// yields:</span>
+</div></div><div data-line="5" class="code-highlight-row numbered"><div class="code-highlight-line"> </div></div><div data-line="6" class="code-highlight-row numbered"><div class="code-highlight-line"><span class="nx">cons</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="nx">map</span><span class="p">(</span><span class="nx">cons</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="nx">cons</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="nx">Nil</span><span class="p">)),</span> <span class="kr">double</span><span class="p">));</span>
+</div></div><div data-line="7" class="code-highlight-row numbered"><div class="code-highlight-line"><span class="nx">cons</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="nx">cons</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="nx">map</span><span class="p">(</span><span class="nx">cons</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="nx">Nil</span><span class="p">),</span> <span class="kr">double</span><span class="p">)));</span>
+</div></div><div data-line="8" class="code-highlight-row numbered"><div class="code-highlight-line"><span class="nx">cons</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="nx">cons</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="nx">cons</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="nx">map</span><span class="p">(</span><span class="nx">Nil</span><span class="p">,</span> <span class="kr">double</span><span class="p">))));</span>
+</div></div><div data-line="9" class="code-highlight-row numbered"><div class="code-highlight-line"><span class="nx">cons</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="nx">cons</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="nx">cons</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="nx">Nil</span><span class="p">)));</span></div></div></pre></div></figure>
 
 <p>There is our first implementation of <code>map</code>. But what if we wanted to utilize JavaScript’s
 object-oriented capabilities and eliminate that <code>isEmpty</code> conditional check? In
 this case we need to add <code>map</code> as a method to the <code>Cons</code> prototype and to
 the <code>Nil</code> object.</p>
 
-<div id="gist-4cdab1438cd8b66ef090-oop-map-js">
-<script src="https://gist.github.com/4cdab1438cd8b66ef090.js?file=oop-map.js"></script>
-<noscript>
-<pre>Cons.prototype.map = function(fn) {
-  return cons(fn(this.head), this.tail.map(fn));
-};
-
-Nil.map = function() {
-  return this;
-};</pre>
-</noscript>
-</div>
+<figure class="code-highlight-figure"><figcaption class="code-highlight-caption"><span class="code-highlight-caption-title">oop-map.js</span><a class="code-highlight-caption-link" href="https://gist.github.com/4cdab1438cd8b66ef090">link</a></figcaption><div class="code-highlight"><pre class="code-highlight-pre"><div data-line="1" class="code-highlight-row numbered"><div class="code-highlight-line"><span class="nx">Cons</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">map</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">fn</span><span class="p">)</span> <span class="p">&#x7b;</span>
+</div></div><div data-line="2" class="code-highlight-row numbered"><div class="code-highlight-line">  <span class="k">return</span> <span class="nx">cons</span><span class="p">(</span><span class="nx">fn</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">head</span><span class="p">),</span> <span class="k">this</span><span class="p">.</span><span class="nx">tail</span><span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="nx">fn</span><span class="p">));</span>
+</div></div><div data-line="3" class="code-highlight-row numbered"><div class="code-highlight-line"><span class="p">&#x7d;;</span>
+</div></div><div data-line="4" class="code-highlight-row numbered"><div class="code-highlight-line"> </div></div><div data-line="5" class="code-highlight-row numbered"><div class="code-highlight-line"><span class="nx">Nil</span><span class="p">.</span><span class="nx">map</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">&#x7b;</span>
+</div></div><div data-line="6" class="code-highlight-row numbered"><div class="code-highlight-line">  <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
+</div></div><div data-line="7" class="code-highlight-row numbered"><div class="code-highlight-line"><span class="p">&#x7d;;</span></div></div></pre></div></figure>
 
 <p>Basically what we have done is separate out the branches of computation in <code>map</code>
 to the objects with which they are concerned. <code>Cons#map</code> builds up the new cons cells
@@ -505,15 +433,9 @@ that are similar to switch statements but vastly more powerful.</p>
 
 <p>Our usage would only change in how we initially call <code>map</code>:</p>
 
-<div id="gist-4cdab1438cd8b66ef090-map-call-2-js">
-<script src="https://gist.github.com/4cdab1438cd8b66ef090.js?file=map-call-2.js"></script>
-<noscript>
-<pre>var list = cons(1, cons(2, cons(3, Nil)));
-var double = (n) =&gt; n * 2;
-
-list.map(double); // cons(2, cons(4, cons(6, Nil)))</pre>
-</noscript>
-</div>
+<figure class="code-highlight-figure"><figcaption class="code-highlight-caption"><span class="code-highlight-caption-title">map-call-2.js</span><a class="code-highlight-caption-link" href="https://gist.github.com/4cdab1438cd8b66ef090">link</a></figcaption><div class="code-highlight"><pre class="code-highlight-pre"><div data-line="1" class="code-highlight-row numbered"><div class="code-highlight-line"><span class="kd">var</span> <span class="nx">list</span> <span class="o">=</span> <span class="nx">cons</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nx">cons</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="nx">cons</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="nx">Nil</span><span class="p">)));</span>
+</div></div><div data-line="2" class="code-highlight-row numbered"><div class="code-highlight-line"><span class="kd">var</span> <span class="kr">double</span> <span class="o">=</span> <span class="p">(</span><span class="nx">n</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">n</span> <span class="o">*</span> <span class="mi">2</span><span class="p">;</span>
+</div></div><div data-line="3" class="code-highlight-row numbered"><div class="code-highlight-line"> </div></div><div data-line="4" class="code-highlight-row numbered"><div class="code-highlight-line"><span class="nx">list</span><span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="kr">double</span><span class="p">);</span> <span class="c1">// cons(2, cons(4, cons(6, Nil)))</span></div></div></pre></div></figure>
 
 <p>So that is <code>map</code>. See how elegantly and simply we were able to implement it in just
 a couple lines. An imperative approach would require some looping construct
@@ -527,18 +449,12 @@ intuitive, so I do not want to discredit them).</p>
 some other value and that may not be another list. Here is the function
 implementation:</p>
 
-<div id="gist-4cdab1438cd8b66ef090-reduce-js">
-<script src="https://gist.github.com/4cdab1438cd8b66ef090.js?file=reduce.js"></script>
-<noscript>
-<pre>var reduce = function(list, fn, memo) {
-  if (list.isEmpty) {
-    return memo;
-  }
-
-  return reduce(list.tail, fn, fn(memo, list.head));
-};</pre>
-</noscript>
-</div>
+<figure class="code-highlight-figure"><figcaption class="code-highlight-caption"><span class="code-highlight-caption-title">reduce.js</span><a class="code-highlight-caption-link" href="https://gist.github.com/4cdab1438cd8b66ef090">link</a></figcaption><div class="code-highlight"><pre class="code-highlight-pre"><div data-line="1" class="code-highlight-row numbered"><div class="code-highlight-line"><span class="kd">var</span> <span class="nx">reduce</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">list</span><span class="p">,</span> <span class="nx">fn</span><span class="p">,</span> <span class="nx">memo</span><span class="p">)</span> <span class="p">&#x7b;</span>
+</div></div><div data-line="2" class="code-highlight-row numbered"><div class="code-highlight-line">  <span class="k">if</span> <span class="p">(</span><span class="nx">list</span><span class="p">.</span><span class="nx">isEmpty</span><span class="p">)</span> <span class="p">&#x7b;</span>
+</div></div><div data-line="3" class="code-highlight-row numbered"><div class="code-highlight-line">    <span class="k">return</span> <span class="nx">memo</span><span class="p">;</span>
+</div></div><div data-line="4" class="code-highlight-row numbered"><div class="code-highlight-line">  <span class="p">&#x7d;</span>
+</div></div><div data-line="5" class="code-highlight-row numbered"><div class="code-highlight-line"> </div></div><div data-line="6" class="code-highlight-row numbered"><div class="code-highlight-line">  <span class="k">return</span> <span class="nx">reduce</span><span class="p">(</span><span class="nx">list</span><span class="p">.</span><span class="nx">tail</span><span class="p">,</span> <span class="nx">fn</span><span class="p">,</span> <span class="nx">fn</span><span class="p">(</span><span class="nx">memo</span><span class="p">,</span> <span class="nx">list</span><span class="p">.</span><span class="nx">head</span><span class="p">));</span>
+</div></div><div data-line="7" class="code-highlight-row numbered"><div class="code-highlight-line"><span class="p">&#x7d;;</span></div></div></pre></div></figure>
 
 <p>This is very similar to our <code>map</code> implementation. Notice that we have one more
 input this time, <code>memo</code>. Think of this as an accumulator, so we can keep track
@@ -554,31 +470,19 @@ else.</p>
 
 <p>Here is a great example where we can calculate the sum of a list of numbers:</p>
 
-<div id="gist-4cdab1438cd8b66ef090-reduce-call-1-js">
-<script src="https://gist.github.com/4cdab1438cd8b66ef090.js?file=reduce-call-1.js"></script>
-<noscript>
-<pre>var list = cons(1, cons(2, cons(3, Nil)));
-var add = (x, y) =&gt; x + y;
-
-reduce(list, add, 0); //=&gt; 6</pre>
-</noscript>
-</div>
+<figure class="code-highlight-figure"><figcaption class="code-highlight-caption"><span class="code-highlight-caption-title">reduce-call-1.js</span><a class="code-highlight-caption-link" href="https://gist.github.com/4cdab1438cd8b66ef090">link</a></figcaption><div class="code-highlight"><pre class="code-highlight-pre"><div data-line="1" class="code-highlight-row numbered"><div class="code-highlight-line"><span class="kd">var</span> <span class="nx">list</span> <span class="o">=</span> <span class="nx">cons</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nx">cons</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="nx">cons</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="nx">Nil</span><span class="p">)));</span>
+</div></div><div data-line="2" class="code-highlight-row numbered"><div class="code-highlight-line"><span class="kd">var</span> <span class="nx">add</span> <span class="o">=</span> <span class="p">(</span><span class="nx">x</span><span class="p">,</span> <span class="nx">y</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">x</span> <span class="o">+</span> <span class="nx">y</span><span class="p">;</span>
+</div></div><div data-line="3" class="code-highlight-row numbered"><div class="code-highlight-line"> </div></div><div data-line="4" class="code-highlight-row numbered"><div class="code-highlight-line"><span class="nx">reduce</span><span class="p">(</span><span class="nx">list</span><span class="p">,</span> <span class="nx">add</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span> <span class="c1">//=&gt; 6</span></div></div></pre></div></figure>
 
 <p>And of course, let us simplify our implementation with the object-oriented
 approach:</p>
 
-<div id="gist-4cdab1438cd8b66ef090-oop-reduce-js">
-<script src="https://gist.github.com/4cdab1438cd8b66ef090.js?file=oop-reduce.js"></script>
-<noscript>
-<pre>Cons.prototype.reduce = function(fn, memo) {
-  return this.tail.reduce(fn, fn(memo, this.head));
-};
-
-Nil.reduce = function(fn, memo) {
-  return memo;
-};</pre>
-</noscript>
-</div>
+<figure class="code-highlight-figure"><figcaption class="code-highlight-caption"><span class="code-highlight-caption-title">oop-reduce.js</span><a class="code-highlight-caption-link" href="https://gist.github.com/4cdab1438cd8b66ef090">link</a></figcaption><div class="code-highlight"><pre class="code-highlight-pre"><div data-line="1" class="code-highlight-row numbered"><div class="code-highlight-line"><span class="nx">Cons</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">reduce</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">fn</span><span class="p">,</span> <span class="nx">memo</span><span class="p">)</span> <span class="p">&#x7b;</span>
+</div></div><div data-line="2" class="code-highlight-row numbered"><div class="code-highlight-line">  <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">tail</span><span class="p">.</span><span class="nx">reduce</span><span class="p">(</span><span class="nx">fn</span><span class="p">,</span> <span class="nx">fn</span><span class="p">(</span><span class="nx">memo</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">head</span><span class="p">));</span>
+</div></div><div data-line="3" class="code-highlight-row numbered"><div class="code-highlight-line"><span class="p">&#x7d;;</span>
+</div></div><div data-line="4" class="code-highlight-row numbered"><div class="code-highlight-line"> </div></div><div data-line="5" class="code-highlight-row numbered"><div class="code-highlight-line"><span class="nx">Nil</span><span class="p">.</span><span class="nx">reduce</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">fn</span><span class="p">,</span> <span class="nx">memo</span><span class="p">)</span> <span class="p">&#x7b;</span>
+</div></div><div data-line="6" class="code-highlight-row numbered"><div class="code-highlight-line">  <span class="k">return</span> <span class="nx">memo</span><span class="p">;</span>
+</div></div><div data-line="7" class="code-highlight-row numbered"><div class="code-highlight-line"><span class="p">&#x7d;;</span></div></div></pre></div></figure>
 
 <p>If you are familiar with <code>reduce</code>, then you also know we could alter our
 implementation to not require the initial <code>memo</code> argument. Instead we could make
@@ -591,16 +495,10 @@ reverse direction. So, it would first encounter <code>Nil</code>, then the next-
 item, and keep going until it reaches the first item in the list. <code>reduceRight</code>
 can be implemented as follows:</p>
 
-<div id="gist-4cdab1438cd8b66ef090-oop-reduceRight-js">
-<script src="https://gist.github.com/4cdab1438cd8b66ef090.js?file=oop-reduceRight.js"></script>
-<noscript>
-<pre>Cons.prototype.reduceRight = function (fn, memo) {
-  return fn(this.tail.reduceRight(fn, memo), this.head);
-};
-
-Nil.reduceRight = Nil.reduce;</pre>
-</noscript>
-</div>
+<figure class="code-highlight-figure"><figcaption class="code-highlight-caption"><span class="code-highlight-caption-title">oop-reduceRight.js</span><a class="code-highlight-caption-link" href="https://gist.github.com/4cdab1438cd8b66ef090">link</a></figcaption><div class="code-highlight"><pre class="code-highlight-pre"><div data-line="1" class="code-highlight-row numbered"><div class="code-highlight-line"><span class="nx">Cons</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">reduceRight</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">fn</span><span class="p">,</span> <span class="nx">memo</span><span class="p">)</span> <span class="p">&#x7b;</span>
+</div></div><div data-line="2" class="code-highlight-row numbered"><div class="code-highlight-line">  <span class="k">return</span> <span class="nx">fn</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">tail</span><span class="p">.</span><span class="nx">reduceRight</span><span class="p">(</span><span class="nx">fn</span><span class="p">,</span> <span class="nx">memo</span><span class="p">),</span> <span class="k">this</span><span class="p">.</span><span class="nx">head</span><span class="p">);</span>
+</div></div><div data-line="3" class="code-highlight-row numbered"><div class="code-highlight-line"><span class="p">&#x7d;;</span>
+</div></div><div data-line="4" class="code-highlight-row numbered"><div class="code-highlight-line"> </div></div><div data-line="5" class="code-highlight-row numbered"><div class="code-highlight-line"><span class="nx">Nil</span><span class="p">.</span><span class="nx">reduceRight</span> <span class="o">=</span> <span class="nx">Nil</span><span class="p">.</span><span class="nx">reduce</span><span class="p">;</span></div></div></pre></div></figure>
 
 <p>This is very close to the implementation of <code>reduce</code> except we flip the order in
 which we call our transformation function and when we make our recursive calls.
@@ -611,18 +509,12 @@ the reverse direction.</p>
 
 <p>Our new map implementation can be seen below:</p>
 
-<div id="gist-4cdab1438cd8b66ef090-oop-map-reduce-js">
-<script src="https://gist.github.com/4cdab1438cd8b66ef090.js?file=oop-map-reduce.js"></script>
-<noscript>
-<pre>Cons.prototype.map = function (fn) {
-  var consBuilder = function(memo, value) {
-    return cons(fn(value), memo);
-  };
-
-  return this.reduceRight(consBuilder, Nil);
-};</pre>
-</noscript>
-</div>
+<figure class="code-highlight-figure"><figcaption class="code-highlight-caption"><span class="code-highlight-caption-title">oop-map-reduce.js</span><a class="code-highlight-caption-link" href="https://gist.github.com/4cdab1438cd8b66ef090">link</a></figcaption><div class="code-highlight"><pre class="code-highlight-pre"><div data-line="1" class="code-highlight-row numbered"><div class="code-highlight-line"><span class="nx">Cons</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">map</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">fn</span><span class="p">)</span> <span class="p">&#x7b;</span>
+</div></div><div data-line="2" class="code-highlight-row numbered"><div class="code-highlight-line">  <span class="kd">var</span> <span class="nx">consBuilder</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">memo</span><span class="p">,</span> <span class="nx">value</span><span class="p">)</span> <span class="p">&#x7b;</span>
+</div></div><div data-line="3" class="code-highlight-row numbered"><div class="code-highlight-line">    <span class="k">return</span> <span class="nx">cons</span><span class="p">(</span><span class="nx">fn</span><span class="p">(</span><span class="nx">value</span><span class="p">),</span> <span class="nx">memo</span><span class="p">);</span>
+</div></div><div data-line="4" class="code-highlight-row numbered"><div class="code-highlight-line">  <span class="p">&#x7d;;</span>
+</div></div><div data-line="5" class="code-highlight-row numbered"><div class="code-highlight-line"> </div></div><div data-line="6" class="code-highlight-row numbered"><div class="code-highlight-line">  <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">reduceRight</span><span class="p">(</span><span class="nx">consBuilder</span><span class="p">,</span> <span class="nx">Nil</span><span class="p">);</span>
+</div></div><div data-line="7" class="code-highlight-row numbered"><div class="code-highlight-line"><span class="p">&#x7d;;</span></div></div></pre></div></figure>
 
 <p>Since we are reducing from the right, we will start from <code>Nil</code> and build cons
 cells up from that. Think back to our list picture where we stacked the cons cells
@@ -649,21 +541,14 @@ to avoid several <code>cons</code> calls. We can implement a <code>list</code> f
 a variable number of arguments and produces a list. Since we are talking about
 FP, let us implement that function in a functional manner too.</p>
 
-<div id="gist-4cdab1438cd8b66ef090-list-constructor-js">
-<script src="https://gist.github.com/4cdab1438cd8b66ef090.js?file=list-constructor.js"></script>
-<noscript>
-<pre>var list = function () {
-  var head = arguments[0];
-  var tail = [].slice.call(arguments, 1);
-
-  if (!head) {
-    return Nil;
-  }
-
-  return cons(head, list.apply(null, tail));
-};</pre>
-</noscript>
-</div>
+<figure class="code-highlight-figure"><figcaption class="code-highlight-caption"><span class="code-highlight-caption-title">list-constructor.js</span><a class="code-highlight-caption-link" href="https://gist.github.com/4cdab1438cd8b66ef090">link</a></figcaption><div class="code-highlight"><pre class="code-highlight-pre"><div data-line="1" class="code-highlight-row numbered"><div class="code-highlight-line"><span class="kd">var</span> <span class="nx">list</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">&#x7b;</span>
+</div></div><div data-line="2" class="code-highlight-row numbered"><div class="code-highlight-line">  <span class="k">if</span> <span class="p">(</span><span class="nx">arguments</span><span class="p">.</span><span class="nx">length</span> <span class="o">===</span> <span class="mi">0</span><span class="p">)</span> <span class="p">&#x7b;</span>
+</div></div><div data-line="3" class="code-highlight-row numbered"><div class="code-highlight-line">    <span class="k">return</span> <span class="nx">Nil</span><span class="p">;</span>
+</div></div><div data-line="4" class="code-highlight-row numbered"><div class="code-highlight-line">  <span class="p">&#x7d;</span>
+</div></div><div data-line="5" class="code-highlight-row numbered"><div class="code-highlight-line"> </div></div><div data-line="6" class="code-highlight-row numbered"><div class="code-highlight-line">  <span class="kd">var</span> <span class="nx">head</span> <span class="o">=</span> <span class="nx">arguments</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
+</div></div><div data-line="7" class="code-highlight-row numbered"><div class="code-highlight-line">  <span class="kd">var</span> <span class="nx">tail</span> <span class="o">=</span> <span class="p">[].</span><span class="nx">slice</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">arguments</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+</div></div><div data-line="8" class="code-highlight-row numbered"><div class="code-highlight-line"> </div></div><div data-line="9" class="code-highlight-row numbered"><div class="code-highlight-line">  <span class="k">return</span> <span class="nx">cons</span><span class="p">(</span><span class="nx">head</span><span class="p">,</span> <span class="nx">list</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="kc">null</span><span class="p">,</span> <span class="nx">tail</span><span class="p">));</span>
+</div></div><div data-line="10" class="code-highlight-row numbered"><div class="code-highlight-line"><span class="p">&#x7d;;</span></div></div></pre></div></figure>
 
 <p>So notice here we are mirroring the concepts we used in our list functions. We
 are returning <code>Nil</code> if <code>arguments</code> are empty, so this is our base case. We then
@@ -673,25 +558,16 @@ Inside that <code>cons</code> call we recursively apply the <code>list</code> fu
 
 <p>Then, we can use our <code>list</code> function for easier list construction:</p>
 
-<div id="gist-4cdab1438cd8b66ef090-list-calls-js">
-<script src="https://gist.github.com/4cdab1438cd8b66ef090.js?file=list-calls.js"></script>
-<noscript>
-<pre>var myList = list(1, 3, 5);
-//=&gt; cons(1, cons(3, cons(5, Nil)));
-
-var myOtherList = myList.map(n =&gt; n * 3);
-// =&gt; cons(3, cons(9, cons(15, Nil)));
-
-var nine = myList.reduce((x, y) =&gt; x + y);
-// =&gt; 9
-
-var listOfLists = list(list(1), list(2), list(3));
-// =&gt; cons(cons(1, Nil), cons(cons(2, Nil), cons(cons(3, Nil), Nil)));
-
-var flattened = listOfLists.map(innerList =&gt; innerList.head);
-// =&gt; cons(1, cons(2, cons(3, Nil)));</pre>
-</noscript>
-</div>
+<figure class="code-highlight-figure"><figcaption class="code-highlight-caption"><span class="code-highlight-caption-title">list-calls.js</span><a class="code-highlight-caption-link" href="https://gist.github.com/4cdab1438cd8b66ef090">link</a></figcaption><div class="code-highlight"><pre class="code-highlight-pre"><div data-line="1" class="code-highlight-row numbered"><div class="code-highlight-line"><span class="kd">var</span> <span class="nx">myList</span> <span class="o">=</span> <span class="nx">list</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">);</span>
+</div></div><div data-line="2" class="code-highlight-row numbered"><div class="code-highlight-line"><span class="c1">//=&gt; cons(1, cons(3, cons(5, Nil)));</span>
+</div></div><div data-line="3" class="code-highlight-row numbered"><div class="code-highlight-line"> </div></div><div data-line="4" class="code-highlight-row numbered"><div class="code-highlight-line"><span class="kd">var</span> <span class="nx">myOtherList</span> <span class="o">=</span> <span class="nx">myList</span><span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="nx">n</span> <span class="o">=&gt;</span> <span class="nx">n</span> <span class="o">*</span> <span class="mi">3</span><span class="p">);</span>
+</div></div><div data-line="5" class="code-highlight-row numbered"><div class="code-highlight-line"><span class="c1">//=&gt; cons(3, cons(9, cons(15, Nil)));</span>
+</div></div><div data-line="6" class="code-highlight-row numbered"><div class="code-highlight-line"> </div></div><div data-line="7" class="code-highlight-row numbered"><div class="code-highlight-line"><span class="kd">var</span> <span class="nx">nine</span> <span class="o">=</span> <span class="nx">myList</span><span class="p">.</span><span class="nx">reduce</span><span class="p">((</span><span class="nx">x</span><span class="p">,</span> <span class="nx">y</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">x</span> <span class="o">+</span> <span class="nx">y</span><span class="p">);</span>
+</div></div><div data-line="8" class="code-highlight-row numbered"><div class="code-highlight-line"><span class="c1">//=&gt; 9</span>
+</div></div><div data-line="9" class="code-highlight-row numbered"><div class="code-highlight-line"> </div></div><div data-line="10" class="code-highlight-row numbered"><div class="code-highlight-line"><span class="kd">var</span> <span class="nx">listOfLists</span> <span class="o">=</span> <span class="nx">list</span><span class="p">(</span><span class="nx">list</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="nx">list</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span> <span class="nx">list</span><span class="p">(</span><span class="mi">3</span><span class="p">));</span>
+</div></div><div data-line="11" class="code-highlight-row numbered"><div class="code-highlight-line"><span class="c1">//=&gt; cons(cons(1, Nil), cons(cons(2, Nil), cons(cons(3, Nil), Nil)));</span>
+</div></div><div data-line="12" class="code-highlight-row numbered"><div class="code-highlight-line"> </div></div><div data-line="13" class="code-highlight-row numbered"><div class="code-highlight-line"><span class="kd">var</span> <span class="nx">flattened</span> <span class="o">=</span> <span class="nx">listOfLists</span><span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="nx">innerList</span> <span class="o">=&gt;</span> <span class="nx">innerList</span><span class="p">.</span><span class="nx">head</span><span class="p">);</span>
+</div></div><div data-line="14" class="code-highlight-row numbered"><div class="code-highlight-line"><span class="c1">//=&gt; cons(1, cons(2, cons(3, Nil)));</span></div></div></pre></div></figure>
 
 <p>Thanks for reading and please leave any feedback or questions you may have on
 FP and lists. If you feel there are any holes in this explanation, please let me
@@ -712,14 +588,10 @@ the concepts of functional programming in future posts.</p>
     </li>
   </ul>
 </div>
-
       <hr />
       <footer role="contentinfo">
         <div class="article-author-bottom">
-          
-
-
-<div itemscope itemtype="http://data-vocabulary.org/Person">
+          <div itemscope itemtype="http://data-vocabulary.org/Person">
   
     <img itemprop="photo" src="http://blog.jeremyfairbank.com/images/bio-photo-1.jpg" class="bio-photo" alt="Jeremy Fairbank bio photo">
   
@@ -746,7 +618,6 @@ the concepts of functional programming in future posts.</p>
   
   
 </div>
-
         </div>
         <p class="byline"><strong>Functional JavaScript Part 1: Lists</strong> was published on <time datetime="2015-01-17T00:00:00-05:00">January 17, 2015</time>.</p>
       </footer>
@@ -772,10 +643,7 @@ the concepts of functional programming in future posts.</p>
 
 <div class="footer-wrap">
   <footer>
-    
-
-<span>&copy; 2014 - 2015 Jeremy Fairbank. Powered by <a href="http://jekyllrb.com" rel="nofollow">Jekyll</a> using the <a href="http://mademistakes.com/minimal-mistakes/" rel="nofollow">Minimal Mistakes</a> theme.</span>
-
+    <span>&copy; 2014 - 2015 Jeremy Fairbank. Powered by <a href="http://jekyllrb.com" rel="nofollow">Jekyll</a> using the <a href="http://mademistakes.com/minimal-mistakes/" rel="nofollow">Minimal Mistakes</a> theme.</span>
   </footer>
 </div><!-- /.footer-wrap -->
 
@@ -799,8 +667,7 @@ ga('send', 'pageview');
 <!-- End Google Analytics -->
 
 
-  
-<script type="text/javascript">
+  <script type="text/javascript">
     /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
     var disqus_shortname = 'jeremyfairbankblog'; // required: replace example with your forum shortname
 
@@ -820,10 +687,7 @@ ga('send', 'pageview');
     }());
 </script>
 <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
-
-
-	        
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>	        
 
 </body>
 </html>

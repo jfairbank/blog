@@ -29,3 +29,20 @@
     margin-right: 20px;
   }
 }
+
+figcaption.code-highlight-caption {
+  padding-top: 0;
+}
+
+pre.code-highlight-pre {
+  font-family: Consolas, "Liberation Mono", Menlo, Courier, monospace !important;
+  font-size: 0.72rem;
+
+  @media #{$large} {
+    font-size: 0.8rem;
+  }
+
+  @media #{$x-large} {
+    font-size: 0.8rem;
+  }
+}

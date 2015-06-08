@@ -34,13 +34,13 @@ In terms of FP, this is the action of a function calling itself a number of time
 OK… but what does that accomplish? Well, one classic example is implementing
 a function to calculate the value of the Fibonacci sequence at a given number `n`:
 
-{% gist 4cdab1438cd8b66ef090/fib.js %}
+{% gist 4cdab1438cd8b66ef090 fib.js %}
 
 Notice that we call our `fib` function inside itself for inputs `n > 1`. We return
 the result of `fib(n - 1) + fib(n - 2)` to get the final answer. If we were to
 trace calls to `fib` for `n = 4`, we would see something like this:
 
-{% gist 4cdab1438cd8b66ef090/fib-calls.js %}
+{% gist 4cdab1438cd8b66ef090 fib-calls.js %}
 
 Notice something interesting? At the next to last line, all that is left is addition
 with `1's` and `0's` to yield `3`. This is the power of recursion, **the base case**.
@@ -60,7 +60,7 @@ of `n = 4`.
 
 Now compare this to an imperative approach with dynamic programming:
 
-{% gist 4cdab1438cd8b66ef090/fib-imperative.js %}
+{% gist 4cdab1438cd8b66ef090 fib-imperative.js %}
 
 That is a little less understandable, albeit **FAAAARRR** more performant. If we
 compare the imperative approach with the functional approach, we find that the
@@ -133,9 +133,9 @@ implementations of them for our list.
 First, we need to create our list data structure. To accomplish this, we actually
 need to implement the cons cell and nil, the empty list.
 
-{% gist 4cdab1438cd8b66ef090/cons-1.js %}
+{% gist 4cdab1438cd8b66ef090 cons-1.js %}
 
-{% gist 4cdab1438cd8b66ef090/nil-1.js %}
+{% gist 4cdab1438cd8b66ef090 nil-1.js %}
 
 So, `Cons` has a `head` property, a `tail` property, and `isEmpty = false`.
 Notice that `Nil` is an object literal instead of a constructor function. It
@@ -146,12 +146,12 @@ errors if you try to access `head` or `tail` on it.
 
 So, if we wanted to build a list, we could do this then:
 
-{% gist 4cdab1438cd8b66ef090/build-list-1.js %}
+{% gist 4cdab1438cd8b66ef090 build-list-1.js %}
 
 That is unsightly, though. We should at least introduce a helper function to
 clean it up a little:
 
-{% gist 4cdab1438cd8b66ef090/build-list-2.js %}
+{% gist 4cdab1438cd8b66ef090 build-list-2.js %}
 
 That is better; we will create an even nicer-looking function later on, but we will
 use this for now.
@@ -175,7 +175,7 @@ then as methods of our `Cons` and `Nil` objects. First, let us look at `map`.
 
 ### Map
 
-{% gist 4cdab1438cd8b66ef090/map.js %}
+{% gist 4cdab1438cd8b66ef090 map.js %}
 
 So what is going on here? Just like our functional `fib` implementation and with
 almost any FP function, we need a base case. Remember that this is the root from
@@ -197,14 +197,14 @@ we finally get to `Nil`. Once we return it, we can begin to return the result
 for each remaining frame in the stack until the first call returns the new list.
 Here is how the list will get built with each call below:
 
-{% gist 4cdab1438cd8b66ef090/map-call-1.js %}
+{% gist 4cdab1438cd8b66ef090 map-call-1.js %}
 
 There is our first implementation of `map`. But what if we wanted to utilize JavaScript's
 object-oriented capabilities and eliminate that `isEmpty` conditional check? In
 this case we need to add `map` as a method to the `Cons` prototype and to
 the `Nil` object.
 
-{% gist 4cdab1438cd8b66ef090/oop-map.js %}
+{% gist 4cdab1438cd8b66ef090 oop-map.js %}
 
 Basically what we have done is separate out the branches of computation in `map`
 to the objects with which they are concerned. `Cons#map` builds up the new cons cells
@@ -216,7 +216,7 @@ that are similar to switch statements but vastly more powerful.
 
 Our usage would only change in how we initially call `map`:
 
-{% gist 4cdab1438cd8b66ef090/map-call-2.js %}
+{% gist 4cdab1438cd8b66ef090 map-call-2.js %}
 
 So that is `map`. See how elegantly and simply we were able to implement it in just
 a couple lines. An imperative approach would require some looping construct
@@ -230,7 +230,7 @@ Next up is `reduce`. Recall that with `reduce` we want to transform our list int
 some other value and that may not be another list. Here is the function
 implementation:
 
-{% gist 4cdab1438cd8b66ef090/reduce.js %}
+{% gist 4cdab1438cd8b66ef090 reduce.js %}
 
 This is very similar to our `map` implementation. Notice that we have one more
 input this time, `memo`. Think of this as an accumulator, so we can keep track
@@ -246,12 +246,12 @@ else.
 
 Here is a great example where we can calculate the sum of a list of numbers:
 
-{% gist 4cdab1438cd8b66ef090/reduce-call-1.js %}
+{% gist 4cdab1438cd8b66ef090 reduce-call-1.js %}
 
 And of course, let us simplify our implementation with the object-oriented
 approach:
 
-{% gist 4cdab1438cd8b66ef090/oop-reduce.js %}
+{% gist 4cdab1438cd8b66ef090 oop-reduce.js %}
 
 If you are familiar with `reduce`, then you also know we could alter our
 implementation to not require the initial `memo` argument. Instead we could make
@@ -264,7 +264,7 @@ reverse direction. So, it would first encounter `Nil`, then the next-to-last
 item, and keep going until it reaches the first item in the list. `reduceRight`
 can be implemented as follows:
 
-{% gist 4cdab1438cd8b66ef090/oop-reduceRight.js %}
+{% gist 4cdab1438cd8b66ef090 oop-reduceRight.js %}
 
 This is very close to the implementation of `reduce` except we flip the order in
 which we call our transformation function and when we make our recursive calls.
@@ -275,7 +275,7 @@ the reverse direction.
 
 Our new map implementation can be seen below:
 
-{% gist 4cdab1438cd8b66ef090/oop-map-reduce.js %}
+{% gist 4cdab1438cd8b66ef090 oop-map-reduce.js %}
 
 Since we are reducing from the right, we will start from `Nil` and build cons
 cells up from that. Think back to our list picture where we stacked the cons cells
@@ -302,7 +302,7 @@ to avoid several `cons` calls. We can implement a `list` function that takes
 a variable number of arguments and produces a list. Since we are talking about
 FP, let us implement that function in a functional manner too.
 
-{% gist 4cdab1438cd8b66ef090/list-constructor.js %}
+{% gist 4cdab1438cd8b66ef090 list-constructor.js %}
 
 So notice here we are mirroring the concepts we used in our list functions. We
 are returning `Nil` if `arguments` are empty, so this is our base case. We then
@@ -312,7 +312,7 @@ Inside that `cons` call we recursively apply the `list` function to the tail via
 
 Then, we can use our `list` function for easier list construction:
 
-{% gist 4cdab1438cd8b66ef090/list-calls.js %}
+{% gist 4cdab1438cd8b66ef090 list-calls.js %}
 
 Thanks for reading and please leave any feedback or questions you may have on
 FP and lists. If you feel there are any holes in this explanation, please let me

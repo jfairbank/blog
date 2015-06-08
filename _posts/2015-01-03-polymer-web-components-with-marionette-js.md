@@ -60,7 +60,7 @@ Our name tag element will be pretty basic, displaying a name and job. We will al
 to edit the name and job. To build the name tag element, we will use this simple Polymer
 convention for creating custom elements:
 
-{% gist 3b857598c2f7b1e12747/name-tag-1.html %}
+{% gist 3b857598c2f7b1e12747 name-tag-1.html %}
 
 There are few concepts to explain here. At line 1, we import our framework for defining
 a custom element via an import link relation. At line 3, we define our custom element
@@ -79,7 +79,7 @@ they match the attributes we published, and we give them default values.
 
 Now we can use our custom element just like any other HTML element:
 
-{% gist 3b857598c2f7b1e12747/name-tag-usage-1.html %}
+{% gist 3b857598c2f7b1e12747 name-tag-usage-1.html %}
 
 <a href="/demos/polymer-components-with-marionette-js/name-tag-usage-1.html" target="_blank" class="btn">DEMO</a>
 
@@ -93,7 +93,7 @@ What we want to accomplish is a way to not only instantiate our custom element w
 Marionette but to also sync model data with other Marionette views. We will tackle the
 former first, allowing us to do this:
 
-{% gist 3b857598c2f7b1e12747/name-tag-usage-marionette-1.js %}
+{% gist 3b857598c2f7b1e12747 name-tag-usage-marionette-1.js %}
 
 <a href="/demos/polymer-components-with-marionette-js/name-tag-usage-marionette-1.html" target="_blank" class="btn">DEMO</a>
 (Note: demo may not work on mobile devices.)
@@ -103,7 +103,7 @@ I have set up a basic GitHub repo for its implementation at
 {% ext_link https://github.com/jfairbank/marionette.polymerview/ jfairbank/marionette.polymerview %}.
 You can view the source in the below gist too:
 
-{% gist 3b857598c2f7b1e12747/marionette.polymerview.js %}
+{% gist 3b857598c2f7b1e12747 marionette.polymerview.js %}
 
 It is not the most foolproof implementation, but it gets the job done and highlights how easily
 we can work with a Polymer web component from Marionette. Instead of going line-by-line, I
@@ -127,7 +127,7 @@ is possible; maybe you can help me figure it out!
 
 Nonetheless, we will tweak our name tag definition to include some property watchers:
 
-{% gist 3b857598c2f7b1e12747/name-tag-2.html %}
+{% gist 3b857598c2f7b1e12747 name-tag-2.html %}
 
 At lines 15 and 19, we define two functions `nameChanged` and `jobChanged`, respectively.
 These are our property watchers. Notice the syntax is property<em>Changed</em>. Whenever
@@ -169,15 +169,15 @@ We will define two other Marionette views, one for displaying information about 
 also define a Marionette layout for organizing our views. Our views and their templates
 are below:
 
-{% gist 3b857598c2f7b1e12747/views-1.js %}
+{% gist 3b857598c2f7b1e12747 views-1.js %}
 
-{% gist 3b857598c2f7b1e12747/templates-1.html %}
+{% gist 3b857598c2f7b1e12747 templates-1.html %}
 
 Notice in our `views-1.js` that we again define a `NameTag` view from `PolymerView`. We
 also define a `PersonFormView` for editing the person model data and a `PersonView` for
 just displaying the person model data. Finally, we wire it all up:
 
-{% gist 3b857598c2f7b1e12747/name-tag-usage-marionette-2.js %}
+{% gist 3b857598c2f7b1e12747 name-tag-usage-marionette-2.js %}
 
 <a href="/demos/polymer-components-with-marionette-js/name-tag-usage-marionette-2.html" target="_blank" class="btn">DEMO</a>
 

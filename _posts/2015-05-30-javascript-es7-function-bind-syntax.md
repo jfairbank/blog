@@ -29,14 +29,14 @@ welcome tool in my JavaScript arsenal.
 
 So what does the syntax actually look like?
 
-{% gist c64db36d16a2719d7a1d/syntax.js %}
+{% gist c64db36d16a2719d7a1d syntax.js %}
 
 That's pretty much it. The proposal introduces a new `::` operator that
 simplifies function binding. Essentially, it offers syntactic sugar for calling
 the `bind`, `call`, and `apply` methods on `Function.prototype`. The equivalent
 ES5 code is below:
 
-{% gist c64db36d16a2719d7a1d/syntax-compiled.js %}
+{% gist c64db36d16a2719d7a1d syntax-compiled.js %}
 
 We could call it a day at that, but I don't want to devalue the power that this
 syntax affords us. Let's explore the ramifications of this syntax further.
@@ -45,7 +45,7 @@ syntax affords us. Let's explore the ramifications of this syntax further.
 
 How often have you done something like this in your JavaScript code?
 
-{% gist c64db36d16a2719d7a1d/es5-iteration.js %}
+{% gist c64db36d16a2719d7a1d es5-iteration.js %}
 
 Granted, you might be using a framework for your Todo app or a library like
 lodash for iteration, but I don't doubt we've all used the native `Array`
@@ -55,7 +55,7 @@ the job done.
 Now, with function bind syntax, we can make this code more expressive and
 elegant:
 
-{% gist c64db36d16a2719d7a1d/es7-iteration.js %}
+{% gist c64db36d16a2719d7a1d es7-iteration.js %}
 
 The semantics remain the same, yet this reads more naturally and hides away the
 uglier syntax we're accustomed to.
@@ -80,12 +80,12 @@ context for our callback. Normally, we have to create a reference to `this` in a
 separate variable and refer to it in our callback, or we call
 `Function.prototype.bind` on our callback, passing in `this`.
 
-{% gist c64db36d16a2719d7a1d/es5-callbacks.js %}
+{% gist c64db36d16a2719d7a1d es5-callbacks.js %}
 
 Again, this is a little messy and slightly ugly. But with function bind syntax,
 it becomes drastically simpler:
 
-{% gist c64db36d16a2719d7a1d/es7-callbacks.js %}
+{% gist c64db36d16a2719d7a1d es7-callbacks.js %}
 
 This is powerfully expressive. No function wrapping. No explicit `bind` calls
 (we're obviously still calling it via `::`, but we hide away those details). We
@@ -115,13 +115,13 @@ To avoid duplication in some classes, I wanted to add some methods to the
 didn't want to pollute the actual object instance. Function bind syntax to the
 rescue!
 
-{% gist c64db36d16a2719d7a1d/es7-casper-chaining.js %}
+{% gist c64db36d16a2719d7a1d es7-casper-chaining.js %}
 
 That is amazing! I can naturally express the chaining semantics while decorating
 my instance without altering it. Just as a reminder of what we would probably
 have to do without function bind syntax, here is some equivalent ES2015 code:
 
-{% gist c64db36d16a2719d7a1d/es6-casper-chaining.js %}
+{% gist c64db36d16a2719d7a1d es6-casper-chaining.js %}
 
 It gets the job done, but it doesn't flow as nicely as our chaining example.
 Function bind syntax allows us to reduce how much code we write and effectively
@@ -149,14 +149,14 @@ no affordance for partial application via this syntax. Recall that the `bind`
 method on `Function.prototype` can also partially apply parameters to the bound
 function by passing in additional arguments.
 
-{% gist c64db36d16a2719d7a1d/es5-partial-application.js %}
+{% gist c64db36d16a2719d7a1d es5-partial-application.js %}
 
 I would like to see some type of partial application syntax, especially as we
 continue to push the boundaries of functional-style programming in JavaScript.
 Alas, I recognize that designing clean, efficient syntax is difficult. This may
 just not be possible. Some quick ideas for a syntax could be:
 
-{% gist c64db36d16a2719d7a1d/es7-partial-application.js %}
+{% gist c64db36d16a2719d7a1d es7-partial-application.js %}
 
 ## Conclusion
 

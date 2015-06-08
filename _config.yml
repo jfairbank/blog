@@ -7,12 +7,14 @@ url:              http://blog.jeremyfairbank.com
 # Jekyll configuration
 permalink:   /:categories/:title/
 markdown:    kramdown
-highlighter: pygments
+highlighter: rouge
 sass:
   sass_dir: _sass
   style: compressed
 gems:
   - jekyll-sitemap
+  - octopress-gist
+  - octopress-solarized
 
 kramdown:
   auto_ids: true
