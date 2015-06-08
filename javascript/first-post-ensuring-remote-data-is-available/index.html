@@ -159,6 +159,8 @@
 <ul id="markdown-toc">
   <li><a href="#greetings" id="markdown-toc-greetings">Greetings</a></li>
   <li><a href="#the-problem" id="markdown-toc-the-problem">The Problem</a></li>
+  <li><a href="#the-solution" id="markdown-toc-the-solution">The Solution</a></li>
+  <li><a href="#conclusion" id="markdown-toc-conclusion">Conclusion</a></li>
 </ul>
 
   </div>
@@ -183,375 +185,157 @@
 
 <p>We have a large single-page application for ordering a highly customizable product. This application is built upon <a href="http://backbonejs.org/">Backbone</a> and <a href="http://marionettejs.com/">Marionette</a> with a <a href="http://rubyonrails.org/">Ruby on Rails</a> back-end. Now, let’s say our configurable product is a car. Certain configuration options on the car will incur various upcharges. These upcharges will not change often, so they will be constant throughout a user’s session on the application. Thus, one of the JavaScript files pulls down all the possible upcharge types from an API on the back-end.</p>
 
-<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
-2
-3
-4
-5
-6
-7
-8
-9
-10
-11
-12
-13
-14
-15</pre></td><td class="code"><pre><span class="c1">// car.js</span>
-
-<span class="kd">var</span> <span class="nx">Car</span> <span class="o">=</span> <span class="nx">Backbone</span><span class="p">.</span><span class="nx">Model</span><span class="p">.</span><span class="nx">extend</span><span class="p">();</span>
-
-<span class="c1">// car/upcharges.js</span>
-
-<span class="kd">var</span> <span class="nx">Upcharge</span> <span class="o">=</span> <span class="nx">Backbone</span><span class="p">.</span><span class="nx">Model</span><span class="p">.</span><span class="nx">extend</span><span class="p">();</span>
-
-<span class="kd">var</span> <span class="nx">Upcharges</span> <span class="o">=</span> <span class="nx">Backbone</span><span class="p">.</span><span class="nx">Collection</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
-  <span class="na">model</span><span class="p">:</span> <span class="nx">Upcharge</span><span class="p">,</span>
-  <span class="na">url</span><span class="p">:</span> <span class="s1">'/api/upcharges'</span>
-<span class="p">});</span>
-
-<span class="kd">var</span> <span class="nx">availableUpcharges</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Upcharges</span><span class="p">();</span>
-<span class="nx">availableUpcharges</span><span class="p">.</span><span class="nx">fetch</span><span class="p">();</span><span class="w">
-</span></pre></td></tr></tbody></table>
-
-
-
-So, `car/upcharges.js` immediately fetches the upcharges as soon as the browser loads the file. In a normal user session, this is completely acceptable because by the time the user can begin to use the application, the upcharges have loaded.
-
-As the user navigates throughout the application, he/she will eventually make decisions that may require the application to add or remove different upcharges to a car. To handle this, the application uses another collection for managing which upcharges have been applied to the car based on a `key` field for each upcharge. Canonical upcharges have been seeded into the application with constant `key` names. For example, if the user wanted chrome rims, the application would add an upcharge via:
-
-
-<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
-2
-3</pre></td><td class="code"><pre><span class="c1">// app/some/module.js</span>
-
-<span class="nx">car</span><span class="p">.</span><span class="nx">appliedUpcharges</span><span class="p">.</span><span class="nx">addUpchargeByKey</span><span class="p">(</span><span class="s1">'chrome_rims'</span><span class="p">);</span><span class="w">
-</span></pre></td></tr></tbody></table>
-
-
-
-The collection for applied upcharges might look something like this then:
-
-
-<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
-2
-3
-4
-5
-6
-7
-8
-9
-10
-11
-12
-13
-14
-15
-16
-17
-18
-19
-20
-21
-22
-23
-24
-25
-26
-27
-28
-29
-30
-31
-32
-33
-34
-35
-36</pre></td><td class="code"><pre><span class="c1">// car/upcharges.js</span>
-
-<span class="kd">var</span> <span class="nx">Upcharges</span> <span class="o">=</span> <span class="nx">Backbone</span><span class="p">.</span><span class="nx">Collection</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
-  <span class="c1">// earlier definitions...</span>
-
-  <span class="na">getByKey</span><span class="p">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">key</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">findWhere</span><span class="p">({</span> <span class="na">key</span><span class="p">:</span> <span class="nx">key</span> <span class="p">});</span>
-  <span class="p">}</span>
-<span class="p">});</span>
-
-<span class="kd">var</span> <span class="nx">AppliedUpcharges</span> <span class="o">=</span> <span class="nx">Backbone</span><span class="p">.</span><span class="nx">Collection</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
-  <span class="na">model</span><span class="p">:</span> <span class="nx">Upcharge</span><span class="p">,</span>
-
-  <span class="na">addUpchargeByKey</span><span class="p">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">key</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">_getUpchargeByKeyAndRun</span><span class="p">(</span><span class="nx">key</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">addUpcharge</span><span class="p">);</span>
-  <span class="p">},</span>
-
-  <span class="na">removeUpchargeByKey</span><span class="p">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">key</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">_getUpchargeByKeyAndRun</span><span class="p">(</span><span class="nx">key</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">removeUpcharge</span><span class="p">);</span>
-  <span class="p">},</span>
-
-  <span class="na">addUpcharge</span><span class="p">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">upcharge</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">has</span><span class="p">(</span><span class="nx">upcharge</span><span class="p">))</span> <span class="p">{</span>
-      <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="nx">upcharge</span><span class="p">.</span><span class="nx">clone</span><span class="p">());</span>
-    <span class="p">}</span>
-  <span class="p">},</span>
-
-  <span class="na">removeUpcharge</span><span class="p">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">upcharge</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">remove</span><span class="p">(</span><span class="nx">upcharge</span><span class="p">);</span>
-  <span class="p">},</span>
-
-  <span class="na">_getUpchargeByKeyAndRun</span><span class="p">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">key</span><span class="p">,</span> <span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
-    <span class="kd">var</span> <span class="nx">upcharge</span> <span class="o">=</span> <span class="nx">availableUpcharges</span><span class="p">.</span><span class="nx">getByKey</span><span class="p">(</span><span class="nx">key</span><span class="p">);</span>
-    <span class="nx">callback</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">upcharge</span><span class="p">);</span>
-  <span class="p">}</span>
-<span class="p">});</span><span class="w">
-</span></pre></td></tr></tbody></table>
-
-
-
-OK, so this is all fine and dandy and it works. Ehh, maybe we should move the logic for adding and removing upcharges to the back-end, but that's for another time and place to discuss. In fact, I'm more in favor of that idea, but it would defeat the purpose of this blog post.
-
-Now, it's time to set up a feature spec because we want to make sure that the upcharges display on the order totals page. Given we use RSpec, Capybara, and FactoryGirl, a very simplified version of the feature spec might look something like this:
-
-
-<div class="highlight"><pre><code class="language-ruby" data-lang="ruby"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
-2
-3
-4
-5
-6
-7
-8
-9
-10
-11
-12
-13
-14
-15
-16
-17
-18
-19
-20
-21
-22
-23
-24
-25
-26
-27
-28
-29
-30
-31
-32
-33
-34
-35
-36
-37
-38</pre></td><td class="code"><pre><span class="nb">require</span> <span class="s1">'spec_helper'</span>
-<span class="nb">require</span> <span class="s1">'features/helpers'</span>
-
-<span class="n">feature</span> <span class="s1">'Configuring a car'</span><span class="p">,</span> <span class="ss">js: </span><span class="kp">true</span> <span class="k">do</span>
-  <span class="n">given</span><span class="p">(</span><span class="ss">:user</span><span class="p">)</span>	<span class="p">{</span> <span class="n">create</span><span class="p">(</span><span class="ss">:user</span><span class="p">)</span> <span class="p">}</span>
-  <span class="n">given</span><span class="p">(</span><span class="ss">:order</span><span class="p">)</span> <span class="p">{</span> <span class="n">create</span><span class="p">(</span><span class="ss">:order</span><span class="p">,</span> <span class="ss">:incomplete</span><span class="p">)</span> <span class="p">}</span>
-
-  <span class="n">background</span> <span class="k">do</span>
-    <span class="n">login_as</span> <span class="n">user</span> <span class="c1"># Helper method from 'features/helpers'</span>
-
-    <span class="n">create</span><span class="p">(</span><span class="ss">:upcharge</span><span class="p">,</span> <span class="p">{</span>
-      <span class="ss">key: </span><span class="s1">'chrome_rims'</span><span class="p">,</span>
-      <span class="ss">description: </span><span class="s1">'Chrome Rims'</span><span class="p">,</span>
-      <span class="ss">price: </span><span class="mi">1000</span>
-    <span class="p">})</span>
-
-    <span class="n">car</span> <span class="o">=</span> <span class="n">create</span><span class="p">(</span><span class="ss">:car</span><span class="p">)</span>
-
-    <span class="n">order</span><span class="p">.</span><span class="nf">car</span> <span class="o">=</span> <span class="n">car</span>
-    <span class="n">order</span><span class="p">.</span><span class="nf">save</span>
-  <span class="k">end</span>
-
-  <span class="n">scenario</span> <span class="s1">'Viewing the order totals page'</span> <span class="k">do</span>
-    <span class="n">click_on</span> <span class="s1">'Orders'</span>
-
-    <span class="n">within</span><span class="p">(</span><span class="s1">'#orders-table'</span><span class="p">)</span> <span class="k">do</span>
-      <span class="n">click_on</span> <span class="s2">"Order #</span><span class="si">#{</span><span class="n">order</span><span class="p">.</span><span class="nf">id</span><span class="si">}</span><span class="s2">"</span>
-    <span class="k">end</span>
-
-    <span class="n">click_on</span> <span class="s1">'Configure Car'</span>
-    <span class="n">click_on</span> <span class="s1">'Add Chrome Rims'</span>
-    <span class="n">click_on</span> <span class="s1">'Order Totals'</span>
-
-    <span class="n">totals</span> <span class="o">=</span> <span class="n">find</span><span class="p">(</span><span class="s1">'#order-totals'</span><span class="p">)</span>
-    <span class="n">expect</span><span class="p">(</span><span class="n">totals</span><span class="p">).</span><span class="nf">to</span> <span class="n">have_selector</span><span class="p">(</span><span class="s1">'.car-upcharge'</span><span class="p">,</span> <span class="ss">count: </span><span class="mi">1</span><span class="p">)</span>
-    <span class="n">expect</span><span class="p">(</span><span class="n">totals</span><span class="p">).</span><span class="nf">to</span> <span class="n">have_selector</span><span class="p">(</span><span class="s1">'.car-upcharge'</span><span class="p">,</span> <span class="ss">text: </span><span class="s1">'Chrome Rims'</span><span class="p">)</span>
-  <span class="k">end</span>
-<span class="k">end</span><span class="w">
-</span></pre></td></tr></tbody></table>
-
-
-
-So, I run the spec and it *fails*. Okay... Did I not properly set up the order and car? Is there some random attribute that is still `nil` on a model that needs to have a value? After strategically (maybe a little randomly) placing `console.log`'s and `puts`'s, I discovered that my `availableUpcharges` variable was an empty collection. But, I added the chrome rims upcharge in my `background` block.
-
-A couple more `console.log`'s and it begins to make sense. RSpec and Capybara load my application's assets before the `background` block runs. So, I fetch the available upcharges before any have even been created. This is problematic for a single page application that pulls remote data down once to use it for the remainder of the user's session. Yes, it's good to not create additional requests for remote data, but maybe immediately loading the data when the file loads isn't a good idea either.
-
-## The Solution
-What can we do then? A better solution would be to asynchronously load and use the available upcharges the first time they're needed. We could use a singleton object for managing the available upcharges like so:
-
-
-<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
-2
-3
-4
-5
-6
-7
-8
-9
-10
-11
-12
-13
-14
-15
-16
-17
-18
-19
-20
-21
-22
-23
-24
-25
-26
-27
-28
-29
-30
-31
-32</pre></td><td class="code"><pre><span class="c1">// car/upcharges.js</span>
-
-<span class="kd">var</span> <span class="nx">AppliedUpcharges</span> <span class="o">=</span> <span class="nx">Backbone</span><span class="p">.</span><span class="nx">Collection</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
-  <span class="c1">// other definitions...</span>
-
-  <span class="c1">// Redefine this function</span>
-  <span class="na">_getUpchargeByKeyAndRun</span><span class="p">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">key</span><span class="p">,</span> <span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
-    <span class="kd">var</span> <span class="nx">self</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
-
-    <span class="nx">availableUpcharges</span><span class="p">.</span><span class="nx">ensured</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">upcharges</span><span class="p">)</span> <span class="p">{</span>
-      <span class="kd">var</span> <span class="nx">upcharge</span> <span class="o">=</span> <span class="nx">upcharges</span><span class="p">.</span><span class="nx">getByKey</span><span class="p">(</span><span class="nx">key</span><span class="p">);</span>
-      <span class="nx">callback</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">self</span><span class="p">,</span> <span class="nx">upcharge</span><span class="p">);</span>
-    <span class="p">});</span>
-  <span class="p">}</span>
-<span class="p">});</span>
-
-<span class="kd">var</span> <span class="nx">availableUpcharges</span> <span class="o">=</span> <span class="p">{</span>
-  <span class="na">ensured</span><span class="p">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">firstCallback</span><span class="p">)</span> <span class="p">{</span>
-    <span class="kd">var</span> <span class="nx">self</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
-    <span class="kd">var</span> <span class="nx">upcharges</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Upcharges</span><span class="p">();</span>
-
-    <span class="nx">upcharges</span><span class="p">.</span><span class="nx">fetch</span><span class="p">({</span>
-      <span class="na">success</span><span class="p">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-	<span class="nx">self</span><span class="p">.</span><span class="nx">ensured</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
-	  <span class="nx">callback</span><span class="p">(</span><span class="nx">upcharges</span><span class="p">);</span>
-	<span class="p">};</span>
-
-	<span class="nx">self</span><span class="p">.</span><span class="nx">ensured</span><span class="p">(</span><span class="nx">firstCallback</span><span class="p">);</span>
-      <span class="p">}</span>
-    <span class="p">})</span>
-  <span class="p">}</span>
-<span class="p">};</span><span class="w">
-</span></pre></td></tr></tbody></table>
-
-
-
-Now, we just call `availableUpcharges.ensured` first, passing it a callback function. We create one interface for accessing the real available upcharges, whether they're loaded yet or not. Our singleton object handles loading them the first time. Once they're loaded, it redefines it's `ensured` method to just simply pass the loaded upcharges to the callback.
-
-I test it out in my application, but then I start to see multiple requests for the available upcharges. That's the exact opposite of what this is supposed to do. Then, I realize my error. You see, our application automatically checks for multiple upcharges based on measurement constraints. There are multiple configurable measurements that are interrelated. So, if a user's car had an atypical length-to-width ratio, then the application catches that on the order totals page and applies an appropriate upcharge. That way, if the user left the application and came back later, the application can recheck the car and update the upcharges as needed. Now, imagine there are several more of those measurement checks occurring all at once, meaning the application would call `addUpchargeByKey` and `removeUpchargeByKey` several times, calling `_getUpchargeByKeyAndRun` several times.
-
-This presents a problem; if the application calls `_getUpchargeByKeyAndRun` multiple consecutive times and the available upcharges haven't loaded yet, then it is going to naturally create multiple requests for them because the `ensured` function has not been redefined yet. We need to tweak our singleton object to take this into account:
-
-
-<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
-2
-3
-4
-5
-6
-7
-8
-9
-10
-11
-12
-13
-14
-15
-16
-17
-18
-19
-20
-21
-22
-23
-24
-25
-26
-27
-28
-29
-30
-31
-32
-33</pre></td><td class="code"><pre><span class="c1">// car/upcharges.js</span>
-
-<span class="kd">var</span> <span class="nx">availableUpcharges</span> <span class="o">=</span> <span class="p">{</span>
-  <span class="na">queue</span><span class="p">:</span> <span class="p">[],</span>
-
-  <span class="na">ensured</span><span class="p">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">firstCallback</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">this</span><span class="p">.</span><span class="nx">queue</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">firstCallback</span><span class="p">);</span>
-
-    <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">request</span><span class="p">)</span> <span class="p">{</span>
-      <span class="k">return</span><span class="p">;</span>
-    <span class="p">}</span>
-
-    <span class="kd">var</span> <span class="nx">self</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
-    <span class="kd">var</span> <span class="nx">upcharges</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Upcharges</span><span class="p">();</span>
-
-    <span class="k">this</span><span class="p">.</span><span class="nx">request</span> <span class="o">=</span> <span class="nx">upcharges</span><span class="p">.</span><span class="nx">fetch</span><span class="p">({</span>
-      <span class="na">success</span><span class="p">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-	<span class="kd">var</span> <span class="nx">currentCallback</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
-
-	<span class="nx">self</span><span class="p">.</span><span class="nx">ensured</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
-	  <span class="nx">callback</span><span class="p">(</span><span class="nx">upcharges</span><span class="p">);</span>
-	<span class="p">};</span>
-
-	<span class="k">while</span> <span class="p">(</span><span class="nx">currentCallback</span> <span class="o">=</span> <span class="nx">self</span><span class="p">.</span><span class="nx">queue</span><span class="p">.</span><span class="nx">shift</span><span class="p">())</span> <span class="p">{</span>
-	  <span class="nx">self</span><span class="p">.</span><span class="nx">ensured</span><span class="p">(</span><span class="nx">currentCallback</span><span class="p">);</span>
-	<span class="p">}</span>
-
-	<span class="k">delete</span> <span class="nx">self</span><span class="p">.</span><span class="nx">request</span><span class="p">;</span>
-	<span class="k">delete</span> <span class="nx">self</span><span class="p">.</span><span class="nx">queue</span><span class="p">;</span>
-      <span class="p">}</span>
-    <span class="p">});</span>
-  <span class="p">}</span>
-<span class="p">};</span><span class="w">
-</span></pre></td></tr></tbody></table>
-
-
-
-So, what's the difference? Well, until the available upcharges are loaded and the `ensured` function is redefined, we simply queue up every callback passed in and check to see if a request has already been made. Once the upcharges load, we redefine the function as before. We also clear our queue, calling the new `ensured` function definition with each queued callback. I run through the application again, and now there is only one request, and all the upcharge checks work properly. I rerun my spec and get my glorious green dot!
-
-## Conclusion
-
-
-I like this solution, and it's currently working fine in production and testing. Granted, the business logic for checking these upcharges should move to the back-end, but it's one of those refactors that gets overshadowed by other bugs and features (I'm sure you know what I mean). Regardless, I feel this is a relatively good starting point for handling this problem. You can use this type of approach to lazily load data in JavaScript that you may not need immediately.
-
-I hope you enjoyed this post and please provide whatever questions or feedback you have!
-</code></pre></div></code></pre></div></code></pre></div></code></pre></div></code></pre></div></code></pre></div>
+<figure class="code-highlight-figure"><figcaption class="code-highlight-caption"><span class="code-highlight-caption-title">car.js</span></figcaption><div class="code-highlight"><pre class="code-highlight-pre"><div data-line="1" class="code-highlight-row numbered"><div class="code-highlight-line"><span class="kd">var</span> <span class="nx">Car</span> <span class="o">=</span> <span class="nx">Backbone</span><span class="p">.</span><span class="nx">Model</span><span class="p">.</span><span class="nx">extend</span><span class="p">();</span>
+</div></div><div data-line="2" class="code-highlight-row numbered"><div class="code-highlight-line"> </div></div><div data-line="3" class="code-highlight-row numbered"><div class="code-highlight-line"><span class="c1">// car/upcharges.js</span>
+</div></div><div data-line="4" class="code-highlight-row numbered"><div class="code-highlight-line"> </div></div><div data-line="5" class="code-highlight-row numbered"><div class="code-highlight-line"><span class="kd">var</span> <span class="nx">Upcharge</span> <span class="o">=</span> <span class="nx">Backbone</span><span class="p">.</span><span class="nx">Model</span><span class="p">.</span><span class="nx">extend</span><span class="p">();</span>
+</div></div><div data-line="6" class="code-highlight-row numbered"><div class="code-highlight-line"> </div></div><div data-line="7" class="code-highlight-row numbered"><div class="code-highlight-line"><span class="kd">var</span> <span class="nx">Upcharges</span> <span class="o">=</span> <span class="nx">Backbone</span><span class="p">.</span><span class="nx">Collection</span><span class="p">.</span><span class="nx">extend</span><span class="p">(&#x7b;</span>
+</div></div><div data-line="8" class="code-highlight-row numbered"><div class="code-highlight-line">  <span class="na">model</span><span class="p">:</span> <span class="nx">Upcharge</span><span class="p">,</span>
+</div></div><div data-line="9" class="code-highlight-row numbered"><div class="code-highlight-line">  <span class="na">url</span><span class="p">:</span> <span class="s1">'/api/upcharges'</span>
+</div></div><div data-line="10" class="code-highlight-row numbered"><div class="code-highlight-line"><span class="p">&#x7d;);</span>
+</div></div><div data-line="11" class="code-highlight-row numbered"><div class="code-highlight-line"> </div></div><div data-line="12" class="code-highlight-row numbered"><div class="code-highlight-line"><span class="kd">var</span> <span class="nx">availableUpcharges</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Upcharges</span><span class="p">();</span>
+</div></div><div data-line="13" class="code-highlight-row numbered"><div class="code-highlight-line"><span class="nx">availableUpcharges</span><span class="p">.</span><span class="nx">fetch</span><span class="p">();</span></div></div></pre></div></figure>
+
+<p>So, <code>car/upcharges.js</code> immediately fetches the upcharges as soon as the browser loads the file. In a normal user session, this is completely acceptable because by the time the user can begin to use the application, the upcharges have loaded.</p>
+
+<p>As the user navigates throughout the application, he/she will eventually make decisions that may require the application to add or remove different upcharges to a car. To handle this, the application uses another collection for managing which upcharges have been applied to the car based on a <code>key</code> field for each upcharge. Canonical upcharges have been seeded into the application with constant <code>key</code> names. For example, if the user wanted chrome rims, the application would add an upcharge via:</p>
+
+<figure class="code-highlight-figure"><figcaption class="code-highlight-caption"><span class="code-highlight-caption-title">app/some/module.js</span></figcaption><div class="code-highlight"><pre class="code-highlight-pre"><div data-line="1" class="code-highlight-row numbered"><div class="code-highlight-line"><span class="nx">car</span><span class="p">.</span><span class="nx">appliedUpcharges</span><span class="p">.</span><span class="nx">addUpchargeByKey</span><span class="p">(</span><span class="s1">'chrome_rims'</span><span class="p">);</span></div></div></pre></div></figure>
+
+<p>The collection for applied upcharges might look something like this then:</p>
+
+<figure class="code-highlight-figure"><figcaption class="code-highlight-caption"><span class="code-highlight-caption-title">car/upcharges.js</span></figcaption><div class="code-highlight"><pre class="code-highlight-pre"><div data-line="1" class="code-highlight-row numbered"><div class="code-highlight-line"><span class="kd">var</span> <span class="nx">Upcharges</span> <span class="o">=</span> <span class="nx">Backbone</span><span class="p">.</span><span class="nx">Collection</span><span class="p">.</span><span class="nx">extend</span><span class="p">(&#x7b;</span>
+</div></div><div data-line="2" class="code-highlight-row numbered"><div class="code-highlight-line">  <span class="c1">// earlier definitions...</span>
+</div></div><div data-line="3" class="code-highlight-row numbered"><div class="code-highlight-line"> </div></div><div data-line="4" class="code-highlight-row numbered"><div class="code-highlight-line">  <span class="na">getByKey</span><span class="p">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">key</span><span class="p">)</span> <span class="p">&#x7b;</span>
+</div></div><div data-line="5" class="code-highlight-row numbered"><div class="code-highlight-line">    <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">findWhere</span><span class="p">(&#x7b;</span> <span class="na">key</span><span class="p">:</span> <span class="nx">key</span> <span class="p">&#x7d;);</span>
+</div></div><div data-line="6" class="code-highlight-row numbered"><div class="code-highlight-line">  <span class="p">&#x7d;</span>
+</div></div><div data-line="7" class="code-highlight-row numbered"><div class="code-highlight-line"><span class="p">&#x7d;);</span>
+</div></div><div data-line="8" class="code-highlight-row numbered"><div class="code-highlight-line"> </div></div><div data-line="9" class="code-highlight-row numbered"><div class="code-highlight-line"><span class="kd">var</span> <span class="nx">AppliedUpcharges</span> <span class="o">=</span> <span class="nx">Backbone</span><span class="p">.</span><span class="nx">Collection</span><span class="p">.</span><span class="nx">extend</span><span class="p">(&#x7b;</span>
+</div></div><div data-line="10" class="code-highlight-row numbered"><div class="code-highlight-line">  <span class="na">model</span><span class="p">:</span> <span class="nx">Upcharge</span><span class="p">,</span>
+</div></div><div data-line="11" class="code-highlight-row numbered"><div class="code-highlight-line"> </div></div><div data-line="12" class="code-highlight-row numbered"><div class="code-highlight-line">  <span class="na">addUpchargeByKey</span><span class="p">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">key</span><span class="p">)</span> <span class="p">&#x7b;</span>
+</div></div><div data-line="13" class="code-highlight-row numbered"><div class="code-highlight-line">    <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">_getUpchargeByKeyAndRun</span><span class="p">(</span><span class="nx">key</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">addUpcharge</span><span class="p">);</span>
+</div></div><div data-line="14" class="code-highlight-row numbered"><div class="code-highlight-line">  <span class="p">&#x7d;,</span>
+</div></div><div data-line="15" class="code-highlight-row numbered"><div class="code-highlight-line"> </div></div><div data-line="16" class="code-highlight-row numbered"><div class="code-highlight-line">  <span class="na">removeUpchargeByKey</span><span class="p">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">key</span><span class="p">)</span> <span class="p">&#x7b;</span>
+</div></div><div data-line="17" class="code-highlight-row numbered"><div class="code-highlight-line">    <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">_getUpchargeByKeyAndRun</span><span class="p">(</span><span class="nx">key</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">removeUpcharge</span><span class="p">);</span>
+</div></div><div data-line="18" class="code-highlight-row numbered"><div class="code-highlight-line">  <span class="p">&#x7d;,</span>
+</div></div><div data-line="19" class="code-highlight-row numbered"><div class="code-highlight-line"> </div></div><div data-line="20" class="code-highlight-row numbered"><div class="code-highlight-line">  <span class="na">addUpcharge</span><span class="p">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">upcharge</span><span class="p">)</span> <span class="p">&#x7b;</span>
+</div></div><div data-line="21" class="code-highlight-row numbered"><div class="code-highlight-line">    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">has</span><span class="p">(</span><span class="nx">upcharge</span><span class="p">))</span> <span class="p">&#x7b;</span>
+</div></div><div data-line="22" class="code-highlight-row numbered"><div class="code-highlight-line">      <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="nx">upcharge</span><span class="p">.</span><span class="nx">clone</span><span class="p">());</span>
+</div></div><div data-line="23" class="code-highlight-row numbered"><div class="code-highlight-line">    <span class="p">&#x7d;</span>
+</div></div><div data-line="24" class="code-highlight-row numbered"><div class="code-highlight-line">  <span class="p">&#x7d;,</span>
+</div></div><div data-line="25" class="code-highlight-row numbered"><div class="code-highlight-line"> </div></div><div data-line="26" class="code-highlight-row numbered"><div class="code-highlight-line">  <span class="na">removeUpcharge</span><span class="p">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">upcharge</span><span class="p">)</span> <span class="p">&#x7b;</span>
+</div></div><div data-line="27" class="code-highlight-row numbered"><div class="code-highlight-line">    <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">remove</span><span class="p">(</span><span class="nx">upcharge</span><span class="p">);</span>
+</div></div><div data-line="28" class="code-highlight-row numbered"><div class="code-highlight-line">  <span class="p">&#x7d;,</span>
+</div></div><div data-line="29" class="code-highlight-row numbered"><div class="code-highlight-line"> </div></div><div data-line="30" class="code-highlight-row numbered"><div class="code-highlight-line">  <span class="na">_getUpchargeByKeyAndRun</span><span class="p">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">key</span><span class="p">,</span> <span class="nx">callback</span><span class="p">)</span> <span class="p">&#x7b;</span>
+</div></div><div data-line="31" class="code-highlight-row numbered"><div class="code-highlight-line">    <span class="kd">var</span> <span class="nx">upcharge</span> <span class="o">=</span> <span class="nx">availableUpcharges</span><span class="p">.</span><span class="nx">getByKey</span><span class="p">(</span><span class="nx">key</span><span class="p">);</span>
+</div></div><div data-line="32" class="code-highlight-row numbered"><div class="code-highlight-line">    <span class="nx">callback</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">upcharge</span><span class="p">);</span>
+</div></div><div data-line="33" class="code-highlight-row numbered"><div class="code-highlight-line">  <span class="p">&#x7d;</span>
+</div></div><div data-line="34" class="code-highlight-row numbered"><div class="code-highlight-line"><span class="p">&#x7d;);</span></div></div></pre></div></figure>
+
+<p>OK, so this is all fine and dandy and it works. Ehh, maybe we should move the logic for adding and removing upcharges to the back-end, but that’s for another time and place to discuss. In fact, I’m more in favor of that idea, but it would defeat the purpose of this blog post.</p>
+
+<p>Now, it’s time to set up a feature spec because we want to make sure that the upcharges display on the order totals page. Given we use RSpec, Capybara, and FactoryGirl, a very simplified version of the feature spec might look something like this:</p>
+
+<figure class="code-highlight-figure"><figcaption class="code-highlight-caption"><span class="code-highlight-caption-title">car_spec.rb</span></figcaption><div class="code-highlight"><pre class="code-highlight-pre"><div data-line="1" class="code-highlight-row numbered"><div class="code-highlight-line"><span class="nb">require</span> <span class="s1">'spec_helper'</span>
+</div></div><div data-line="2" class="code-highlight-row numbered"><div class="code-highlight-line"><span class="nb">require</span> <span class="s1">'features/helpers'</span>
+</div></div><div data-line="3" class="code-highlight-row numbered"><div class="code-highlight-line"> </div></div><div data-line="4" class="code-highlight-row numbered"><div class="code-highlight-line"><span class="n">feature</span> <span class="s1">'Configuring a car'</span><span class="p">,</span> <span class="ss">js: </span><span class="kp">true</span> <span class="k">do</span>
+</div></div><div data-line="5" class="code-highlight-row numbered"><div class="code-highlight-line">  <span class="n">given</span><span class="p">(</span><span class="ss">:user</span><span class="p">)</span>  <span class="p">&#x7b;</span> <span class="n">create</span><span class="p">(</span><span class="ss">:user</span><span class="p">)</span> <span class="p">&#x7d;</span>
+</div></div><div data-line="6" class="code-highlight-row numbered"><div class="code-highlight-line">  <span class="n">given</span><span class="p">(</span><span class="ss">:order</span><span class="p">)</span> <span class="p">&#x7b;</span> <span class="n">create</span><span class="p">(</span><span class="ss">:order</span><span class="p">,</span> <span class="ss">:incomplete</span><span class="p">)</span> <span class="p">&#x7d;</span>
+</div></div><div data-line="7" class="code-highlight-row numbered"><div class="code-highlight-line"> </div></div><div data-line="8" class="code-highlight-row numbered"><div class="code-highlight-line">  <span class="n">background</span> <span class="k">do</span>
+</div></div><div data-line="9" class="code-highlight-row numbered"><div class="code-highlight-line">    <span class="n">login_as</span> <span class="n">user</span> <span class="c1"># Helper method from 'features/helpers'</span>
+</div></div><div data-line="10" class="code-highlight-row numbered"><div class="code-highlight-line"> </div></div><div data-line="11" class="code-highlight-row numbered"><div class="code-highlight-line">    <span class="n">create</span><span class="p">(</span><span class="ss">:upcharge</span><span class="p">,</span> <span class="p">&#x7b;</span>
+</div></div><div data-line="12" class="code-highlight-row numbered"><div class="code-highlight-line">      <span class="ss">key: </span><span class="s1">'chrome_rims'</span><span class="p">,</span>
+</div></div><div data-line="13" class="code-highlight-row numbered"><div class="code-highlight-line">      <span class="ss">description: </span><span class="s1">'Chrome Rims'</span><span class="p">,</span>
+</div></div><div data-line="14" class="code-highlight-row numbered"><div class="code-highlight-line">      <span class="ss">price: </span><span class="mi">1000</span>
+</div></div><div data-line="15" class="code-highlight-row numbered"><div class="code-highlight-line">    <span class="p">&#x7d;)</span>
+</div></div><div data-line="16" class="code-highlight-row numbered"><div class="code-highlight-line"> </div></div><div data-line="17" class="code-highlight-row numbered"><div class="code-highlight-line">    <span class="n">car</span> <span class="o">=</span> <span class="n">create</span><span class="p">(</span><span class="ss">:car</span><span class="p">)</span>
+</div></div><div data-line="18" class="code-highlight-row numbered"><div class="code-highlight-line"> </div></div><div data-line="19" class="code-highlight-row numbered"><div class="code-highlight-line">    <span class="n">order</span><span class="p">.</span><span class="nf">car</span> <span class="o">=</span> <span class="n">car</span>
+</div></div><div data-line="20" class="code-highlight-row numbered"><div class="code-highlight-line">    <span class="n">order</span><span class="p">.</span><span class="nf">save</span>
+</div></div><div data-line="21" class="code-highlight-row numbered"><div class="code-highlight-line">  <span class="k">end</span>
+</div></div><div data-line="22" class="code-highlight-row numbered"><div class="code-highlight-line"> </div></div><div data-line="23" class="code-highlight-row numbered"><div class="code-highlight-line">  <span class="n">scenario</span> <span class="s1">'Viewing the order totals page'</span> <span class="k">do</span>
+</div></div><div data-line="24" class="code-highlight-row numbered"><div class="code-highlight-line">    <span class="n">click_on</span> <span class="s1">'Orders'</span>
+</div></div><div data-line="25" class="code-highlight-row numbered"><div class="code-highlight-line"> </div></div><div data-line="26" class="code-highlight-row numbered"><div class="code-highlight-line">    <span class="n">within</span><span class="p">(</span><span class="s1">'#orders-table'</span><span class="p">)</span> <span class="k">do</span>
+</div></div><div data-line="27" class="code-highlight-row numbered"><div class="code-highlight-line">      <span class="n">click_on</span> <span class="s2">"Order #</span><span class="si">#&#x7b;</span><span class="n">order</span><span class="p">.</span><span class="nf">id</span><span class="si">&#x7d;</span><span class="s2">"</span>
+</div></div><div data-line="28" class="code-highlight-row numbered"><div class="code-highlight-line">    <span class="k">end</span>
+</div></div><div data-line="29" class="code-highlight-row numbered"><div class="code-highlight-line"> </div></div><div data-line="30" class="code-highlight-row numbered"><div class="code-highlight-line">    <span class="n">click_on</span> <span class="s1">'Configure Car'</span>
+</div></div><div data-line="31" class="code-highlight-row numbered"><div class="code-highlight-line">    <span class="n">click_on</span> <span class="s1">'Add Chrome Rims'</span>
+</div></div><div data-line="32" class="code-highlight-row numbered"><div class="code-highlight-line">    <span class="n">click_on</span> <span class="s1">'Order Totals'</span>
+</div></div><div data-line="33" class="code-highlight-row numbered"><div class="code-highlight-line"> </div></div><div data-line="34" class="code-highlight-row numbered"><div class="code-highlight-line">    <span class="n">totals</span> <span class="o">=</span> <span class="n">find</span><span class="p">(</span><span class="s1">'#order-totals'</span><span class="p">)</span>
+</div></div><div data-line="35" class="code-highlight-row numbered"><div class="code-highlight-line">    <span class="n">expect</span><span class="p">(</span><span class="n">totals</span><span class="p">).</span><span class="nf">to</span> <span class="n">have_selector</span><span class="p">(</span><span class="s1">'.car-upcharge'</span><span class="p">,</span> <span class="ss">count: </span><span class="mi">1</span><span class="p">)</span>
+</div></div><div data-line="36" class="code-highlight-row numbered"><div class="code-highlight-line">    <span class="n">expect</span><span class="p">(</span><span class="n">totals</span><span class="p">).</span><span class="nf">to</span> <span class="n">have_selector</span><span class="p">(</span><span class="s1">'.car-upcharge'</span><span class="p">,</span> <span class="ss">text: </span><span class="s1">'Chrome Rims'</span><span class="p">)</span>
+</div></div><div data-line="37" class="code-highlight-row numbered"><div class="code-highlight-line">  <span class="k">end</span>
+</div></div><div data-line="38" class="code-highlight-row numbered"><div class="code-highlight-line"><span class="k">end</span></div></div></pre></div></figure>
+
+<p>So, I run the spec and it <em>fails</em>. Okay… Did I not properly set up the order and car? Is there some random attribute that is still <code>nil</code> on a model that needs to have a value? After strategically (maybe a little randomly) placing <code>console.log</code>’s and <code>puts</code>’s, I discovered that my <code>availableUpcharges</code> variable was an empty collection. But, I added the chrome rims upcharge in my <code>background</code> block.</p>
+
+<p>A couple more <code>console.log</code>’s and it begins to make sense. RSpec and Capybara load my application’s assets before the <code>background</code> block runs. So, I fetch the available upcharges before any have even been created. This is problematic for a single page application that pulls remote data down once to use it for the remainder of the user’s session. Yes, it’s good to not create additional requests for remote data, but maybe immediately loading the data when the file loads isn’t a good idea either.</p>
+
+<h2 id="the-solution">The Solution</h2>
+<p>What can we do then? A better solution would be to asynchronously load and use the available upcharges the first time they’re needed. We could use a singleton object for managing the available upcharges like so:</p>
+
+<figure class="code-highlight-figure"><figcaption class="code-highlight-caption"><span class="code-highlight-caption-title">car/upcharges.js</span></figcaption><div class="code-highlight"><pre class="code-highlight-pre"><div data-line="1" class="code-highlight-row numbered"><div class="code-highlight-line"><span class="kd">var</span> <span class="nx">AppliedUpcharges</span> <span class="o">=</span> <span class="nx">Backbone</span><span class="p">.</span><span class="nx">Collection</span><span class="p">.</span><span class="nx">extend</span><span class="p">(&#x7b;</span>
+</div></div><div data-line="2" class="code-highlight-row numbered"><div class="code-highlight-line">  <span class="c1">// other definitions...</span>
+</div></div><div data-line="3" class="code-highlight-row numbered"><div class="code-highlight-line"> </div></div><div data-line="4" class="code-highlight-row numbered"><div class="code-highlight-line">  <span class="c1">// Redefine this function</span>
+</div></div><div data-line="5" class="code-highlight-row numbered"><div class="code-highlight-line">  <span class="na">_getUpchargeByKeyAndRun</span><span class="p">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">key</span><span class="p">,</span> <span class="nx">callback</span><span class="p">)</span> <span class="p">&#x7b;</span>
+</div></div><div data-line="6" class="code-highlight-row numbered"><div class="code-highlight-line">    <span class="kd">var</span> <span class="nx">self</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+</div></div><div data-line="7" class="code-highlight-row numbered"><div class="code-highlight-line"> </div></div><div data-line="8" class="code-highlight-row numbered"><div class="code-highlight-line">    <span class="nx">availableUpcharges</span><span class="p">.</span><span class="nx">ensured</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">upcharges</span><span class="p">)</span> <span class="p">&#x7b;</span>
+</div></div><div data-line="9" class="code-highlight-row numbered"><div class="code-highlight-line">      <span class="kd">var</span> <span class="nx">upcharge</span> <span class="o">=</span> <span class="nx">upcharges</span><span class="p">.</span><span class="nx">getByKey</span><span class="p">(</span><span class="nx">key</span><span class="p">);</span>
+</div></div><div data-line="10" class="code-highlight-row numbered"><div class="code-highlight-line">      <span class="nx">callback</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">self</span><span class="p">,</span> <span class="nx">upcharge</span><span class="p">);</span>
+</div></div><div data-line="11" class="code-highlight-row numbered"><div class="code-highlight-line">    <span class="p">&#x7d;);</span>
+</div></div><div data-line="12" class="code-highlight-row numbered"><div class="code-highlight-line">  <span class="p">&#x7d;</span>
+</div></div><div data-line="13" class="code-highlight-row numbered"><div class="code-highlight-line"><span class="p">&#x7d;);</span>
+</div></div><div data-line="14" class="code-highlight-row numbered"><div class="code-highlight-line"> </div></div><div data-line="15" class="code-highlight-row numbered"><div class="code-highlight-line"><span class="kd">var</span> <span class="nx">availableUpcharges</span> <span class="o">=</span> <span class="p">&#x7b;</span>
+</div></div><div data-line="16" class="code-highlight-row numbered"><div class="code-highlight-line">  <span class="na">ensured</span><span class="p">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">firstCallback</span><span class="p">)</span> <span class="p">&#x7b;</span>
+</div></div><div data-line="17" class="code-highlight-row numbered"><div class="code-highlight-line">    <span class="kd">var</span> <span class="nx">self</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+</div></div><div data-line="18" class="code-highlight-row numbered"><div class="code-highlight-line">    <span class="kd">var</span> <span class="nx">upcharges</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Upcharges</span><span class="p">();</span>
+</div></div><div data-line="19" class="code-highlight-row numbered"><div class="code-highlight-line"> </div></div><div data-line="20" class="code-highlight-row numbered"><div class="code-highlight-line">    <span class="nx">upcharges</span><span class="p">.</span><span class="nx">fetch</span><span class="p">(&#x7b;</span>
+</div></div><div data-line="21" class="code-highlight-row numbered"><div class="code-highlight-line">      <span class="na">success</span><span class="p">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">&#x7b;</span>
+</div></div><div data-line="22" class="code-highlight-row numbered"><div class="code-highlight-line">        <span class="nx">self</span><span class="p">.</span><span class="nx">ensured</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">callback</span><span class="p">)</span> <span class="p">&#x7b;</span>
+</div></div><div data-line="23" class="code-highlight-row numbered"><div class="code-highlight-line">          <span class="nx">callback</span><span class="p">(</span><span class="nx">upcharges</span><span class="p">);</span>
+</div></div><div data-line="24" class="code-highlight-row numbered"><div class="code-highlight-line">        <span class="p">&#x7d;;</span>
+</div></div><div data-line="25" class="code-highlight-row numbered"><div class="code-highlight-line"> </div></div><div data-line="26" class="code-highlight-row numbered"><div class="code-highlight-line">        <span class="nx">self</span><span class="p">.</span><span class="nx">ensured</span><span class="p">(</span><span class="nx">firstCallback</span><span class="p">);</span>
+</div></div><div data-line="27" class="code-highlight-row numbered"><div class="code-highlight-line">      <span class="p">&#x7d;</span>
+</div></div><div data-line="28" class="code-highlight-row numbered"><div class="code-highlight-line">    <span class="p">&#x7d;)</span>
+</div></div><div data-line="29" class="code-highlight-row numbered"><div class="code-highlight-line">  <span class="p">&#x7d;</span>
+</div></div><div data-line="30" class="code-highlight-row numbered"><div class="code-highlight-line"><span class="p">&#x7d;;</span></div></div></pre></div></figure>
+
+<p>Now, we just call <code>availableUpcharges.ensured</code> first, passing it a callback function. We create one interface for accessing the real available upcharges, whether they’re loaded yet or not. Our singleton object handles loading them the first time. Once they’re loaded, it redefines it’s <code>ensured</code> method to just simply pass the loaded upcharges to the callback.</p>
+
+<p>I test it out in my application, but then I start to see multiple requests for the available upcharges. That’s the exact opposite of what this is supposed to do. Then, I realize my error. You see, our application automatically checks for multiple upcharges based on measurement constraints. There are multiple configurable measurements that are interrelated. So, if a user’s car had an atypical length-to-width ratio, then the application catches that on the order totals page and applies an appropriate upcharge. That way, if the user left the application and came back later, the application can recheck the car and update the upcharges as needed. Now, imagine there are several more of those measurement checks occurring all at once, meaning the application would call <code>addUpchargeByKey</code> and <code>removeUpchargeByKey</code> several times, calling <code>_getUpchargeByKeyAndRun</code> several times.</p>
+
+<p>This presents a problem; if the application calls <code>_getUpchargeByKeyAndRun</code> multiple consecutive times and the available upcharges haven’t loaded yet, then it is going to naturally create multiple requests for them because the <code>ensured</code> function has not been redefined yet. We need to tweak our singleton object to take this into account:</p>
+
+<figure class="code-highlight-figure"><figcaption class="code-highlight-caption"><span class="code-highlight-caption-title">car/upcharges.js</span></figcaption><div class="code-highlight"><pre class="code-highlight-pre"><div data-line="1" class="code-highlight-row numbered"><div class="code-highlight-line"><span class="kd">var</span> <span class="nx">availableUpcharges</span> <span class="o">=</span> <span class="p">&#x7b;</span>
+</div></div><div data-line="2" class="code-highlight-row numbered"><div class="code-highlight-line">  <span class="na">queue</span><span class="p">:</span> <span class="p">[],</span>
+</div></div><div data-line="3" class="code-highlight-row numbered"><div class="code-highlight-line"> </div></div><div data-line="4" class="code-highlight-row numbered"><div class="code-highlight-line">  <span class="na">ensured</span><span class="p">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">firstCallback</span><span class="p">)</span> <span class="p">&#x7b;</span>
+</div></div><div data-line="5" class="code-highlight-row numbered"><div class="code-highlight-line">    <span class="k">this</span><span class="p">.</span><span class="nx">queue</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">firstCallback</span><span class="p">);</span>
+</div></div><div data-line="6" class="code-highlight-row numbered"><div class="code-highlight-line"> </div></div><div data-line="7" class="code-highlight-row numbered"><div class="code-highlight-line">    <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">request</span><span class="p">)</span> <span class="p">&#x7b;</span>
+</div></div><div data-line="8" class="code-highlight-row numbered"><div class="code-highlight-line">      <span class="k">return</span><span class="p">;</span>
+</div></div><div data-line="9" class="code-highlight-row numbered"><div class="code-highlight-line">    <span class="p">&#x7d;</span>
+</div></div><div data-line="10" class="code-highlight-row numbered"><div class="code-highlight-line"> </div></div><div data-line="11" class="code-highlight-row numbered"><div class="code-highlight-line">    <span class="kd">var</span> <span class="nx">self</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+</div></div><div data-line="12" class="code-highlight-row numbered"><div class="code-highlight-line">    <span class="kd">var</span> <span class="nx">upcharges</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Upcharges</span><span class="p">();</span>
+</div></div><div data-line="13" class="code-highlight-row numbered"><div class="code-highlight-line"> </div></div><div data-line="14" class="code-highlight-row numbered"><div class="code-highlight-line">    <span class="k">this</span><span class="p">.</span><span class="nx">request</span> <span class="o">=</span> <span class="nx">upcharges</span><span class="p">.</span><span class="nx">fetch</span><span class="p">(&#x7b;</span>
+</div></div><div data-line="15" class="code-highlight-row numbered"><div class="code-highlight-line">      <span class="na">success</span><span class="p">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">&#x7b;</span>
+</div></div><div data-line="16" class="code-highlight-row numbered"><div class="code-highlight-line">        <span class="kd">var</span> <span class="nx">currentCallback</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+</div></div><div data-line="17" class="code-highlight-row numbered"><div class="code-highlight-line"> </div></div><div data-line="18" class="code-highlight-row numbered"><div class="code-highlight-line">        <span class="nx">self</span><span class="p">.</span><span class="nx">ensured</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">callback</span><span class="p">)</span> <span class="p">&#x7b;</span>
+</div></div><div data-line="19" class="code-highlight-row numbered"><div class="code-highlight-line">          <span class="nx">callback</span><span class="p">(</span><span class="nx">upcharges</span><span class="p">);</span>
+</div></div><div data-line="20" class="code-highlight-row numbered"><div class="code-highlight-line">        <span class="p">&#x7d;;</span>
+</div></div><div data-line="21" class="code-highlight-row numbered"><div class="code-highlight-line"> </div></div><div data-line="22" class="code-highlight-row numbered"><div class="code-highlight-line">        <span class="k">while</span> <span class="p">(</span><span class="nx">currentCallback</span> <span class="o">=</span> <span class="nx">self</span><span class="p">.</span><span class="nx">queue</span><span class="p">.</span><span class="nx">shift</span><span class="p">())</span> <span class="p">&#x7b;</span>
+</div></div><div data-line="23" class="code-highlight-row numbered"><div class="code-highlight-line">          <span class="nx">self</span><span class="p">.</span><span class="nx">ensured</span><span class="p">(</span><span class="nx">currentCallback</span><span class="p">);</span>
+</div></div><div data-line="24" class="code-highlight-row numbered"><div class="code-highlight-line">        <span class="p">&#x7d;</span>
+</div></div><div data-line="25" class="code-highlight-row numbered"><div class="code-highlight-line"> </div></div><div data-line="26" class="code-highlight-row numbered"><div class="code-highlight-line">        <span class="k">delete</span> <span class="nx">self</span><span class="p">.</span><span class="nx">request</span><span class="p">;</span>
+</div></div><div data-line="27" class="code-highlight-row numbered"><div class="code-highlight-line">        <span class="k">delete</span> <span class="nx">self</span><span class="p">.</span><span class="nx">queue</span><span class="p">;</span>
+</div></div><div data-line="28" class="code-highlight-row numbered"><div class="code-highlight-line">      <span class="p">&#x7d;</span>
+</div></div><div data-line="29" class="code-highlight-row numbered"><div class="code-highlight-line">    <span class="p">&#x7d;);</span>
+</div></div><div data-line="30" class="code-highlight-row numbered"><div class="code-highlight-line">  <span class="p">&#x7d;</span>
+</div></div><div data-line="31" class="code-highlight-row numbered"><div class="code-highlight-line"><span class="p">&#x7d;;</span></div></div></pre></div></figure>
+
+<p>So, what’s the difference? Well, until the available upcharges are loaded and the <code>ensured</code> function is redefined, we simply queue up every callback passed in and check to see if a request has already been made. Once the upcharges load, we redefine the function as before. We also clear our queue, calling the new <code>ensured</code> function definition with each queued callback. I run through the application again, and now there is only one request, and all the upcharge checks work properly. I rerun my spec and get my glorious green dot!</p>
+
+<h2 id="conclusion">Conclusion</h2>
+
+<p>I like this solution, and it’s currently working fine in production and testing. Granted, the business logic for checking these upcharges should move to the back-end, but it’s one of those refactors that gets overshadowed by other bugs and features (I’m sure you know what I mean). Regardless, I feel this is a relatively good starting point for handling this problem. You can use this type of approach to lazily load data in JavaScript that you may not need immediately.</p>
+
+<p>I hope you enjoyed this post and please provide whatever questions or feedback you have!</p>
 
       <div class="social-share">
   <ul class="inline-list">
