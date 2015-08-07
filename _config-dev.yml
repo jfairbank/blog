@@ -2,7 +2,7 @@
 title:            Jeremy Fairbank Blog
 description:      "The JavaScript web development blog of Jeremy Fairbank."
 locale:           en_US
-url:              http://localhost:4000
+url:              http://blog.jeremyfairbank.dev:4000
 
 # Jekyll configuration
 permalink:   /:categories/:title/
