@@ -10,6 +10,10 @@
     </url>
     
     <url>
+        <loc>http://blog.jeremyfairbank.com/feed.json</loc>
+    </url>
+    
+    <url>
         <loc>http://blog.jeremyfairbank.com/feed.xml</loc>
     </url>
     
@@ -18,11 +22,11 @@
     </url>
     
     <url>
-        <loc>http://blog.jeremyfairbank.com/posts/index.html</loc>
+        <loc>http://blog.jeremyfairbank.com/index.html</loc>
     </url>
     
     <url>
-        <loc>http://blog.jeremyfairbank.com/index.html</loc>
+        <loc>http://blog.jeremyfairbank.com/posts/index.html</loc>
     </url>
     
     <url>
