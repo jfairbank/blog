@@ -9,7 +9,6 @@ processFeed({
       {% if post.title != null and post.title != empty %}
         {% unless first %},{% endunless %}{
           "title": {{post.title | jsonify}},
-          "content": {{post.content | markdownify | strip_html | jsonify}},
           "link": "{{ site.url }}{{ post.url }}",
           "date": "{{ post.date }}",
           "excerpt": "{{ post.snippet }}"
