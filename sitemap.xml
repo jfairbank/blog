@@ -1,70 +1,70 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
-        <loc>http://blog.jeremyfairbank.com</loc>
+        <loc>//blog.jeremyfairbank.com</loc>
     </url>
     
     
     <url>
-        <loc>http://blog.jeremyfairbank.com/404.html</loc>
+        <loc>//blog.jeremyfairbank.com/404.html</loc>
     </url>
     
     <url>
-        <loc>http://blog.jeremyfairbank.com/feed.json</loc>
+        <loc>//blog.jeremyfairbank.com/feed.json</loc>
     </url>
     
     <url>
-        <loc>http://blog.jeremyfairbank.com/feed.xml</loc>
+        <loc>//blog.jeremyfairbank.com/feed.xml</loc>
     </url>
     
     <url>
-        <loc>http://blog.jeremyfairbank.com/about/index.html</loc>
+        <loc>//blog.jeremyfairbank.com/about/index.html</loc>
     </url>
     
     <url>
-        <loc>http://blog.jeremyfairbank.com/index.html</loc>
+        <loc>//blog.jeremyfairbank.com/index.html</loc>
     </url>
     
     <url>
-        <loc>http://blog.jeremyfairbank.com/posts/index.html</loc>
+        <loc>//blog.jeremyfairbank.com/posts/index.html</loc>
     </url>
     
     <url>
-        <loc>http://blog.jeremyfairbank.com/assets/css/main.css</loc>
+        <loc>//blog.jeremyfairbank.com/assets/css/main.css</loc>
     </url>
     
     <url>
-        <loc>http://blog.jeremyfairbank.com/sitemap.xml</loc>
+        <loc>//blog.jeremyfairbank.com/sitemap.xml</loc>
     </url>
     
 
     
     <url>
-        <loc>http://blog.jeremyfairbank.com/javascript/functional-javascript-streams-2/</loc>
+        <loc>//blog.jeremyfairbank.com/javascript/functional-javascript-streams-2/</loc>
     </url>
     
     <url>
-        <loc>http://blog.jeremyfairbank.com/javascript/javascript-es7-function-bind-syntax/</loc>
+        <loc>//blog.jeremyfairbank.com/javascript/javascript-es7-function-bind-syntax/</loc>
     </url>
     
     <url>
-        <loc>http://blog.jeremyfairbank.com/javascript/functional-javascript-lists-1/</loc>
+        <loc>//blog.jeremyfairbank.com/javascript/functional-javascript-lists-1/</loc>
     </url>
     
     <url>
-        <loc>http://blog.jeremyfairbank.com/javascript/polymer-web-components-with-marionette-js/</loc>
+        <loc>//blog.jeremyfairbank.com/javascript/polymer-web-components-with-marionette-js/</loc>
     </url>
     
     <url>
-        <loc>http://blog.jeremyfairbank.com/programming/open-source-you/</loc>
+        <loc>//blog.jeremyfairbank.com/programming/open-source-you/</loc>
     </url>
     
     <url>
-        <loc>http://blog.jeremyfairbank.com/javascript/components-with-backbone-js-and-marionette-js/</loc>
+        <loc>//blog.jeremyfairbank.com/javascript/components-with-backbone-js-and-marionette-js/</loc>
     </url>
     
     <url>
-        <loc>http://blog.jeremyfairbank.com/javascript/first-post-ensuring-remote-data-is-available/</loc>
+        <loc>//blog.jeremyfairbank.com/javascript/first-post-ensuring-remote-data-is-available/</loc>
     </url>
     
 </urlset>

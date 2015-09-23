@@ -2,13 +2,13 @@
 <feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en">
 <title type="text">Jeremy Fairbank Blog</title>
 <generator uri="https://github.com/jekyll/jekyll">Jekyll</generator>
-<link rel="self" type="application/atom+xml" href="http://blog.jeremyfairbank.com/feed.xml" />
-<link rel="alternate" type="text/html" href="http://blog.jeremyfairbank.com" />
-<updated>2015-08-15T11:29:38-04:00</updated>
-<id>http://blog.jeremyfairbank.com/</id>
+<link rel="self" type="application/atom+xml" href="//blog.jeremyfairbank.com/feed.xml" />
+<link rel="alternate" type="text/html" href="//blog.jeremyfairbank.com" />
+<updated>2015-09-22T20:15:54-04:00</updated>
+<id>//blog.jeremyfairbank.com/</id>
 <author>
   <name>Jeremy Fairbank</name>
-  <uri>http://blog.jeremyfairbank.com/</uri>
+  <uri>//blog.jeremyfairbank.com/</uri>
   
 </author>
 
@@ -17,13 +17,13 @@
 
 <entry>
   <title type="html"><![CDATA[Functional JavaScript Part 2: Streams]]></title>
-  <link rel="alternate" type="text/html" href="http://blog.jeremyfairbank.com/javascript/functional-javascript-streams-2/" />
-  <id>http://blog.jeremyfairbank.com/javascript/functional-javascript-streams-2</id>
+  <link rel="alternate" type="text/html" href="//blog.jeremyfairbank.com/javascript/functional-javascript-streams-2/" />
+  <id>//blog.jeremyfairbank.com/javascript/functional-javascript-streams-2</id>
   <published>2015-08-07T00:00:00-04:00</published>
   <updated>2015-08-07T00:00:00-04:00</updated>
   <author>
     <name>Jeremy Fairbank</name>
-    <uri>http://blog.jeremyfairbank.com</uri>
+    <uri>//blog.jeremyfairbank.com</uri>
     
   </author>
   <content type="html">&lt;section id=&quot;table-of-contents&quot; class=&quot;toc&quot;&gt;
@@ -400,7 +400,7 @@ critical to functional programming and helps reinforce other concepts like
 modularity and the single responsibility principle. Streams are an important
 tool in the bag of functional and JavaScript programmers.&lt;/p&gt;
 
-  &lt;p&gt;&lt;a href=&quot;http://blog.jeremyfairbank.com/javascript/functional-javascript-streams-2/&quot;&gt;Functional JavaScript Part 2: Streams&lt;/a&gt; was originally published by Jeremy Fairbank at &lt;a href=&quot;http://blog.jeremyfairbank.com&quot;&gt;Jeremy Fairbank Blog&lt;/a&gt; on August 07, 2015.&lt;/p&gt;</content>
+  &lt;p&gt;&lt;a href=&quot;//blog.jeremyfairbank.com/javascript/functional-javascript-streams-2/&quot;&gt;Functional JavaScript Part 2: Streams&lt;/a&gt; was originally published by Jeremy Fairbank at &lt;a href=&quot;//blog.jeremyfairbank.com&quot;&gt;Jeremy Fairbank Blog&lt;/a&gt; on August 07, 2015.&lt;/p&gt;</content>
 </entry>
 
 
@@ -408,13 +408,13 @@ tool in the bag of functional and JavaScript programmers.&lt;/p&gt;
 
 <entry>
   <title type="html"><![CDATA[JavaScript ES7 Function Bind Syntax]]></title>
-  <link rel="alternate" type="text/html" href="http://blog.jeremyfairbank.com/javascript/javascript-es7-function-bind-syntax/" />
-  <id>http://blog.jeremyfairbank.com/javascript/javascript-es7-function-bind-syntax</id>
+  <link rel="alternate" type="text/html" href="//blog.jeremyfairbank.com/javascript/javascript-es7-function-bind-syntax/" />
+  <id>//blog.jeremyfairbank.com/javascript/javascript-es7-function-bind-syntax</id>
   <published>2015-05-30T00:00:00-04:00</published>
   <updated>2015-05-30T00:00:00-04:00</updated>
   <author>
     <name>Jeremy Fairbank</name>
-    <uri>http://blog.jeremyfairbank.com</uri>
+    <uri>//blog.jeremyfairbank.com</uri>
     
   </author>
   <content type="html">&lt;section id=&quot;table-of-contents&quot; class=&quot;toc&quot;&gt;
@@ -694,7 +694,7 @@ just not be possible. Some quick ideas for a syntax could be:&lt;/p&gt;
 and hope the maintainers strongly consider its inclusion. This syntax opens up
 the door for writing cleaner and more expressive JavaScript.&lt;/p&gt;
 
-  &lt;p&gt;&lt;a href=&quot;http://blog.jeremyfairbank.com/javascript/javascript-es7-function-bind-syntax/&quot;&gt;JavaScript ES7 Function Bind Syntax&lt;/a&gt; was originally published by Jeremy Fairbank at &lt;a href=&quot;http://blog.jeremyfairbank.com&quot;&gt;Jeremy Fairbank Blog&lt;/a&gt; on May 30, 2015.&lt;/p&gt;</content>
+  &lt;p&gt;&lt;a href=&quot;//blog.jeremyfairbank.com/javascript/javascript-es7-function-bind-syntax/&quot;&gt;JavaScript ES7 Function Bind Syntax&lt;/a&gt; was originally published by Jeremy Fairbank at &lt;a href=&quot;//blog.jeremyfairbank.com&quot;&gt;Jeremy Fairbank Blog&lt;/a&gt; on May 30, 2015.&lt;/p&gt;</content>
 </entry>
 
 
@@ -702,13 +702,13 @@ the door for writing cleaner and more expressive JavaScript.&lt;/p&gt;
 
 <entry>
   <title type="html"><![CDATA[Functional JavaScript Part 1: Lists]]></title>
-  <link rel="alternate" type="text/html" href="http://blog.jeremyfairbank.com/javascript/functional-javascript-lists-1/" />
-  <id>http://blog.jeremyfairbank.com/javascript/functional-javascript-lists-1</id>
+  <link rel="alternate" type="text/html" href="//blog.jeremyfairbank.com/javascript/functional-javascript-lists-1/" />
+  <id>//blog.jeremyfairbank.com/javascript/functional-javascript-lists-1</id>
   <published>2015-01-17T00:00:00-05:00</published>
   <updated>2015-01-17T00:00:00-05:00</updated>
   <author>
     <name>Jeremy Fairbank</name>
-    <uri>http://blog.jeremyfairbank.com</uri>
+    <uri>//blog.jeremyfairbank.com</uri>
     
   </author>
   <content type="html">&lt;section id=&quot;table-of-contents&quot; class=&quot;toc&quot;&gt;
@@ -1135,7 +1135,7 @@ know. I hope you now have a better understanding and appreciation for
 what is possible with functional programming. We will continue to investigate
 the concepts of functional programming in future posts.&lt;/p&gt;
 
-  &lt;p&gt;&lt;a href=&quot;http://blog.jeremyfairbank.com/javascript/functional-javascript-lists-1/&quot;&gt;Functional JavaScript Part 1: Lists&lt;/a&gt; was originally published by Jeremy Fairbank at &lt;a href=&quot;http://blog.jeremyfairbank.com&quot;&gt;Jeremy Fairbank Blog&lt;/a&gt; on January 17, 2015.&lt;/p&gt;</content>
+  &lt;p&gt;&lt;a href=&quot;//blog.jeremyfairbank.com/javascript/functional-javascript-lists-1/&quot;&gt;Functional JavaScript Part 1: Lists&lt;/a&gt; was originally published by Jeremy Fairbank at &lt;a href=&quot;//blog.jeremyfairbank.com&quot;&gt;Jeremy Fairbank Blog&lt;/a&gt; on January 17, 2015.&lt;/p&gt;</content>
 </entry>
 
 
@@ -1143,13 +1143,13 @@ the concepts of functional programming in future posts.&lt;/p&gt;
 
 <entry>
   <title type="html"><![CDATA[Polymer Web Components with Marionette.js]]></title>
-  <link rel="alternate" type="text/html" href="http://blog.jeremyfairbank.com/javascript/polymer-web-components-with-marionette-js/" />
-  <id>http://blog.jeremyfairbank.com/javascript/polymer-web-components-with-marionette-js</id>
+  <link rel="alternate" type="text/html" href="//blog.jeremyfairbank.com/javascript/polymer-web-components-with-marionette-js/" />
+  <id>//blog.jeremyfairbank.com/javascript/polymer-web-components-with-marionette-js</id>
   <published>2015-01-03T00:00:00-05:00</published>
   <updated>2015-01-03T00:00:00-05:00</updated>
   <author>
     <name>Jeremy Fairbank</name>
-    <uri>http://blog.jeremyfairbank.com</uri>
+    <uri>//blog.jeremyfairbank.com</uri>
     
   </author>
   <content type="html">
@@ -1543,7 +1543,7 @@ let me know in the comments or make a pull request at the GitHub repo.
 and the caliber of speakers was spectacular.
 &lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/figure&gt;
 
-  &lt;p&gt;&lt;a href=&quot;http://blog.jeremyfairbank.com/javascript/polymer-web-components-with-marionette-js/&quot;&gt;Polymer Web Components with Marionette.js&lt;/a&gt; was originally published by Jeremy Fairbank at &lt;a href=&quot;http://blog.jeremyfairbank.com&quot;&gt;Jeremy Fairbank Blog&lt;/a&gt; on January 03, 2015.&lt;/p&gt;</content>
+  &lt;p&gt;&lt;a href=&quot;//blog.jeremyfairbank.com/javascript/polymer-web-components-with-marionette-js/&quot;&gt;Polymer Web Components with Marionette.js&lt;/a&gt; was originally published by Jeremy Fairbank at &lt;a href=&quot;//blog.jeremyfairbank.com&quot;&gt;Jeremy Fairbank Blog&lt;/a&gt; on January 03, 2015.&lt;/p&gt;</content>
 </entry>
 
 
@@ -1551,13 +1551,13 @@ and the caliber of speakers was spectacular.
 
 <entry>
   <title type="html"><![CDATA[Open Source You]]></title>
-  <link rel="alternate" type="text/html" href="http://blog.jeremyfairbank.com/programming/open-source-you/" />
-  <id>http://blog.jeremyfairbank.com/programming/open-source-you</id>
+  <link rel="alternate" type="text/html" href="//blog.jeremyfairbank.com/programming/open-source-you/" />
+  <id>//blog.jeremyfairbank.com/programming/open-source-you</id>
   <published>2014-12-31T00:00:00-05:00</published>
   <updated>2014-12-31T00:00:00-05:00</updated>
   <author>
     <name>Jeremy Fairbank</name>
-    <uri>http://blog.jeremyfairbank.com</uri>
+    <uri>//blog.jeremyfairbank.com</uri>
     
   </author>
   <content type="html">&lt;section id=&quot;table-of-contents&quot; class=&quot;toc&quot;&gt;
@@ -1692,7 +1692,7 @@ a few articles that I found useful in formulating my ideas:&lt;/p&gt;
   &lt;li&gt;&lt;a href=&quot;http://en.wikipedia.org/wiki/Women_in_computing&quot; target=&quot;_blank&quot;&gt;Women in computing&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
-  &lt;p&gt;&lt;a href=&quot;http://blog.jeremyfairbank.com/programming/open-source-you/&quot;&gt;Open Source You&lt;/a&gt; was originally published by Jeremy Fairbank at &lt;a href=&quot;http://blog.jeremyfairbank.com&quot;&gt;Jeremy Fairbank Blog&lt;/a&gt; on December 31, 2014.&lt;/p&gt;</content>
+  &lt;p&gt;&lt;a href=&quot;//blog.jeremyfairbank.com/programming/open-source-you/&quot;&gt;Open Source You&lt;/a&gt; was originally published by Jeremy Fairbank at &lt;a href=&quot;//blog.jeremyfairbank.com&quot;&gt;Jeremy Fairbank Blog&lt;/a&gt; on December 31, 2014.&lt;/p&gt;</content>
 </entry>
 
 
@@ -1700,13 +1700,13 @@ a few articles that I found useful in formulating my ideas:&lt;/p&gt;
 
 <entry>
   <title type="html"><![CDATA[Components with Backbone.js and Marionette.js]]></title>
-  <link rel="alternate" type="text/html" href="http://blog.jeremyfairbank.com/javascript/components-with-backbone-js-and-marionette-js/" />
-  <id>http://blog.jeremyfairbank.com/javascript/components-with-backbone-js-and-marionette-js</id>
+  <link rel="alternate" type="text/html" href="//blog.jeremyfairbank.com/javascript/components-with-backbone-js-and-marionette-js/" />
+  <id>//blog.jeremyfairbank.com/javascript/components-with-backbone-js-and-marionette-js</id>
   <published>2014-06-25T00:00:00-04:00</published>
   <updated>2014-06-25T00:00:00-04:00</updated>
   <author>
     <name>Jeremy Fairbank</name>
-    <uri>http://blog.jeremyfairbank.com</uri>
+    <uri>//blog.jeremyfairbank.com</uri>
     
   </author>
   <content type="html">&lt;section id=&quot;table-of-contents&quot; class=&quot;toc&quot;&gt;
@@ -2142,7 +2142,7 @@ a few articles that I found useful in formulating my ideas:&lt;/p&gt;
 
 &lt;p&gt;I hope you enjoyed this post, and I look forward to any questions or feedback!&lt;/p&gt;
 
-  &lt;p&gt;&lt;a href=&quot;http://blog.jeremyfairbank.com/javascript/components-with-backbone-js-and-marionette-js/&quot;&gt;Components with Backbone.js and Marionette.js&lt;/a&gt; was originally published by Jeremy Fairbank at &lt;a href=&quot;http://blog.jeremyfairbank.com&quot;&gt;Jeremy Fairbank Blog&lt;/a&gt; on June 25, 2014.&lt;/p&gt;</content>
+  &lt;p&gt;&lt;a href=&quot;//blog.jeremyfairbank.com/javascript/components-with-backbone-js-and-marionette-js/&quot;&gt;Components with Backbone.js and Marionette.js&lt;/a&gt; was originally published by Jeremy Fairbank at &lt;a href=&quot;//blog.jeremyfairbank.com&quot;&gt;Jeremy Fairbank Blog&lt;/a&gt; on June 25, 2014.&lt;/p&gt;</content>
 </entry>
 
 
@@ -2150,13 +2150,13 @@ a few articles that I found useful in formulating my ideas:&lt;/p&gt;
 
 <entry>
   <title type="html"><![CDATA[First Post: Ensuring Remote Data is Available in JavaScript]]></title>
-  <link rel="alternate" type="text/html" href="http://blog.jeremyfairbank.com/javascript/first-post-ensuring-remote-data-is-available/" />
-  <id>http://blog.jeremyfairbank.com/javascript/first-post-ensuring-remote-data-is-available</id>
+  <link rel="alternate" type="text/html" href="//blog.jeremyfairbank.com/javascript/first-post-ensuring-remote-data-is-available/" />
+  <id>//blog.jeremyfairbank.com/javascript/first-post-ensuring-remote-data-is-available</id>
   <published>2014-06-21T00:00:00-04:00</published>
   <updated>2014-06-21T00:00:00-04:00</updated>
   <author>
     <name>Jeremy Fairbank</name>
-    <uri>http://blog.jeremyfairbank.com</uri>
+    <uri>//blog.jeremyfairbank.com</uri>
     
   </author>
   <content type="html">&lt;section id=&quot;table-of-contents&quot; class=&quot;toc&quot;&gt;
@@ -2345,7 +2345,7 @@ a few articles that I found useful in formulating my ideas:&lt;/p&gt;
 
 &lt;p&gt;I hope you enjoyed this post and please provide whatever questions or feedback you have!&lt;/p&gt;
 
-  &lt;p&gt;&lt;a href=&quot;http://blog.jeremyfairbank.com/javascript/first-post-ensuring-remote-data-is-available/&quot;&gt;First Post: Ensuring Remote Data is Available in JavaScript&lt;/a&gt; was originally published by Jeremy Fairbank at &lt;a href=&quot;http://blog.jeremyfairbank.com&quot;&gt;Jeremy Fairbank Blog&lt;/a&gt; on June 21, 2014.&lt;/p&gt;</content>
+  &lt;p&gt;&lt;a href=&quot;//blog.jeremyfairbank.com/javascript/first-post-ensuring-remote-data-is-available/&quot;&gt;First Post: Ensuring Remote Data is Available in JavaScript&lt;/a&gt; was originally published by Jeremy Fairbank at &lt;a href=&quot;//blog.jeremyfairbank.com&quot;&gt;Jeremy Fairbank Blog&lt;/a&gt; on June 21, 2014.&lt;/p&gt;</content>
 </entry>
 
 </feed>
