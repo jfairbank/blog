@@ -3,12 +3,12 @@ layout: page
 title: About Me
 excerpt: Ruby and JavaScript Web Developer Jeremy Fairbank
 tags: [about, programming, web development, ruby developer, javascript developer]
-modified: 11-19-2014
+modified: 2-6-2016
 comments: false
 image:
   feature: hawaii-2.jpg
   credit: Jeremy Fairbank
-  creditlink: http://jfairbank.github.io
+  creditlink: http://blog.jeremyfairbank.com
 ---
 
 Hi, my name is Jeremy Fairbank, and I am a web developer. I enjoy working with
@@ -19,10 +19,17 @@ I like to build modular, scalable applications with reasonable abstraction to ke
 
 ## Work
 
-<a href="http://pushagency.io" class="push-logo" target="_blank"></a> <a href="http://www.simplybuilt.com" class="simplybuilt-logo" target="_blank"></a>
+<a href="http://pushagency.io" class="push-logo" target="_blank"></a>
 
-I work remotely on [SimplyBuilt](http://www.simplybuilt.com) for an awesome
-company called Push ([pushagency.io](http://pushagency.io)).
+I work for [Push Agency](http://pushagency.io) as a full stack developer with a
+focus on JavaScript and Ruby.
+
+---
+
+## Conferences
+
+I like to speak at web development conferences. You can see many of talks by
+visiting [here](/conferences/).
 
 ---
 
@@ -32,49 +39,44 @@ company called Push ([pushagency.io](http://pushagency.io)).
   <p>
     <img class="logo" src="/images/marionette-logo.png" width="64" alt="Marionette.js"/>
 
-    I am a big fan of the {% ext_link http://marionettejs.com Marionette.js %}
-    framework for {% ext_link http://backbonejs.org Backbone.js %} and am a core
-    team member. Check out our repo at {% gh marionettejs/backbone.marionette %}.
+    I have contributed to the
+    {% ext_link http://backbonejs.org Backbone.js %} framework
+    {% ext_link http://marionettejs.com Marionette.js %}
+    ({% gh marionettejs/backbone.marionette repo %}) in the past and have my own
+    component library for it:
+    {% gh jfairbank/marionette.component Marionette.Component %}.
   </p>
 
   <p>
-    <img class="logo" src="/images/github-mark.png" width="64" alt="GitHub" />
-    I also have a few open source libraries on GitHub such as my component library
-    for Marionette.js,
-    {% gh jfairbank/marionette.component Marionette.Component %},
-    and a color manipulation gem for Ruby,
-    {% gh jfairbank/chroma chroma %}.
+    I also have a few other open source libraries on GitHub, especially for
+    React and Redux:
   </p>
+
+  <ul>
+    <li>
+      {% gh jfairbank/redux-resource redux-resource %}: Redux action creator for
+      managing RESTful resources.
+    </li>
+    <li>
+      {% gh jfairbank/react-classify react-classify %}: Classify functional
+      React components to use component lifecycle hooks.
+    </li>
+    <li>
+      {% gh jfairbank/perchance perchance %}: Simple maybe monad for JavaScript.
+    </li>
+    <li>
+      {% gh jfairbank/chroma chroma %}: Color manipulation gem for Ruby.
+    </li>
+    <li>
+      {% gh jfairbank/nth-child nth-child %}: Calculate the nth-child equation
+      for CSS selectors.
+    </li>
+  </ul>
 
   <p>
     You can view my GitHub profile {% gh jfairbank here %}.
   </p>
 </div>
-
----
-
-## Conferences
-
-{% for talk_data in site.data.talks %}
-  <div class="conference-talk">
-    {% assign talk = talk_data[1] %}
-
-    <h3 class="conference-talk-heading">
-      {{ talk.conference }}<br>
-      <small class="conference-talk-title">{{ talk.title }}</small>
-    </h3>
-
-    <p>
-      {{ talk.blurb | replace: '#[conference_ext_link]', talk.conference_ext_link | replace: '#[location]', talk.location }}
-    </p>
-
-    {{ talk.video }}
-  </div>
-
-  {% unless forloop.last %}
----
-  {% endunless %}
-{% endfor %}
 
 ---
 

@@ -1,0 +1,87 @@
+- name: "CodeMash 2016"
+  url: https://www.codemash.org
+  ext_link: <a href="https://www.codemash.org" target="_blank">CodeMash</a>
+  location: Sandusky, OH
+  talks:
+    - title: Functional Programming Basics in ES6
+      slides_url: https://speakerdeck.com/jfairbank/codemash-functional-programming-basics-in-es6
+      slides_embed: <script async class="speakerdeck-embed" data-id="c6ddba41fc8042a8862c921ddbc3ac26" data-ratio="1.77777777777778" src="//speakerdeck.com/assets/embed.js"></script>
+
+- name: "Nodevember '15"
+  url: http://www.nodevember.org
+  ext_link: <a href="http://www.nodevember.org" target="_blank">Nodevember</a>
+  location: Nashville, TN
+  talks:
+    - title: Orchestrating Apps by Composing Angular Directives
+      slides_url: https://speakerdeck.com/jfairbank/nodevember-orchestrating-apps-by-composing-angular-directives
+      slides_embed: <script async class="speakerdeck-embed" data-id="7ef4ed4d7bb9496eae7b661c8809f404" data-ratio="1.77777777777778" src="//speakerdeck.com/assets/embed.js"></script>
+      video_url: https://www.youtube.com/watch?v=uS3IrNVam6Q
+
+- name: "HTML5DevConf Autumn 2015"
+  url: http://html5devconf.com
+  ext_link: <a href="http://html5devconf.com" target="_blank">HTML5DevConf</a>
+  location: San Francisco, CA
+  talks:
+    - title: ES7 and Beyond!
+      slides_url: https://speakerdeck.com/jfairbank/html5devconf-es7-and-beyond
+      slides_embed: <script async class="speakerdeck-embed" data-id="bdad642f76164b738cb49551f5a6309f" data-ratio="1.33333333333333" src="//speakerdeck.com/assets/embed.js"></script>
+
+- name: "ConnectJS 2015"
+  url: http://connect-js.com
+  ext_link: <a href="http://connect-js.com" target="_blank">Connect JS</a>
+  location: Atlanta, GA
+  talks:
+    - title: Functional Programming Basics in ES6
+      slides_url: https://speakerdeck.com/jfairbank/connectjs-functional-programming-basics-in-es6
+      slides_embed: <script async class="speakerdeck-embed" data-id="4c63e813bd604455a01a78c1e9e315bc" data-ratio="1.33333333333333" src="//speakerdeck.com/assets/embed.js"></script>
+      video_url: https://www.youtube.com/watch?v=bsD81gqubow
+    - title: Orchestrating Apps by Composing Angular Directives
+      slides_url: https://speakerdeck.com/jfairbank/connectjs-orchestrating-apps-by-composing-angular-directives
+      slides_embed: <script async class="speakerdeck-embed" data-id="4a8e69cdf459472a8bf4e17964a6152d" data-ratio="1.33333333333333" src="//speakerdeck.com/assets/embed.js"></script>
+      video_url: https://www.youtube.com/watch?v=9mPrlJNuaIw
+    - title: Dynamically Sassy
+      slides_url: https://speakerdeck.com/jfairbank/connectjs-dynamically-sassy
+      slides_embed: <script async class="speakerdeck-embed" data-id="5fd922cbfea443bda885b77c54c15697" data-ratio="1.33333333333333" src="//speakerdeck.com/assets/embed.js"></script>
+      video_url: https://www.youtube.com/watch?v=c-oAGu1pZqo
+
+- name: "Music City Code 2015"
+  url: http://www.musiccitycode.com
+  ext_link: <a href="http://www.musiccitycode.com" target="_blank">Music City Code</a>
+  location: Nashville, TN
+  talks:
+    - title: ES7 and Beyond!
+      slides_url: https://speakerdeck.com/jfairbank/es7-and-beyond
+      slides_embed: <script async class="speakerdeck-embed" data-id="f622eaec70154e118d23396447106a3b" data-ratio="1.77777777777778" src="//speakerdeck.com/assets/embed.js"></script>
+
+- name: "Codestock 2015"
+  url: http://www.codestock.org/
+  ext_link: <a href="http://www.codestock.org/" target="_blank">Codestock</a>
+  location: Knoxville, TN
+  talks:
+    - title: Functional Programming Basics in JavaScript
+      slides_url: https://speakerdeck.com/jfairbank/codestock-functional-programming-basics-in-javascript
+      slides_embed: <script async class="speakerdeck-embed" data-id="2400cb25f719489fabd1a67e02d3ff7f" data-ratio="1.33333333333333" src="//speakerdeck.com/assets/embed.js"></script>
+    - title: Orchestrating Apps by Composing Angular Directives
+      slides_url: https://speakerdeck.com/jfairbank/codestock-orchestrating-apps-by-composing-angular-directives
+      slides_embed: <script async class="speakerdeck-embed" data-id="ba9d758e4e85416681537b563da30908" data-ratio="1.33333333333333" src="//speakerdeck.com/assets/embed.js"></script>
+
+- name: "RailsConf 2015"
+  url: http://www.railsconf.com/
+  ext_link: <a href="http://www.railsconf.com" target="_blank">RailsConf</a>
+  blurb: 'I got to meet some amazing people and talk about dynamic Sass rendering at #[conference_ext_link] in #[location].'
+  location: Atlanta, GA
+  talks:
+    - title: Dynamically Sassy
+      video: <iframe width="420" height="315" src="//www.youtube.com/embed/ouGWyZfGZ8M" frameborder="0" allowfullscreen></iframe>
+      video_url: https://www.youtube.com/embed/ouGWyZfGZ8M
+
+- name: "Nodevember '14"
+  url: http://www.nodevember.org
+  ext_link: <a href="http://www.nodevember.org" target="_blank">Nodevember</a>
+  blurb: 'I had the amazing honor to give my first developer talk at the inaugural #[conference_ext_link] conference in #[location].'
+  location: Nashville, TN
+  talks:
+    - title: Building Modular and Component Driven Architecture in Backbone.js and Marionette.js
+      slides_url: https://speakerdeck.com/jfairbank/dynamically-sassy
+      video: <iframe width="420" height="315" src="//www.youtube.com/embed/PrQSpdWkN6Q" frameborder="0" allowfullscreen></iframe>
+      video_url: https://www.youtube.com/watch?v=PrQSpdWkN6Q

@@ -1,0 +1,56 @@
+.conference {
+  background: #eee;
+  border-top: 4px solid #ddd;
+  padding: 10px 15px 15px 15px;
+}
+
+.conference + .conference {
+  margin-top: 20px;
+}
+
+.conference__name {
+  color: #555;
+  font-size: 1.5rem;
+  margin-top: 5px;
+  text-shadow: 1px 1px 0px #fff;
+  text-transform: uppercase;
+
+  a {
+    text-decoration: underline;
+  }
+}
+
+.talk + .talk {
+  border-top: 1px solid #fff;
+  margin-top: 15px;
+}
+
+.talk__title {
+  color: #555;
+  font-size: 1.4rem;
+  margin-bottom: 10px;
+  margin-top: 10px;
+}
+
+.talk__resources {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.talk__resource {
+  display: inline-block;
+}
+
+.talk__resource + .talk__resource {
+  $spacing: 10px;
+
+  border-left: 1px solid #ccc;
+  margin-left: $spacing;
+  padding-left: $spacing;
+}
+
+.talk__resource + .talk__resource {
+  border-left: 1px solid #ccc;
+  margin-left: 5px;
+}
