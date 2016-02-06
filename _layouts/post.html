@@ -33,6 +33,7 @@
     {% include _author-bio.html %}
   </div>
   <article class="post">
+    {% include _promo.html %}
     <div class="headline-wrap">
       {% if page.link %}
         <h1><a href="{{ page.link }}">{{ page.title }}</a></h1>
@@ -44,6 +45,7 @@
       {% if page.share %}{% include _social-share.html %}{% endif %}
       {{ content }}
       {% if page.share %}{% include _social-share.html %}{% endif %}
+      {% include _promo.html %}
       <hr />
       <footer role="contentinfo">
         <div class="article-author-bottom">
