@@ -54,6 +54,10 @@ visiting [here](/conferences/).
 
   <ul>
     <li>
+      {% gh jfairbank/revalidate revalidate %}: Elegant, composable validation
+      for JavaScript.
+    </li>
+    <li>
       {% gh jfairbank/redux-resource redux-resource %}: Redux action creator for
       managing RESTful resources.
     </li>
