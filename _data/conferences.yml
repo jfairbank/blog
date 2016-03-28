@@ -8,6 +8,18 @@
       slides_embed: <script async class="speakerdeck-embed" data-id="44e66e1df99a48dd8a8cff77fdb7f6c8" data-ratio="1.77777777777778" src="//speakerdeck.com/assets/embed.js"></script>
       video_url: https://www.youtube.com/watch?v=QtgR94Q2pt4
 
+- name: "JavaScript Summit 2016"
+  url: http://environmentsforhumans.com/2016/javascript-summit
+  ext_link: <a href="http://environmentsforhumans.com/2016/javascript-summit">JavaScript Summit</a>
+  location: Online
+  talks:
+    - title: ES7 and Beyond!
+      slides_url: https://speakerdeck.com/jfairbank/js-summit-es7-and-beyond
+      slides_embed: <script async class="speakerdeck-embed" data-id="3566ac779b124e6d83f0c8600f899614" data-ratio="1.33333333333333" src="//speakerdeck.com/assets/embed.js"></script>
+    - title: Modular React and Redux
+      slides_url: https://speakerdeck.com/jfairbank/js-summit-modular-react-and-redux
+      slides_embed: <script async class="speakerdeck-embed" data-id="9b5149ec33ff42bd89ab9e24a798dca3" data-ratio="1.77777777777778" src="//speakerdeck.com/assets/embed.js"></script>
+
 - name: "CodeMash 2016"
   url: https://www.codemash.org
   ext_link: <a href="https://www.codemash.org" target="_blank">CodeMash</a>
@@ -35,6 +47,7 @@
     - title: ES7 and Beyond!
       slides_url: https://speakerdeck.com/jfairbank/html5devconf-es7-and-beyond
       slides_embed: <script async class="speakerdeck-embed" data-id="bdad642f76164b738cb49551f5a6309f" data-ratio="1.33333333333333" src="//speakerdeck.com/assets/embed.js"></script>
+      video_url: https://www.youtube.com/watch?v=ZjzgX62NHpc
 
 - name: "ConnectJS 2015"
   url: http://connect-js.com
