@@ -19,10 +19,10 @@ I like to build modular, scalable applications with reasonable abstraction to ke
 
 ## Work
 
-<a href="http://pushagency.io" class="push-logo" target="_blank"></a>
+<!-- <a href="http://pushagency.io" class="push-logo" target="_blank"></a> -->
 
-I work for [Push Agency](http://pushagency.io) as a full stack developer with a
-focus on JavaScript and Ruby.
+I work for [Sigient](http://sigient.com) as a front-end developer with a
+focus on React, Redux, and functional programming.
 
 ---
 
