@@ -1,8 +1,8 @@
 # Site wide configuration
-title:            Jeremy Fairbank Blog
-description:      "The JavaScript web development blog of Jeremy Fairbank."
-locale:           en_US
-url:              http://blog.jeremyfairbank.dev:4000
+title: Jeremy Fairbank Blog
+description: "The JavaScript web development blog of Jeremy Fairbank."
+locale: en_US
+url: http://blog.jeremyfairbank.com.dev
 
 # Jekyll configuration
 permalink:   /:categories/:title/

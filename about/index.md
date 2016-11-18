@@ -28,7 +28,7 @@ focus on React, Redux, and functional programming.
 
 ## Conferences
 
-I like to speak at web development conferences. You can see many of talks by
+I like to speak at web development conferences. You can see many of my talks by
 visiting [here](/conferences/).
 
 ---
@@ -84,15 +84,6 @@ visiting [here](/conferences/).
     You can view my GitHub profile {% gh jfairbank here %}.
   </p>
 </div>
-
----
-
-## Besides Dev
-
-Outside of web development I am a husband to my beautiful wife and a father to
-my son. I play guitar and sing at my church and believe I would be pretty
-messed up without the grace of God every day. I dabble in some photography and
-really enjoy jazz and chill electronic music.
 
 ---
 
