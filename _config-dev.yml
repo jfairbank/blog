@@ -1,3 +1,4 @@
+encoding: utf-8
 # Site wide configuration
 title: Jeremy Fairbank Blog
 description: "The JavaScript web development blog of Jeremy Fairbank."
@@ -25,21 +26,23 @@ kramdown:
 owner:
   name: Jeremy Fairbank
   avatar: bio-photo-1.jpg
-  bio: "Making the web with JavaScript."
+  bio: "Making the web with JavaScript and Elm."
+  role: "Software Engineer"
+  location: Tennessee
   email:
   disqus-shortname: jeremyfairbankblog
-  twitter: ElPapaPollo
+  twitter: elpapapollo
   facebook:
   google:
     plus: JeremyFairbank
-    analytics:
+    analytics: "UA-52148605-1"
     verify:
     ad-client:
     ad-slot:
   bing-verify:
   github: jfairbank
   stackoverflow:
-  linkedin:
+  linkedin: jfairbank
   instagram: elpapapollo
   lastfm:
   tumblr:

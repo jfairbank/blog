@@ -11,25 +11,25 @@ image:
   creditlink: http://blog.jeremyfairbank.com
 ---
 
-Hi, my name is Jeremy Fairbank, and I am a web developer. I enjoy working with
-JavaScript and Ruby, but I know my way around other languages.
-I like to build modular, scalable applications with reasonable abstraction to keep things DRY. I really enjoy helping and teaching others, especially about JavaScript.
+Hi, my name is Jeremy Fairbank, and I am a software engineer. I enjoy working
+with JavaScript and Elm, but I know my way around other languages like Ruby. I
+like to build modular, component-driven applications with reasonable abstraction
+to keep things DRY. I really enjoy helping and teaching others, especially about
+JavaScript and Elm.
 
 ---
 
 ## Work
 
-<!-- <a href="http://pushagency.io" class="push-logo" target="_blank"></a> -->
-
-I work for [Sigient](http://sigient.com) as a front-end developer with a
-focus on React, Redux, and functional programming.
+I work for [Sigient](http://sigient.com) as a full-stack engineer with a focus
+on React, Redux, and functional programming.
 
 ---
 
 ## Conferences
 
 I like to speak at web development conferences. You can see many of my talks by
-visiting [here](/conferences/).
+visiting [my conferences page](/conferences/).
 
 ---
 
@@ -49,39 +49,31 @@ visiting [here](/conferences/).
       validations for JavaScript.
     </li>
     <li>
-      {% gh jfairbank/redux-saga-test-plan redux-saga-test-plan %}: Test helpers
+      {% gh jfairbank/redux-saga-test-plan redux-saga-test-plan %}: Powerful test helpers
       for {% gh yelouafi/redux-saga Redux Saga %}.
     </li>
     <li>
-      {% gh jfairbank/redux-resource redux-resource %}: Redux action creator for
-      managing RESTful resources.
-    </li>
-    <li>
-      {% gh jfairbank/combos combos %}: Generate all possible permutations of an
-      object's key-value pairs.
-    </li>
-    <li>
-      {% gh jfairbank/react-classify react-classify %}: Classify functional
-      React components to use component lifecycle hooks.
+      {% gh jfairbank/redux-saga-router redux-saga-router %}: A router for
+      {% gh yelouafi/redux-saga Redux Saga %}.
     </li>
     <li>
       {% gh jfairbank/perchance perchance %}: Simple maybe monad for JavaScript.
     </li>
     <li>
+      {% gh jfairbank/run-elm run-elm %}: Run Elm code from the command line.
+    </li>
+    <li>
       {% gh jfairbank/chroma chroma %}: Color manipulation gem for Ruby.
     </li>
     <li>
-      {% gh jfairbank/nth-child nth-child %}: Calculate the nth-child equation
-      for CSS selectors.
-    </li>
-    <li>
-      {% gh jfairbank/marionette.component marionette.component %}: Component
-      building library for Marionette.js. Unmaintained.
+      {% gh jfairbank/combos combos %}: Generate all possible permutations of an
+      object's key-value pairs.
     </li>
   </ul>
 
   <p>
-    You can view my GitHub profile {% gh jfairbank here %}.
+    Please view my {% gh jfairbank GitHub profile %} for more of my open
+    source work.
   </p>
 </div>
 
@@ -91,5 +83,6 @@ visiting [here](/conferences/).
 
 Say hi to me at these places:
 
-* [Twitter](http://twitter.com/{{ site.owner.twitter }})
 * [GitHub](http://github.com/{{ site.owner.github }})
+* [Twitter](http://twitter.com/{{ site.owner.twitter }})
+* [LinkedIn](http://www.linkedin.com/in/{{ site.owner.linkedin }})

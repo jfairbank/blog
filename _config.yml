@@ -1,8 +1,9 @@
+encoding: utf-8
 # Site wide configuration
-title:            Jeremy Fairbank Blog
-description:      "The JavaScript web development blog of Jeremy Fairbank."
-locale:           en_US
-url:              //blog.jeremyfairbank.com
+title: Jeremy Fairbank Blog
+description: "The JavaScript web development blog of Jeremy Fairbank."
+locale: en_US
+url: //blog.jeremyfairbank.com
 
 # Jekyll configuration
 permalink:   /:categories/:title/
@@ -29,12 +30,12 @@ kramdown:
 owner:
   name: Jeremy Fairbank
   avatar: bio-photo-1.jpg
-  bio: "Making the web with JavaScript."
-  role: "Web Developer"
+  bio: "Making the web with JavaScript and Elm."
+  role: "Software Engineer"
   location: Tennessee
   email:
   disqus-shortname: jeremyfairbankblog
-  twitter: ElPapaPollo
+  twitter: elpapapollo
   facebook:
   google:
     plus: JeremyFairbank
@@ -45,7 +46,7 @@ owner:
   bing-verify:
   github: jfairbank
   stackoverflow:
-  linkedin:
+  linkedin: jfairbank
   instagram: elpapapollo
   lastfm:
   tumblr:
