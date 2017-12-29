@@ -21,8 +21,8 @@ JavaScript and Elm.
 
 ## Work
 
-I work for [Sigient](http://sigient.com) as a full-stack engineer with a focus
-on React, Redux, and functional programming.
+I work for [Test Double](https://testdouble.com/) as a software engineer and
+consultant, helping improve how the world builds software.
 
 ---
 
