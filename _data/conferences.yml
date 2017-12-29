@@ -1,3 +1,88 @@
+- name: "Elm Conf 2017"
+  url: https://www.elm-conf.us/
+  ext_link: <a href="https://www.elm-conf.us/" target="_blank">Elm Conf</a>
+  location: St. Louis, MO
+  talks:
+    - title: "Solving the Boolean Identity Crisis"
+      slides_url: https://speakerdeck.com/jfairbank/elm-conf-2017-solving-the-boolean-identity-crisis
+      slides_embed: <script async class="speakerdeck-embed" data-id="fea227b8a1e24120a028c178cf8750ac" data-ratio="1.77777777777778" src="//speakerdeck.com/assets/embed.js"></script>
+      video_url: https://www.youtube.com/watch?v=8Af1bh-BVY8
+
+- name: "Connect.Tech 2017"
+  url: http://connect.tech/
+  ext_link: <a href="http://connect.tech/" target="_blank">Connect.Tech</a>
+  location: Atlanta, GA
+  talks:
+    - title: "Functional Web with Elm"
+      slides_url: https://speakerdeck.com/jfairbank/connect-dot-tech-2017-functional-web-with-elm
+      slides_embed: <script async class="speakerdeck-embed" data-id="6b956fe4afb045d58b6f5d461c76f9cf" data-ratio="1.77777777777778" src="//speakerdeck.com/assets/embed.js"></script>
+    - title: "Get Started with Redux"
+      slides_url: https://speakerdeck.com/jfairbank/connect-dot-tech-2017-get-started-with-redux
+      slides_embed: <script async class="speakerdeck-embed" data-id="feac6253f78c4a579ed18a352bedd8b8" data-ratio="1.77777777777778" src="//speakerdeck.com/assets/embed.js"></script>
+    - title: "Dive into RxJS Observables"
+      slides_url: https://speakerdeck.com/jfairbank/connect-dot-tech-2017-dive-into-rxjs-observables
+      slides_embed: <script async class="speakerdeck-embed" data-id="a351fcd8d7624c3b82bdea451ac743d4" data-ratio="1.77777777777778" src="//speakerdeck.com/assets/embed.js"></script>
+
+- name: "Scenic City Summit 2017"
+  url: https://www.sceniccitysummit.com/
+  ext_link: <a href="https://www.sceniccitysummit.com/" target="_blank">Scenic City Summit</a>
+  location: Chattanooga, TN
+  talks:
+    - title: "Get Started with Redux"
+      slides_url: https://speakerdeck.com/jfairbank/scenic-city-summit-2017-get-started-with-redux
+      slides_embed: <script async class="speakerdeck-embed" data-id="5a623d24a32740759a64aae08f52adb5" data-ratio="1.77777777777778" src="//speakerdeck.com/assets/embed.js"></script>
+      video_url: https://www.youtube.com/watch?v=hDe_rzWlGtI
+    - title: "Tame the frontend with Elm"
+      slides_url: https://speakerdeck.com/jfairbank/scenic-city-summit-2017-tame-the-frontend-with-elm
+      slides_embed: <script async class="speakerdeck-embed" data-id="b84ad61763a444588cb08befe3a80716" data-ratio="1.77777777777778" src="//speakerdeck.com/assets/embed.js"></script>
+
+- name: "Fluent Conf 2017"
+  url: https://conferences.oreilly.com/fluent/fl-ca
+  ext_link: <a href="https://conferences.oreilly.com/fluent/fl-ca" target="_blank">Fluent Conf</a>
+  location: San Jose, CA
+  talks:
+    - title: "Tame the frontend with Elm"
+      slides_url: https://speakerdeck.com/jfairbank/fluent-conf-2017-tame-the-frontend-with-elm
+      slides_embed: <script async class="speakerdeck-embed" data-id="df3fd538001f49308a9e3a06d9c6c333" data-ratio="1.77777777777778" src="//speakerdeck.com/assets/embed.js"></script>
+      video_url: https://www.youtube.com/watch?v=D740qUZVcr4
+
+- name: "CodeStock 2017"
+  url: http://www.codestock.org/
+  ext_link: <a href="http://www.codestock.org/" target="_blank">CodeStock</a>
+  location: Knoxville, TN
+  talks:
+    - title: "Functional Programming Basics in ES6"
+      slides_url: https://speakerdeck.com/jfairbank/codestock-2017-functional-programming-basics-in-es6
+      slides_embed: <script async class="speakerdeck-embed" data-id="bbf82db06e9343558554feb5022ce10d" data-ratio="1.77777777777778" src="//speakerdeck.com/assets/embed.js"></script>
+
+- name: "JazzCon 2017"
+  url: http://jazzcon.tech/
+  ext_link: <a href="http://jazzcon.tech/" target="_blank">JazzCon</a>
+  location: New Orleans, LA
+  talks:
+    - title: "Building Web Apps with Elm Workshop"
+      slides_url: https://speakerdeck.com/jfairbank/jazzcon-2017-building-web-apps-with-elm-workshop
+      slides_embed: <script async class="speakerdeck-embed" data-id="c81adbb16cbd4859b809552236743573" data-ratio="1.77777777777778" src="//speakerdeck.com/assets/embed.js"></script>
+    - title: "State, Side Effects, and Redux. Oh my!"
+      slides_url: https://speakerdeck.com/jfairbank/jazzcon-2017-state-side-effects-and-redux-oh-my
+      slides_embed: <script async class="speakerdeck-embed" data-id="f0ceb197e9cf4a469d7bc6cd6ca783ae" data-ratio="1.77777777777778" src="//speakerdeck.com/assets/embed.js"></script>
+    - title: "The Rise of Async JavaScript"
+      slides_url: https://speakerdeck.com/jfairbank/jazzcon-2017-the-rise-of-async-javascript
+      slides_embed: <script async class="speakerdeck-embed" data-id="6b9888dfe50d4c81bd5c0ce3812ddd61" data-ratio="1.77777777777778" src="//speakerdeck.com/assets/embed.js"></script>
+      video_url: https://www.youtube.com/watch?v=tm9BBx99vvM
+
+- name: "DevNexus 2017"
+  url: https://devnexus.com/
+  ext_link: <a href="https://devnexus.com/" target="_blank">DevNexus</a>
+  location: Atlanta, GA
+  talks:
+    - title: "Functional Programming Basics in ES6"
+      slides_url: https://speakerdeck.com/jfairbank/devnexus-2017-functional-programming-basics-in-es6
+      slides_embed: <script async class="speakerdeck-embed" data-id="2c33f06ab9c24411a673599dae76a84e" data-ratio="1.77777777777778" src="//speakerdeck.com/assets/embed.js"></script>
+    - title: "The Rise of Async JavaScript"
+      slides_url: https://speakerdeck.com/jfairbank/devnexus-2017-the-rise-of-async-javascript
+      slides_embed: <script async class="speakerdeck-embed" data-id="c68eadb8aaf444f39618b89f20058e60" data-ratio="1.77777777777778" src="//speakerdeck.com/assets/embed.js"></script>
+
 - name: "CodeMash 2017"
   url: http://www.codemash.org/
   ext_link: <a href="http://www.codemash.org/" target="_blank">CodeMash</a>
