@@ -4,7 +4,7 @@
 <generator uri="https://github.com/jekyll/jekyll">Jekyll</generator>
 <link rel="self" type="application/atom+xml" href="//blog.jeremyfairbank.com/feed.xml" />
 <link rel="alternate" type="text/html" href="//blog.jeremyfairbank.com" />
-<updated>2017-12-28T21:31:57-05:00</updated>
+<updated>2019-06-05T16:06:29-10:00</updated>
 <id>//blog.jeremyfairbank.com/</id>
 <author>
   <name>Jeremy Fairbank</name>
@@ -16,11 +16,435 @@
   
 
 <entry>
+  <title type="html"><![CDATA[Solving the Boolean Identity Crisis: Part 2]]></title>
+  <link rel="alternate" type="text/html" href="//blog.jeremyfairbank.com/elm/solving-the-boolean-identity-crisis-part-2/" />
+  <id>//blog.jeremyfairbank.com/elm/solving-the-boolean-identity-crisis-part-2</id>
+  <published>2019-05-30T00:00:00-10:00</published>
+  <updated>2019-05-30T00:00:00-10:00</updated>
+  <author>
+    <name>Jeremy Fairbank</name>
+    <uri>//blog.jeremyfairbank.com</uri>
+    
+  </author>
+  <content type="html">&lt;section id=&quot;table-of-contents&quot; class=&quot;toc&quot;&gt;
+  &lt;header&gt;
+    &lt;h3&gt;Contents&lt;/h3&gt;
+  &lt;/header&gt;
+&lt;div id=&quot;drawer&quot;&gt;
+&lt;ul id=&quot;markdown-toc&quot;&gt;
+  &lt;li&gt;&lt;a href=&quot;#the-problem&quot; id=&quot;markdown-toc-the-problem&quot;&gt;The Problem&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#fix-the-boolean-blindness&quot; id=&quot;markdown-toc-fix-the-boolean-blindness&quot;&gt;Fix the Boolean Blindness&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#use-timeposix&quot; id=&quot;markdown-toc-use-timeposix&quot;&gt;Use Time.Posix&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#what-you-learned&quot; id=&quot;markdown-toc-what-you-learned&quot;&gt;What You Learned&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+  &lt;/div&gt;
+&lt;/section&gt;
+&lt;!-- /#table-of-contents --&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://programming-elm.com/img/fog-boolean-blindness.jpg&quot; alt=&quot;Man and dog walking down road through fog&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;Originally published at &lt;a href=&quot;https://programming-elm.com/blog/2019-05-30-solving-the-boolean-identity-crisis-part-2&quot;&gt;https://programming-elm.com&lt;/a&gt; on May 30, 2019.&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;In the &lt;a href=&quot;/elm/solving-the-boolean-identity-crisis-part-1&quot;&gt;previous post&lt;/a&gt;,
+we explored how boolean arguments obscure the intent of code. We replaced
+boolean arguments with custom type values to make code more explicit and
+maintainable.&lt;/p&gt;
+
+&lt;p&gt;In this post, you will discover that boolean return values cause a problem known
+as &lt;em&gt;boolean blindness&lt;/em&gt;. Boolean blindness can create accidental bugs in if-else
+expressions that the compiler can’t prevent. You will learn how to replace
+boolean return values with custom types to eliminate boolean blindness and
+leverage the compiler for safer code.&lt;/p&gt;
+
+&lt;h2 id=&quot;the-problem&quot;&gt;The Problem&lt;/h2&gt;
+
+&lt;p&gt;In my talk, &lt;a href=&quot;https://www.youtube.com/watch?v=8Af1bh-BVY8&quot;&gt;Solving the Boolean Identity Crisis&lt;/a&gt;,
+I share a tale from a
+&lt;a href=&quot;https://www.cs.cmu.edu/~15150/previous-semesters/2012-spring/resources/lectures/09.pdf&quot;&gt;lecture&lt;/a&gt; by
+&lt;a href=&quot;http://dlicata.web.wesleyan.edu&quot;&gt;Dan Licata&lt;/a&gt;, a professor at Wesleyan University.&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;Sometimes, when I’m walking down the street, someone will ask me “do you know what time it
+is?” If I feel like being a literalist, I’ll say “yes.” Then they roll their eyes and say “okay, [tell]
+me what time it is!” The downside of this is that they might get used to demanding the time, and
+start demanding it of people who don’t even know it.
+It’s better to ask “do you know what time is it, and if so, please tell me?”. [T]hat’s what “what
+time is it?” usually means. This way, you get the information you were after, when it’s available.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;If we translate this into code, it might look like this.&lt;/p&gt;
+
+&lt;figure class=&quot;code-highlight-figure&quot;&gt;&lt;div class=&quot;code-highlight&quot;&gt;&lt;pre class=&quot;code-highlight-pre&quot;&gt;&lt;div data-line=&quot;1&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;type alias Person =
+&lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;2&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;    &amp;#x7b; time : String &amp;#x7d;
+&lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;3&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt; &lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;4&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt; &lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;5&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;doYouKnowTheTime : Person -&amp;gt; Boolean
+&lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;6&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;doYouKnowTheTime person =
+&lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;7&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;    person.time /= &quot;&quot;
+&lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;8&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt; &lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;9&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt; &lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;10&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;tellMeTheTime : Person -&amp;gt; String
+&lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;11&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;tellMeTheTime person =
+&lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;12&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;    person.time
+&lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;13&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt; &lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;14&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt; &lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;15&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;currentTime : Person -&amp;gt; String
+&lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;16&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;currentTime person =
+&lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;17&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;    if doYouKnowTheTime person then
+&lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;18&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;        tellMeTheTime person
+&lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;19&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt; &lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;20&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;    else
+&lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;21&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;        &quot;Does anybody really know what time it is?&quot;&lt;/div&gt;&lt;/div&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/figure&gt;
+
+&lt;p&gt;The &lt;code&gt;doYouKnowTheTime&lt;/code&gt; function accepts a &lt;code&gt;Person&lt;/code&gt; type and checks if the &lt;code&gt;time&lt;/code&gt;
+field isn’t the empty string. Then, we branch on a call to &lt;code&gt;doYouKnowTheTime&lt;/code&gt; inside the
+&lt;code&gt;currentTime&lt;/code&gt; function. If it returns &lt;code&gt;True&lt;/code&gt;, then we call &lt;code&gt;tellMeTheTime&lt;/code&gt; to
+return the value of &lt;code&gt;person.time&lt;/code&gt;. Otherwise, we return a default time.&lt;/p&gt;
+
+&lt;p&gt;This code may look fine but it suffers from a couple of problems.&lt;/p&gt;
+
+&lt;p&gt;First, as Dan rightly points out, people could demand time of others that don’t
+have it. Nothing stops us from writing this code.&lt;/p&gt;
+
+&lt;figure class=&quot;code-highlight-figure&quot;&gt;&lt;div class=&quot;code-highlight&quot;&gt;&lt;pre class=&quot;code-highlight-pre&quot;&gt;&lt;div data-line=&quot;1&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;currentTime person =
+&lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;2&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;    if doYouKnowTheTime person then
+&lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;3&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;        tellMeTheTime person
+&lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;4&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt; &lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;5&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;    else
+&lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;6&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;        tellMeTheTime person -- returns empty string&lt;/div&gt;&lt;/div&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/figure&gt;
+
+&lt;p&gt;We can still call &lt;code&gt;tellMeTheTime&lt;/code&gt; when &lt;code&gt;person.time&lt;/code&gt; is the empty string. This
+would likely cause a bug.&lt;/p&gt;
+
+&lt;p&gt;Second, the fact that we can cause the previous situation surfaces a
+data-modeling code smell. Strings notoriously cause trouble because any string
+is valid according to the type system. The compiler can’t enforce that a given
+string is not empty. This is a weak substitute for a more meaningful data type.&lt;/p&gt;
+
+&lt;p&gt;We want to give the compiler better type information so it can constrain this
+code to only access the time when it’s truly available. Let’s explore how to
+make this code clearer and safer.&lt;/p&gt;
+
+&lt;h2 id=&quot;fix-the-boolean-blindness&quot;&gt;Fix the Boolean Blindness&lt;/h2&gt;
+
+&lt;p&gt;The first problem stems from boolean blindness. When you reduce information to a
+boolean, you lose that information easily. The information that boolean carries
+is only known inside the &lt;code&gt;if&lt;/code&gt; check. As soon as you branch into the body of the
+if-else expression, you become &lt;em&gt;blind&lt;/em&gt; to the original information that got you
+there. Because that boolean loses information, you must backtrack to recover it
+when you need it again.&lt;/p&gt;
+
+&lt;p&gt;Dan offers this solution to boolean blindness, “boolean tests let you &lt;em&gt;look&lt;/em&gt;,
+options let you &lt;em&gt;see&lt;/em&gt;.”&lt;/p&gt;
+
+&lt;p&gt;Dan is referring to the &lt;code&gt;option&lt;/code&gt; type in
+&lt;a href=&quot;https://en.wikipedia.org/wiki/ML_%28programming_language%29&quot;&gt;ML&lt;/a&gt;. In Elm, we call
+it the &lt;code&gt;Maybe&lt;/code&gt; type. What Dan means is that booleans only tell you if something is
+present. The &lt;code&gt;Maybe&lt;/code&gt; type tells you if it’s present by giving it to you when
+it’s available. Let’s rewrite our example with &lt;code&gt;Maybe String&lt;/code&gt;.&lt;/p&gt;
+
+&lt;figure class=&quot;code-highlight-figure&quot;&gt;&lt;div class=&quot;code-highlight&quot;&gt;&lt;pre class=&quot;code-highlight-pre&quot;&gt;&lt;div data-line=&quot;1&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;type alias Person =
+&lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;2&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;    &amp;#x7b; time : Maybe String &amp;#x7d;
+&lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;3&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt; &lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;4&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt; &lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;5&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;whatTimeIsIt : Person -&amp;gt; Maybe String
+&lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;6&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;whatTimeIsIt person =
+&lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;7&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;    person.time
+&lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;8&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt; &lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;9&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt; &lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;10&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;currentTime : Person -&amp;gt; String
+&lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;11&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;currentTime person =
+&lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;12&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;    case whatTimeIsIt person of
+&lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;13&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;        Just time -&amp;gt;
+&lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;14&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;            time
+&lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;15&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt; &lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;16&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;        Nothing -&amp;gt;
+&lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;17&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;            &quot;Does anybody really know what time it is?&quot;&lt;/div&gt;&lt;/div&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/figure&gt;
+
+&lt;p&gt;We update the &lt;code&gt;time&lt;/code&gt; field to be &lt;code&gt;Maybe String&lt;/code&gt;. Then, we add a &lt;code&gt;whatTimeIsIt&lt;/code&gt;
+function that returns &lt;code&gt;person.time&lt;/code&gt;. Inside &lt;code&gt;currentTime&lt;/code&gt; we now call
+&lt;code&gt;whatTimeIsIt&lt;/code&gt; and pattern match on the result. If the person has the time, then
+we immediately have access to it inside &lt;code&gt;Just&lt;/code&gt;. No need to first check with an
+if-else expression. If the person doesn’t have the time, i.e. &lt;code&gt;Nothing&lt;/code&gt;, then we
+return our default.&lt;/p&gt;
+
+&lt;p&gt;We can’t accidentally access the time if it’s not present because the compiler
+will enforce the &lt;code&gt;Maybe&lt;/code&gt; type constraint.&lt;/p&gt;
+
+&lt;p&gt;We still have a problem, though. The time inside &lt;code&gt;Just&lt;/code&gt; could be the empty
+string, which is an invalid time. Let’s fix that next.&lt;/p&gt;
+
+&lt;h2 id=&quot;use-timeposix&quot;&gt;Use Time.Posix&lt;/h2&gt;
+
+&lt;p&gt;We need a better type for encoding the time to avoid the empty string. Luckily,
+Elm has a package for working with time called
+&lt;a href=&quot;https://package.elm-lang.org/packages/elm/time/latest/&quot;&gt;elm/time&lt;/a&gt;. It offers a
+&lt;code&gt;Posix&lt;/code&gt; type to represent Unix time, or the amount of time that has passed since
+midnight UTC on January 1, 1970. We can use the &lt;code&gt;Posix&lt;/code&gt; type and then convert it
+to a formatted time when needed.&lt;/p&gt;
+
+&lt;figure class=&quot;code-highlight-figure&quot;&gt;&lt;div class=&quot;code-highlight&quot;&gt;&lt;pre class=&quot;code-highlight-pre&quot;&gt;&lt;div data-line=&quot;1&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;import Time exposing (Posix, toHour, toMinute, utc)
+&lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;2&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt; &lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;3&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt; &lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;4&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;type alias Person =
+&lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;5&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;    &amp;#x7b; time : Maybe Posix &amp;#x7d;
+&lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;6&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt; &lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;7&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt; &lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;8&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;whatTimeIsIt : Person -&amp;gt; Maybe Posix
+&lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;9&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;whatTimeIsIt person =
+&lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;10&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;    person.time
+&lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;11&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt; &lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;12&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt; &lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;13&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;currentTime : Person -&amp;gt; String
+&lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;14&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;currentTime person =
+&lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;15&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;    case whatTimeIsIt person of
+&lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;16&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;        Just time -&amp;gt;
+&lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;17&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;            String.fromInt (toHour utc time)
+&lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;18&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;                ++ &quot;:&quot;
+&lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;19&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;                ++ String.fromInt (toMinute utc time)
+&lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;20&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt; &lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;21&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;        Nothing -&amp;gt;
+&lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;22&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;            &quot;Does anybody really know what time it is?&quot;&lt;/div&gt;&lt;/div&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/figure&gt;
+
+&lt;p&gt;We import the &lt;code&gt;Time&lt;/code&gt; module and expose &lt;code&gt;Posix&lt;/code&gt;, &lt;code&gt;toHour&lt;/code&gt;, &lt;code&gt;toMinute&lt;/code&gt;, and &lt;code&gt;utc&lt;/code&gt;.
+We change the &lt;code&gt;time&lt;/code&gt; field to &lt;code&gt;Maybe Posix&lt;/code&gt; and update the type annotation for
+&lt;code&gt;whatTimeIsIt&lt;/code&gt;. Inside the &lt;code&gt;Just&lt;/code&gt; branch of &lt;code&gt;currentTime&lt;/code&gt;, we now know we have a
+valid time thanks to the &lt;code&gt;Posix&lt;/code&gt; type. We use the &lt;code&gt;toHour&lt;/code&gt; and &lt;code&gt;toMinute&lt;/code&gt;
+functions along with &lt;code&gt;String.fromInt&lt;/code&gt; and the &lt;code&gt;utc&lt;/code&gt; time zone to build a
+formatted string time.&lt;/p&gt;
+
+&lt;p&gt;This is great. Because of static types, the compiler will enforce our code to
+only access a valid time when it exists.&lt;/p&gt;
+
+&lt;p&gt;We could go one step further to improve this code. If a person doesn’t have the
+time, then it’s &lt;code&gt;Nothing&lt;/code&gt;. But, that doesn’t explain &lt;em&gt;why&lt;/em&gt; the person doesn’t
+have time. We can replace &lt;code&gt;Maybe&lt;/code&gt; with our own custom type.&lt;/p&gt;
+
+&lt;figure class=&quot;code-highlight-figure&quot;&gt;&lt;div class=&quot;code-highlight&quot;&gt;&lt;pre class=&quot;code-highlight-pre&quot;&gt;&lt;div data-line=&quot;1&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;type CurrentTime
+&lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;2&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;    = CurrentTime Posix
+&lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;3&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;    | NoWatch
+&lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;4&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;    | InAHurry
+&lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;5&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt; &lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;6&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt; &lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;7&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;type alias Person =
+&lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;8&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;    &amp;#x7b; time : CurrentTime &amp;#x7d;
+&lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;9&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt; &lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;10&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt; &lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;11&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;currentTime : Person -&amp;gt; String
+&lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;12&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;currentTime person =
+&lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;13&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;    case whatTimeIsIt person of
+&lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;14&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;        CurrentTime time -&amp;gt;
+&lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;15&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;            String.fromInt (toHour utc time)
+&lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;16&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;                ++ &quot;:&quot;
+&lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;17&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;                ++ String.fromInt (toMinute utc time)
+&lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;18&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt; &lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;19&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;        NoWatch -&amp;gt;
+&lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;20&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;            &quot;I don&#39;t have the time.&quot;
+&lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;21&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt; &lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;22&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;        InAHurry -&amp;gt;
+&lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;23&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;            &quot;Sorry, I&#39;m in a hurry.&quot;&lt;/div&gt;&lt;/div&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/figure&gt;
+
+&lt;p&gt;We introduce a &lt;code&gt;CurrentTime&lt;/code&gt; custom type with three constructors, &lt;code&gt;CurrentTime&lt;/code&gt;,
+&lt;code&gt;NoWatch&lt;/code&gt;, and &lt;code&gt;InAHurry&lt;/code&gt;. The &lt;code&gt;CurrentTime&lt;/code&gt; constructor wraps &lt;code&gt;Posix&lt;/code&gt;. We then
+change the &lt;code&gt;time&lt;/code&gt; field to be &lt;code&gt;CurrentTime&lt;/code&gt;. In the &lt;code&gt;currentTime&lt;/code&gt; function, we
+handle all three constructors. The &lt;code&gt;CurrentTime&lt;/code&gt; branch stays the same as the
+previous &lt;code&gt;Just&lt;/code&gt; branch. The &lt;code&gt;NoWatch&lt;/code&gt; and &lt;code&gt;InAHurry&lt;/code&gt; branches each return a
+string that describes why the person doesn’t have the time.&lt;/p&gt;
+
+&lt;p&gt;Now, we have made the code more precise about why a person doesn’t have the time
+and have encoded better business domain rules into the code with custom types.
+Plus, we still have the compiler to ensure we can only access a valid time in
+the &lt;code&gt;CurrentTime&lt;/code&gt; branch.&lt;/p&gt;
+
+&lt;h2 id=&quot;what-you-learned&quot;&gt;What You Learned&lt;/h2&gt;
+
+&lt;p&gt;In this post, you learned that boolean return values cause boolean blindness.
+You saw that boolean blindness can lead to human error by letting code access
+data in incorrect places. You discovered that built-in custom types such as
+&lt;code&gt;Maybe&lt;/code&gt; or your own custom type let you test and access the presence of data.
+Additionally, the compiler ensures you access data only when it’s truly
+available. Try refactoring some of your own code to replace a boolean return
+value with a more meaningful custom type to make your code more maintainable.&lt;/p&gt;
+
+&lt;p&gt;To learn more about how to build Elm applications effectively, grab a copy of my
+book &lt;a href=&quot;https://programming-elm.com&quot;&gt;Programming Elm&lt;/a&gt; from
+&lt;a href=&quot;https://pragprog.com/book/jfelm/programming-elm&quot;&gt;The Pragmatic Programmers&lt;/a&gt;.&lt;/p&gt;
+
+  &lt;p&gt;&lt;a href=&quot;//blog.jeremyfairbank.com/elm/solving-the-boolean-identity-crisis-part-2/&quot;&gt;Solving the Boolean Identity Crisis: Part 2&lt;/a&gt; was originally published by Jeremy Fairbank at &lt;a href=&quot;//blog.jeremyfairbank.com&quot;&gt;Jeremy Fairbank Blog&lt;/a&gt; on May 30, 2019.&lt;/p&gt;</content>
+</entry>
+
+
+  
+
+<entry>
+  <title type="html"><![CDATA[Solving the Boolean Identity Crisis: Part 1]]></title>
+  <link rel="alternate" type="text/html" href="//blog.jeremyfairbank.com/elm/solving-the-boolean-identity-crisis-part-1/" />
+  <id>//blog.jeremyfairbank.com/elm/solving-the-boolean-identity-crisis-part-1</id>
+  <published>2019-05-20T00:00:00-10:00</published>
+  <updated>2019-05-20T00:00:00-10:00</updated>
+  <author>
+    <name>Jeremy Fairbank</name>
+    <uri>//blog.jeremyfairbank.com</uri>
+    
+  </author>
+  <content type="html">&lt;section id=&quot;table-of-contents&quot; class=&quot;toc&quot;&gt;
+  &lt;header&gt;
+    &lt;h3&gt;Contents&lt;/h3&gt;
+  &lt;/header&gt;
+&lt;div id=&quot;drawer&quot;&gt;
+&lt;ul id=&quot;markdown-toc&quot;&gt;
+  &lt;li&gt;&lt;a href=&quot;#the-problem&quot; id=&quot;markdown-toc-the-problem&quot;&gt;The Problem&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#show-intent&quot; id=&quot;markdown-toc-show-intent&quot;&gt;Show Intent&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#what-you-learned&quot; id=&quot;markdown-toc-what-you-learned&quot;&gt;What You Learned&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+  &lt;/div&gt;
+&lt;/section&gt;
+&lt;!-- /#table-of-contents --&gt;
+
+&lt;p&gt;&lt;em&gt;Originally published at &lt;a href=&quot;https://programming-elm.com/blog/2019-05-20-solving-the-boolean-identity-crisis-part-1&quot;&gt;https://programming-elm.com&lt;/a&gt; on May 20, 2019.&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;Back in September 2017, I presented the talk “Solving the Boolean Identity
+Crisis” at ElmConf. The talk highlights the downsides of using booleans in Elm
+code and offers ways to write clearer, more maintainable code. This post and the
+next couple of posts will share what I explored in that presentation. You can
+preview what’s to come by watching my talk on &lt;a href=&quot;https://www.youtube.com/watch?v=8Af1bh-BVY8&quot;&gt;YouTube&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;In this post, you will see how boolean function arguments obscure the intent of
+code. Then, you will learn how to replace boolean arguments with Elm’s custom
+types to write more understandable code.&lt;/p&gt;
+
+&lt;h2 id=&quot;the-problem&quot;&gt;The Problem&lt;/h2&gt;
+
+&lt;p&gt;Look at this function call to understand the problem with boolean arguments.&lt;/p&gt;
+
+&lt;figure class=&quot;code-highlight-figure&quot;&gt;&lt;div class=&quot;code-highlight&quot;&gt;&lt;pre class=&quot;code-highlight-pre&quot;&gt;&lt;div data-line=&quot;1&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;bookFlight &quot;OGG&quot; True&lt;/div&gt;&lt;/div&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/figure&gt;
+
+&lt;p&gt;We pass in a string argument &lt;code&gt;&quot;OGG&quot;&lt;/code&gt; and a boolean argument &lt;code&gt;True&lt;/code&gt; to a
+&lt;code&gt;bookFlight&lt;/code&gt; function. If you encountered this in an Elm codebase, you
+might wonder what the boolean argument does.&lt;/p&gt;
+
+&lt;p&gt;Boolean arguments hide the intent of code. We don’t know the significance of the
+&lt;code&gt;True&lt;/code&gt; value here without looking up the definition of &lt;code&gt;bookFlight&lt;/code&gt;. The boolean
+argument makes this code harder to understand, especially as a newcomer
+learning the codebase.&lt;/p&gt;
+
+&lt;p&gt;Looking up the definition, we find this. (I use &lt;code&gt;...&lt;/code&gt; to signify irrelevant
+code.)&lt;/p&gt;
+
+&lt;figure class=&quot;code-highlight-figure&quot;&gt;&lt;div class=&quot;code-highlight&quot;&gt;&lt;pre class=&quot;code-highlight-pre&quot;&gt;&lt;div data-line=&quot;1&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;bookFlight : String -&amp;gt; Bool -&amp;gt; Cmd Msg
+&lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;2&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;bookFlight airport isPremium =
+&lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;3&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;    if isPremium then
+&lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;4&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;        ...
+&lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;5&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt; &lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;6&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;    else
+&lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;7&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;        ...&lt;/div&gt;&lt;/div&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/figure&gt;
+
+&lt;p&gt;The boolean argument is called &lt;code&gt;isPremium&lt;/code&gt;, so it means the booking customer has
+a premium status. We use an if-else expression to branch on &lt;code&gt;isPremium&lt;/code&gt;. If
+&lt;code&gt;isPremium&lt;/code&gt; is &lt;code&gt;False&lt;/code&gt;, we’re not certain what status this customer has. We have
+to assume that the customer has a “regular” status because the code makes that
+implicit. We’ve lost the explicit &lt;emph&gt;intent&lt;/emph&gt; of this code by using a
+boolean argument.&lt;/p&gt;
+
+&lt;p&gt;This code will present future problems if we need more than one customer status.
+For example, let’s say we need to introduce a new economy status. We could
+introduce another boolean argument called &lt;code&gt;isRegular&lt;/code&gt;.&lt;/p&gt;
+
+&lt;figure class=&quot;code-highlight-figure&quot;&gt;&lt;div class=&quot;code-highlight&quot;&gt;&lt;pre class=&quot;code-highlight-pre&quot;&gt;&lt;div data-line=&quot;1&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;bookFlight : String -&amp;gt; Bool -&amp;gt; Bool -&amp;gt; Cmd Msg
+&lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;2&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;bookFlight airport isPremium isRegular =
+&lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;3&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;    if isPremium then
+&lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;4&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;        ...
+&lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;5&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt; &lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;6&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;    else if isRegular then
+&lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;7&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;        ...
+&lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;8&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt; &lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;9&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;    else
+&lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;10&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;        ...&lt;/div&gt;&lt;/div&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/figure&gt;
+
+&lt;p&gt;After checking if &lt;code&gt;isPremium&lt;/code&gt; is &lt;code&gt;True&lt;/code&gt;, we check if &lt;code&gt;isRegular&lt;/code&gt; &lt;code&gt;True&lt;/code&gt;.
+Otherwise, the implicit customer status is economy.&lt;/p&gt;
+
+&lt;p&gt;Now, function calls will look like this.&lt;/p&gt;
+
+&lt;figure class=&quot;code-highlight-figure&quot;&gt;&lt;div class=&quot;code-highlight&quot;&gt;&lt;pre class=&quot;code-highlight-pre&quot;&gt;&lt;div data-line=&quot;1&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;bookFlight &quot;OGG&quot; True False&lt;/div&gt;&lt;/div&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/figure&gt;
+
+&lt;p&gt;That’s even more confusing. We could easily mix up the order of the boolean
+arguments too and accidentally book a customer with the wrong status. Also, we
+could easily pass in two &lt;code&gt;True&lt;/code&gt; arguments. A customer can’t have both premium
+and regular status. We have to let the first boolean argument &lt;code&gt;isPremium&lt;/code&gt; take
+precedence in the if-else expression to deal with this invalid argument
+permutation.&lt;/p&gt;
+
+&lt;h2 id=&quot;show-intent&quot;&gt;Show Intent&lt;/h2&gt;
+
+&lt;p&gt;We can clean up the &lt;code&gt;bookFlight&lt;/code&gt; function by replacing the boolean arguments
+with an Elm custom type. Instead of hiding statuses behind boolean values, let’s
+make them explicit. We can easily encode each type of status like so.&lt;/p&gt;
+
+&lt;figure class=&quot;code-highlight-figure&quot;&gt;&lt;div class=&quot;code-highlight&quot;&gt;&lt;pre class=&quot;code-highlight-pre&quot;&gt;&lt;div data-line=&quot;1&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;type CustomerStatus
+&lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;2&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;    = Premium
+&lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;3&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;    | Regular
+&lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;4&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;    | Economy&lt;/div&gt;&lt;/div&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/figure&gt;
+
+&lt;p&gt;We add a &lt;code&gt;CustomerStatus&lt;/code&gt; custom type with three values, or constructors. Each
+value perfectly encodes each status, &lt;code&gt;Premium&lt;/code&gt;, &lt;code&gt;Regular&lt;/code&gt;, and &lt;code&gt;Economy&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;We can update the &lt;code&gt;bookFlight&lt;/code&gt; function like so.&lt;/p&gt;
+
+&lt;figure class=&quot;code-highlight-figure&quot;&gt;&lt;div class=&quot;code-highlight&quot;&gt;&lt;pre class=&quot;code-highlight-pre&quot;&gt;&lt;div data-line=&quot;1&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;bookFlight : String -&amp;gt; CustomerStatus -&amp;gt; Cmd Msg
+&lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;2&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;bookFlight airport customerStatus =
+&lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;3&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;    case customerStatus of
+&lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;4&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;        Premium -&amp;gt;
+&lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;5&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;            ...
+&lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;6&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt; &lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;7&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;        Regular -&amp;gt;
+&lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;8&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;            ...
+&lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;9&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt; &lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;10&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;        Economy -&amp;gt;
+&lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;11&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;            ...&lt;/div&gt;&lt;/div&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/figure&gt;
+
+&lt;p&gt;The &lt;code&gt;bookFlight&lt;/code&gt; function makes it clear how to handle each customer status
+without implicit if-else branching. Additionally, the compiler ensures we handle
+each status. In the previous version of &lt;code&gt;bookFlight&lt;/code&gt; with two boolean arguments,
+nothing would prevent us from accidentally forgetting to handle the &lt;code&gt;else if
+isRegular&lt;/code&gt; branch. The compiler would accept this code.&lt;/p&gt;
+
+&lt;figure class=&quot;code-highlight-figure&quot;&gt;&lt;div class=&quot;code-highlight&quot;&gt;&lt;pre class=&quot;code-highlight-pre&quot;&gt;&lt;div data-line=&quot;1&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;bookFlight airport isPremium isRegular =
+&lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;2&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;    if isPremium then
+&lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;3&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;        ...
+&lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;4&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt; &lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;5&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;    else
+&lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;6&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;        ...&lt;/div&gt;&lt;/div&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/figure&gt;
+
+&lt;p&gt;If we forgot the &lt;code&gt;Regular&lt;/code&gt; branch in the version with the &lt;code&gt;CustomerStatus&lt;/code&gt; type,
+the code would not compile.&lt;/p&gt;
+
+&lt;p&gt;This code:&lt;/p&gt;
+
+&lt;figure class=&quot;code-highlight-figure&quot;&gt;&lt;div class=&quot;code-highlight&quot;&gt;&lt;pre class=&quot;code-highlight-pre&quot;&gt;&lt;div data-line=&quot;1&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;bookFlight airport customerStatus =
+&lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;2&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;    case customerStatus of
+&lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;3&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;        Premium -&amp;gt;
+&lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;4&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;            ...
+&lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;5&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt; &lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;6&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;        Economy -&amp;gt;
+&lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;7&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;            ...&lt;/div&gt;&lt;/div&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/figure&gt;
+
+&lt;p&gt;Would result in this compiler error:&lt;/p&gt;
+
+&lt;figure class=&quot;code-highlight-figure&quot;&gt;&lt;div class=&quot;code-highlight&quot;&gt;&lt;pre class=&quot;code-highlight-pre&quot;&gt;&lt;div data-line=&quot;1&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;This `case` does not have branches for all possibilities:
+&lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;2&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt; &lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;3&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;|&amp;gt;    case customerStatus of
+&lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;4&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;|&amp;gt;        Premium -&amp;gt;
+&lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;5&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;|&amp;gt;            ...
+&lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;6&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;|&amp;gt;
+&lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;7&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;|&amp;gt;        Economy -&amp;gt;
+&lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;8&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;|&amp;gt;            ...
+&lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;9&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt; &lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;10&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;Missing possibilities include:
+&lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;11&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt; &lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;12&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;    Regular&lt;/div&gt;&lt;/div&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/figure&gt;
+
+&lt;p&gt;Custom types provide compiler safety along with explicit code. Now calls to
+&lt;code&gt;bookFlight&lt;/code&gt; declare the intent of code because we pass in the &lt;code&gt;CustomerStatus&lt;/code&gt;
+directly.&lt;/p&gt;
+
+&lt;figure class=&quot;code-highlight-figure&quot;&gt;&lt;div class=&quot;code-highlight&quot;&gt;&lt;pre class=&quot;code-highlight-pre&quot;&gt;&lt;div data-line=&quot;1&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;bookFlight &quot;OGG&quot; Premium&lt;/div&gt;&lt;/div&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/figure&gt;
+
+&lt;p&gt;If we ran into the above function, we would more easily understand what’s
+happening. We’re booking a flight for a premium customer. We’ve made the code
+clearer and more maintainable.&lt;/p&gt;
+
+&lt;h2 id=&quot;what-you-learned&quot;&gt;What You Learned&lt;/h2&gt;
+
+&lt;p&gt;In this post, you learned how boolean arguments can make code confusing and
+unmaintainable by hiding the intent of code. You saw how replacing boolean
+arguments with custom type values created better, safer code. Try this technique
+out on your own Elm project. Find a function that accepts a boolean argument and
+see if you can make a custom type that more explicitly encodes the meaning of
+that boolean argument when it’s &lt;code&gt;True&lt;/code&gt; and &lt;code&gt;False&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;To learn more about how to build Elm applications effectively, grab a copy of my
+book &lt;a href=&quot;https://programming-elm.com&quot;&gt;Programming Elm&lt;/a&gt; from
+&lt;a href=&quot;https://pragprog.com/book/jfelm/programming-elm&quot;&gt;The Pragmatic Programmers&lt;/a&gt;.&lt;/p&gt;
+
+  &lt;p&gt;&lt;a href=&quot;//blog.jeremyfairbank.com/elm/solving-the-boolean-identity-crisis-part-1/&quot;&gt;Solving the Boolean Identity Crisis: Part 1&lt;/a&gt; was originally published by Jeremy Fairbank at &lt;a href=&quot;//blog.jeremyfairbank.com&quot;&gt;Jeremy Fairbank Blog&lt;/a&gt; on May 20, 2019.&lt;/p&gt;</content>
+</entry>
+
+
+  
+
+<entry>
   <title type="html"><![CDATA[Functional JavaScript Part 2: Streams]]></title>
   <link rel="alternate" type="text/html" href="//blog.jeremyfairbank.com/javascript/functional-javascript-streams-2/" />
   <id>//blog.jeremyfairbank.com/javascript/functional-javascript-streams-2</id>
-  <published>2015-08-07T00:00:00-04:00</published>
-  <updated>2015-08-07T00:00:00-04:00</updated>
+  <published>2015-08-07T00:00:00-10:00</published>
+  <updated>2015-08-07T00:00:00-10:00</updated>
   <author>
     <name>Jeremy Fairbank</name>
     <uri>//blog.jeremyfairbank.com</uri>
@@ -410,8 +834,8 @@ tool in the bag of functional and JavaScript programmers.&lt;/p&gt;
   <title type="html"><![CDATA[JavaScript ES7 Function Bind Syntax]]></title>
   <link rel="alternate" type="text/html" href="//blog.jeremyfairbank.com/javascript/javascript-es7-function-bind-syntax/" />
   <id>//blog.jeremyfairbank.com/javascript/javascript-es7-function-bind-syntax</id>
-  <published>2015-05-30T00:00:00-04:00</published>
-  <updated>2015-05-30T00:00:00-04:00</updated>
+  <published>2015-05-30T00:00:00-10:00</published>
+  <updated>2015-05-30T00:00:00-10:00</updated>
   <author>
     <name>Jeremy Fairbank</name>
     <uri>//blog.jeremyfairbank.com</uri>
@@ -704,8 +1128,8 @@ the door for writing cleaner and more expressive JavaScript.&lt;/p&gt;
   <title type="html"><![CDATA[Functional JavaScript Part 1: Lists]]></title>
   <link rel="alternate" type="text/html" href="//blog.jeremyfairbank.com/javascript/functional-javascript-lists-1/" />
   <id>//blog.jeremyfairbank.com/javascript/functional-javascript-lists-1</id>
-  <published>2015-01-17T00:00:00-05:00</published>
-  <updated>2015-01-17T00:00:00-05:00</updated>
+  <published>2015-01-17T00:00:00-10:00</published>
+  <updated>2015-01-17T00:00:00-10:00</updated>
   <author>
     <name>Jeremy Fairbank</name>
     <uri>//blog.jeremyfairbank.com</uri>
@@ -1145,8 +1569,8 @@ the concepts of functional programming in future posts.&lt;/p&gt;
   <title type="html"><![CDATA[Polymer Web Components with Marionette.js]]></title>
   <link rel="alternate" type="text/html" href="//blog.jeremyfairbank.com/javascript/polymer-web-components-with-marionette-js/" />
   <id>//blog.jeremyfairbank.com/javascript/polymer-web-components-with-marionette-js</id>
-  <published>2015-01-03T00:00:00-05:00</published>
-  <updated>2015-01-03T00:00:00-05:00</updated>
+  <published>2015-01-03T00:00:00-10:00</published>
+  <updated>2015-01-03T00:00:00-10:00</updated>
   <author>
     <name>Jeremy Fairbank</name>
     <uri>//blog.jeremyfairbank.com</uri>
@@ -1553,8 +1977,8 @@ and the caliber of speakers was spectacular.
   <title type="html"><![CDATA[Open Source You]]></title>
   <link rel="alternate" type="text/html" href="//blog.jeremyfairbank.com/programming/open-source-you/" />
   <id>//blog.jeremyfairbank.com/programming/open-source-you</id>
-  <published>2014-12-31T00:00:00-05:00</published>
-  <updated>2014-12-31T00:00:00-05:00</updated>
+  <published>2014-12-31T00:00:00-10:00</published>
+  <updated>2014-12-31T00:00:00-10:00</updated>
   <author>
     <name>Jeremy Fairbank</name>
     <uri>//blog.jeremyfairbank.com</uri>
@@ -1702,8 +2126,8 @@ a few articles that I found useful in formulating my ideas:&lt;/p&gt;
   <title type="html"><![CDATA[Components with Backbone.js and Marionette.js]]></title>
   <link rel="alternate" type="text/html" href="//blog.jeremyfairbank.com/javascript/components-with-backbone-js-and-marionette-js/" />
   <id>//blog.jeremyfairbank.com/javascript/components-with-backbone-js-and-marionette-js</id>
-  <published>2014-06-25T00:00:00-04:00</published>
-  <updated>2014-06-25T00:00:00-04:00</updated>
+  <published>2014-06-25T00:00:00-10:00</published>
+  <updated>2014-06-25T00:00:00-10:00</updated>
   <author>
     <name>Jeremy Fairbank</name>
     <uri>//blog.jeremyfairbank.com</uri>
@@ -2152,8 +2576,8 @@ a few articles that I found useful in formulating my ideas:&lt;/p&gt;
   <title type="html"><![CDATA[First Post: Ensuring Remote Data is Available in JavaScript]]></title>
   <link rel="alternate" type="text/html" href="//blog.jeremyfairbank.com/javascript/first-post-ensuring-remote-data-is-available/" />
   <id>//blog.jeremyfairbank.com/javascript/first-post-ensuring-remote-data-is-available</id>
-  <published>2014-06-21T00:00:00-04:00</published>
-  <updated>2014-06-21T00:00:00-04:00</updated>
+  <published>2014-06-21T00:00:00-10:00</published>
+  <updated>2014-06-21T00:00:00-10:00</updated>
   <author>
     <name>Jeremy Fairbank</name>
     <uri>//blog.jeremyfairbank.com</uri>
