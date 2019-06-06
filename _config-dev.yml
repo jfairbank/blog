@@ -3,7 +3,7 @@ encoding: utf-8
 title: Jeremy Fairbank Blog
 description: "The JavaScript web development blog of Jeremy Fairbank."
 locale: en_US
-url: http://blog.jeremyfairbank.com.dev
+url: http://127.0.0.1:4000
 
 # Jekyll configuration
 permalink:   /:categories/:title/
