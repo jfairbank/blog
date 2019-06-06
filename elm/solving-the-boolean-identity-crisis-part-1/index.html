@@ -1,0 +1,446 @@
+<!doctype html>
+<!--[if lt IE 7]><html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="en"> <![endif]-->
+<!--[if (IE 7)&!(IEMobile)]><html class="no-js lt-ie9 lt-ie8" lang="en"><![endif]-->
+<!--[if (IE 8)&!(IEMobile)]><html class="no-js lt-ie9" lang="en"><![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en"><!--<![endif]-->
+<head>
+<meta charset="utf-8">
+<title>Solving the Boolean Identity Crisis: Part 1 &#8211; Jeremy Fairbank Blog</title>
+<meta name="description" content="See how boolean function arguments obscure the intent of code. Then, learn how to replace boolean arguments with Elm's custom types to write more understandable code.">
+<meta name="keywords" content="elm">
+
+
+
+<!-- Twitter Cards -->
+<meta name="twitter:title" content="Solving the Boolean Identity Crisis: Part 1">
+<meta name="twitter:description" content="See how boolean function arguments obscure the intent of code. Then, learn how to replace boolean arguments with Elm's custom types to write more understandable code.">
+<meta name="twitter:site" content="@elpapapollo">
+<meta name="twitter:creator" content="@elpapapollo">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="//blog.jeremyfairbank.com/images/bio-photo-1.jpg">
+<!-- Open Graph -->
+<meta property="og:locale" content="en_US">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Solving the Boolean Identity Crisis: Part 1">
+<meta property="og:description" content="See how boolean function arguments obscure the intent of code. Then, learn how to replace boolean arguments with Elm's custom types to write more understandable code.">
+<meta property="og:url" content="//blog.jeremyfairbank.com/elm/solving-the-boolean-identity-crisis-part-1/">
+<meta property="og:site_name" content="Jeremy Fairbank Blog">
+<meta property="og:image" content="//blog.jeremyfairbank.com/images/bio-photo-1.jpg">
+
+
+
+
+
+<link rel="canonical" href="https://programming-elm.com/blog/2019-05-20-solving-the-boolean-identity-crisis-part-1">
+<link href="//blog.jeremyfairbank.com/feed.xml" type="application/atom+xml" rel="alternate" title="Jeremy Fairbank Blog Feed">
+
+
+<!-- http://t.co/dKP3o1e -->
+<meta name="HandheldFriendly" content="True">
+<meta name="MobileOptimized" content="320">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!-- For all browsers -->
+<link href='/stylesheets/all-1c0f6d20e18f50700b8d02bad173217e.css' media='all' rel='stylesheet' type='text/css'>
+<link rel="stylesheet" href="//blog.jeremyfairbank.com/assets/css/main.css">
+
+<meta http-equiv="cleartype" content="on">
+
+<!-- HTML5 Shiv and Media Query Support -->
+<!--[if lt IE 9]>
+	<script src="//blog.jeremyfairbank.com/assets/js/vendor/html5shiv.min.js"></script>
+	<script src="//blog.jeremyfairbank.com/assets/js/vendor/respond.min.js"></script>
+<![endif]-->
+
+<!-- Modernizr -->
+<script src="//blog.jeremyfairbank.com/assets/js/vendor/modernizr-2.7.1.custom.min.js"></script>
+
+<link href='//fonts.googleapis.com/css?family=PT+Sans+Narrow:400,700%7CPT+Serif:400,700,400italic' rel='stylesheet' type='text/css'>
+
+<!-- Icons -->
+<!-- 16x16 -->
+<link rel="shortcut icon" href="//blog.jeremyfairbank.com/favicon.ico">
+<!-- 32x32 -->
+<link rel="shortcut icon" href="//blog.jeremyfairbank.com/favicon.png">
+<!-- 57x57 (precomposed) for iPhone 3GS, pre-2011 iPod Touch and older Android devices -->
+<link rel="apple-touch-icon-precomposed" href="//blog.jeremyfairbank.com/images/apple-touch-icon-precomposed.png">
+<!-- 72x72 (precomposed) for 1st generation iPad, iPad 2 and iPad mini -->
+<link rel="apple-touch-icon-precomposed" sizes="72x72" href="//blog.jeremyfairbank.com/images/apple-touch-icon-72x72-precomposed.png">
+<!-- 114x114 (precomposed) for iPhone 4, 4S, 5 and post-2011 iPod Touch -->
+<link rel="apple-touch-icon-precomposed" sizes="114x114" href="//blog.jeremyfairbank.com/images/apple-touch-icon-114x114-precomposed.png">
+<!-- 144x144 (precomposed) for iPad 3rd and 4th generation -->
+<link rel="apple-touch-icon-precomposed" sizes="144x144" href="//blog.jeremyfairbank.com/images/apple-touch-icon-144x144-precomposed.png">
+</head>
+
+<body class="post">
+
+<!--[if lt IE 9]><div class="browser-upgrade alert alert-info">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</div><![endif]-->
+
+<div class="navigation-wrapper">
+	<div class="site-name">
+		<a href="//blog.jeremyfairbank.com/">Jeremy Fairbank Blog</a>
+	</div><!-- /.site-name -->
+	<div class="top-navigation">
+		<nav role="navigation" id="site-nav" class="nav">
+		    <ul>
+		        
+				    
+				        
+				    
+				    <li><a href="//blog.jeremyfairbank.com/about/" >About</a></li>
+				
+				    
+				        
+				    
+				    <li><a href="//blog.jeremyfairbank.com/posts/" >Posts</a></li>
+				
+				    
+				        
+				    
+				    <li><a href="//blog.jeremyfairbank.com/conferences/" >Conferences</a></li>
+				
+				    
+				        
+				        
+				    <li><a href="http://jeremyfairbank.com" target="_blank">jeremyfairbank.com</a></li>
+				
+		    </ul>
+		</nav>
+	</div><!-- /.top-navigation -->
+</div><!-- /.navigation-wrapper -->
+
+
+
+<div id="main" role="main">
+  <div class="article-author-side">
+    <div itemscope itemtype="http://data-vocabulary.org/Person">
+  
+    <img itemprop="photo" src="//blog.jeremyfairbank.com/images/bio-photo-1.jpg" class="bio-photo" alt="Jeremy Fairbank bio photo">
+  
+  <h3 itemprop="name">Jeremy Fairbank</h3>
+  <p>
+    <span itemprop="role">Software Engineer and Consultant</span>.
+    <span itemprop="address" itemscope><span itemprop="locality">Hawaii</span></span>.
+    Author of Programming Elm and Conference Speaker.
+  </p>
+  
+  <a href="http://twitter.com/elpapapollo" class="author-social" target="_blank"><i class="fa fa-fw fa-twitter-square"></i> Twitter</a>
+  
+  
+  <a href="http://linkedin.com/in/jfairbank" class="author-social" target="_blank"><i class="fa fa-fw fa-linkedin-square"></i> LinkedIn</a>
+  <a href="http://instagram.com/elpapapollo" class="author-social" target="_blank"><i class="fa fa-fw fa-instagram"></i> Instagram</a>
+  
+  <a href="http://github.com/jfairbank" class="author-social" target="_blank"><i class="fa fa-fw fa-github"></i> Github</a>
+  
+  
+  
+  
+  
+  
+  
+  
+</div>
+  </div>
+  <article class="post">
+    
+    <div class="headline-wrap">
+      
+        <h1><a href="//blog.jeremyfairbank.com/elm/solving-the-boolean-identity-crisis-part-1/" rel="bookmark" title="Solving the Boolean Identity Crisis: Part 1">Solving the Boolean Identity Crisis: Part 1</a></h1>
+      
+    </div><!--/ .headline-wrap -->
+    <div class="article-wrap">
+      <div class="social-share">
+  <ul class="inline-list">
+    <li class="facebook">
+      <a href="https://www.facebook.com/sharer/sharer.php?u=//blog.jeremyfairbank.com/elm/solving-the-boolean-identity-crisis-part-1/" title="Share on Facebook"><span class="count"><i class="fa fa-facebook-square"></i> Share</span></a>
+    </li>
+    <li class="twitter">
+      <a href="https://twitter.com/intent/tweet?text=//blog.jeremyfairbank.com/elm/solving-the-boolean-identity-crisis-part-1/" title="Share on Twitter"><span class="count"><i class="fa fa-twitter-square"></i> Tweet</span></a>
+    </li>
+  </ul>
+</div>
+      <section id="table-of-contents" class="toc">
+  <header>
+    <h3>Contents</h3>
+  </header>
+<div id="drawer">
+<ul id="markdown-toc">
+  <li><a href="#the-problem" id="markdown-toc-the-problem">The Problem</a></li>
+  <li><a href="#show-intent" id="markdown-toc-show-intent">Show Intent</a></li>
+  <li><a href="#what-you-learned" id="markdown-toc-what-you-learned">What You Learned</a></li>
+</ul>
+
+  </div>
+</section>
+<!-- /#table-of-contents -->
+
+<p><em>Originally published at <a href="https://programming-elm.com/blog/2019-05-20-solving-the-boolean-identity-crisis-part-1">https://programming-elm.com</a> on May 20, 2019.</em></p>
+
+<p>Back in September 2017, I presented the talk “Solving the Boolean Identity
+Crisis” at ElmConf. The talk highlights the downsides of using booleans in Elm
+code and offers ways to write clearer, more maintainable code. This post and the
+next couple of posts will share what I explored in that presentation. You can
+preview what’s to come by watching my talk on <a href="https://www.youtube.com/watch?v=8Af1bh-BVY8">YouTube</a>.</p>
+
+<p>In this post, you will see how boolean function arguments obscure the intent of
+code. Then, you will learn how to replace boolean arguments with Elm’s custom
+types to write more understandable code.</p>
+
+<h2 id="the-problem">The Problem</h2>
+
+<p>Look at this function call to understand the problem with boolean arguments.</p>
+
+<figure class="code-highlight-figure"><div class="code-highlight"><pre class="code-highlight-pre"><div data-line="1" class="code-highlight-row numbered"><div class="code-highlight-line">bookFlight "OGG" True</div></div></pre></div></figure>
+
+<p>We pass in a string argument <code>"OGG"</code> and a boolean argument <code>True</code> to a
+<code>bookFlight</code> function. If you encountered this in an Elm codebase, you
+might wonder what the boolean argument does.</p>
+
+<p>Boolean arguments hide the intent of code. We don’t know the significance of the
+<code>True</code> value here without looking up the definition of <code>bookFlight</code>. The boolean
+argument makes this code harder to understand, especially as a newcomer
+learning the codebase.</p>
+
+<p>Looking up the definition, we find this. (I use <code>...</code> to signify irrelevant
+code.)</p>
+
+<figure class="code-highlight-figure"><div class="code-highlight"><pre class="code-highlight-pre"><div data-line="1" class="code-highlight-row numbered"><div class="code-highlight-line">bookFlight : String -&gt; Bool -&gt; Cmd Msg
+</div></div><div data-line="2" class="code-highlight-row numbered"><div class="code-highlight-line">bookFlight airport isPremium =
+</div></div><div data-line="3" class="code-highlight-row numbered"><div class="code-highlight-line">    if isPremium then
+</div></div><div data-line="4" class="code-highlight-row numbered"><div class="code-highlight-line">        ...
+</div></div><div data-line="5" class="code-highlight-row numbered"><div class="code-highlight-line"> </div></div><div data-line="6" class="code-highlight-row numbered"><div class="code-highlight-line">    else
+</div></div><div data-line="7" class="code-highlight-row numbered"><div class="code-highlight-line">        ...</div></div></pre></div></figure>
+
+<p>The boolean argument is called <code>isPremium</code>, so it means the booking customer has
+a premium status. We use an if-else expression to branch on <code>isPremium</code>. If
+<code>isPremium</code> is <code>False</code>, we’re not certain what status this customer has. We have
+to assume that the customer has a “regular” status because the code makes that
+implicit. We’ve lost the explicit <emph>intent</emph> of this code by using a
+boolean argument.</p>
+
+<p>This code will present future problems if we need more than one customer status.
+For example, let’s say we need to introduce a new economy status. We could
+introduce another boolean argument called <code>isRegular</code>.</p>
+
+<figure class="code-highlight-figure"><div class="code-highlight"><pre class="code-highlight-pre"><div data-line="1" class="code-highlight-row numbered"><div class="code-highlight-line">bookFlight : String -&gt; Bool -&gt; Bool -&gt; Cmd Msg
+</div></div><div data-line="2" class="code-highlight-row numbered"><div class="code-highlight-line">bookFlight airport isPremium isRegular =
+</div></div><div data-line="3" class="code-highlight-row numbered"><div class="code-highlight-line">    if isPremium then
+</div></div><div data-line="4" class="code-highlight-row numbered"><div class="code-highlight-line">        ...
+</div></div><div data-line="5" class="code-highlight-row numbered"><div class="code-highlight-line"> </div></div><div data-line="6" class="code-highlight-row numbered"><div class="code-highlight-line">    else if isRegular then
+</div></div><div data-line="7" class="code-highlight-row numbered"><div class="code-highlight-line">        ...
+</div></div><div data-line="8" class="code-highlight-row numbered"><div class="code-highlight-line"> </div></div><div data-line="9" class="code-highlight-row numbered"><div class="code-highlight-line">    else
+</div></div><div data-line="10" class="code-highlight-row numbered"><div class="code-highlight-line">        ...</div></div></pre></div></figure>
+
+<p>After checking if <code>isPremium</code> is <code>True</code>, we check if <code>isRegular</code> <code>True</code>.
+Otherwise, the implicit customer status is economy.</p>
+
+<p>Now, function calls will look like this.</p>
+
+<figure class="code-highlight-figure"><div class="code-highlight"><pre class="code-highlight-pre"><div data-line="1" class="code-highlight-row numbered"><div class="code-highlight-line">bookFlight "OGG" True False</div></div></pre></div></figure>
+
+<p>That’s even more confusing. We could easily mix up the order of the boolean
+arguments too and accidentally book a customer with the wrong status. Also, we
+could easily pass in two <code>True</code> arguments. A customer can’t have both premium
+and regular status. We have to let the first boolean argument <code>isPremium</code> take
+precedence in the if-else expression to deal with this invalid argument
+permutation.</p>
+
+<h2 id="show-intent">Show Intent</h2>
+
+<p>We can clean up the <code>bookFlight</code> function by replacing the boolean arguments
+with an Elm custom type. Instead of hiding statuses behind boolean values, let’s
+make them explicit. We can easily encode each type of status like so.</p>
+
+<figure class="code-highlight-figure"><div class="code-highlight"><pre class="code-highlight-pre"><div data-line="1" class="code-highlight-row numbered"><div class="code-highlight-line">type CustomerStatus
+</div></div><div data-line="2" class="code-highlight-row numbered"><div class="code-highlight-line">    = Premium
+</div></div><div data-line="3" class="code-highlight-row numbered"><div class="code-highlight-line">    | Regular
+</div></div><div data-line="4" class="code-highlight-row numbered"><div class="code-highlight-line">    | Economy</div></div></pre></div></figure>
+
+<p>We add a <code>CustomerStatus</code> custom type with three values, or constructors. Each
+value perfectly encodes each status, <code>Premium</code>, <code>Regular</code>, and <code>Economy</code>.</p>
+
+<p>We can update the <code>bookFlight</code> function like so.</p>
+
+<figure class="code-highlight-figure"><div class="code-highlight"><pre class="code-highlight-pre"><div data-line="1" class="code-highlight-row numbered"><div class="code-highlight-line">bookFlight : String -&gt; CustomerStatus -&gt; Cmd Msg
+</div></div><div data-line="2" class="code-highlight-row numbered"><div class="code-highlight-line">bookFlight airport customerStatus =
+</div></div><div data-line="3" class="code-highlight-row numbered"><div class="code-highlight-line">    case customerStatus of
+</div></div><div data-line="4" class="code-highlight-row numbered"><div class="code-highlight-line">        Premium -&gt;
+</div></div><div data-line="5" class="code-highlight-row numbered"><div class="code-highlight-line">            ...
+</div></div><div data-line="6" class="code-highlight-row numbered"><div class="code-highlight-line"> </div></div><div data-line="7" class="code-highlight-row numbered"><div class="code-highlight-line">        Regular -&gt;
+</div></div><div data-line="8" class="code-highlight-row numbered"><div class="code-highlight-line">            ...
+</div></div><div data-line="9" class="code-highlight-row numbered"><div class="code-highlight-line"> </div></div><div data-line="10" class="code-highlight-row numbered"><div class="code-highlight-line">        Economy -&gt;
+</div></div><div data-line="11" class="code-highlight-row numbered"><div class="code-highlight-line">            ...</div></div></pre></div></figure>
+
+<p>The <code>bookFlight</code> function makes it clear how to handle each customer status
+without implicit if-else branching. Additionally, the compiler ensures we handle
+each status. In the previous version of <code>bookFlight</code> with two boolean arguments,
+nothing would prevent us from accidentally forgetting to handle the <code>else if
+isRegular</code> branch. The compiler would accept this code.</p>
+
+<figure class="code-highlight-figure"><div class="code-highlight"><pre class="code-highlight-pre"><div data-line="1" class="code-highlight-row numbered"><div class="code-highlight-line">bookFlight airport isPremium isRegular =
+</div></div><div data-line="2" class="code-highlight-row numbered"><div class="code-highlight-line">    if isPremium then
+</div></div><div data-line="3" class="code-highlight-row numbered"><div class="code-highlight-line">        ...
+</div></div><div data-line="4" class="code-highlight-row numbered"><div class="code-highlight-line"> </div></div><div data-line="5" class="code-highlight-row numbered"><div class="code-highlight-line">    else
+</div></div><div data-line="6" class="code-highlight-row numbered"><div class="code-highlight-line">        ...</div></div></pre></div></figure>
+
+<p>If we forgot the <code>Regular</code> branch in the version with the <code>CustomerStatus</code> type,
+the code would not compile.</p>
+
+<p>This code:</p>
+
+<figure class="code-highlight-figure"><div class="code-highlight"><pre class="code-highlight-pre"><div data-line="1" class="code-highlight-row numbered"><div class="code-highlight-line">bookFlight airport customerStatus =
+</div></div><div data-line="2" class="code-highlight-row numbered"><div class="code-highlight-line">    case customerStatus of
+</div></div><div data-line="3" class="code-highlight-row numbered"><div class="code-highlight-line">        Premium -&gt;
+</div></div><div data-line="4" class="code-highlight-row numbered"><div class="code-highlight-line">            ...
+</div></div><div data-line="5" class="code-highlight-row numbered"><div class="code-highlight-line"> </div></div><div data-line="6" class="code-highlight-row numbered"><div class="code-highlight-line">        Economy -&gt;
+</div></div><div data-line="7" class="code-highlight-row numbered"><div class="code-highlight-line">            ...</div></div></pre></div></figure>
+
+<p>Would result in this compiler error:</p>
+
+<figure class="code-highlight-figure"><div class="code-highlight"><pre class="code-highlight-pre"><div data-line="1" class="code-highlight-row numbered"><div class="code-highlight-line">This `case` does not have branches for all possibilities:
+</div></div><div data-line="2" class="code-highlight-row numbered"><div class="code-highlight-line"> </div></div><div data-line="3" class="code-highlight-row numbered"><div class="code-highlight-line">|&gt;    case customerStatus of
+</div></div><div data-line="4" class="code-highlight-row numbered"><div class="code-highlight-line">|&gt;        Premium -&gt;
+</div></div><div data-line="5" class="code-highlight-row numbered"><div class="code-highlight-line">|&gt;            ...
+</div></div><div data-line="6" class="code-highlight-row numbered"><div class="code-highlight-line">|&gt;
+</div></div><div data-line="7" class="code-highlight-row numbered"><div class="code-highlight-line">|&gt;        Economy -&gt;
+</div></div><div data-line="8" class="code-highlight-row numbered"><div class="code-highlight-line">|&gt;            ...
+</div></div><div data-line="9" class="code-highlight-row numbered"><div class="code-highlight-line"> </div></div><div data-line="10" class="code-highlight-row numbered"><div class="code-highlight-line">Missing possibilities include:
+</div></div><div data-line="11" class="code-highlight-row numbered"><div class="code-highlight-line"> </div></div><div data-line="12" class="code-highlight-row numbered"><div class="code-highlight-line">    Regular</div></div></pre></div></figure>
+
+<p>Custom types provide compiler safety along with explicit code. Now calls to
+<code>bookFlight</code> declare the intent of code because we pass in the <code>CustomerStatus</code>
+directly.</p>
+
+<figure class="code-highlight-figure"><div class="code-highlight"><pre class="code-highlight-pre"><div data-line="1" class="code-highlight-row numbered"><div class="code-highlight-line">bookFlight "OGG" Premium</div></div></pre></div></figure>
+
+<p>If we ran into the above function, we would more easily understand what’s
+happening. We’re booking a flight for a premium customer. We’ve made the code
+clearer and more maintainable.</p>
+
+<h2 id="what-you-learned">What You Learned</h2>
+
+<p>In this post, you learned how boolean arguments can make code confusing and
+unmaintainable by hiding the intent of code. You saw how replacing boolean
+arguments with custom type values created better, safer code. Try this technique
+out on your own Elm project. Find a function that accepts a boolean argument and
+see if you can make a custom type that more explicitly encodes the meaning of
+that boolean argument when it’s <code>True</code> and <code>False</code>.</p>
+
+<p>To learn more about how to build Elm applications effectively, grab a copy of my
+book <a href="https://programming-elm.com">Programming Elm</a> from
+<a href="https://pragprog.com/book/jfelm/programming-elm">The Pragmatic Programmers</a>.</p>
+
+      <div class="social-share">
+  <ul class="inline-list">
+    <li class="facebook">
+      <a href="https://www.facebook.com/sharer/sharer.php?u=//blog.jeremyfairbank.com/elm/solving-the-boolean-identity-crisis-part-1/" title="Share on Facebook"><span class="count"><i class="fa fa-facebook-square"></i> Share</span></a>
+    </li>
+    <li class="twitter">
+      <a href="https://twitter.com/intent/tweet?text=//blog.jeremyfairbank.com/elm/solving-the-boolean-identity-crisis-part-1/" title="Share on Twitter"><span class="count"><i class="fa fa-twitter-square"></i> Tweet</span></a>
+    </li>
+  </ul>
+</div>
+      
+      <hr />
+      <footer role="contentinfo">
+        <div class="article-author-bottom">
+          <div itemscope itemtype="http://data-vocabulary.org/Person">
+  
+    <img itemprop="photo" src="//blog.jeremyfairbank.com/images/bio-photo-1.jpg" class="bio-photo" alt="Jeremy Fairbank bio photo">
+  
+  <h3 itemprop="name">Jeremy Fairbank</h3>
+  <p>
+    <span itemprop="role">Software Engineer and Consultant</span>.
+    <span itemprop="address" itemscope><span itemprop="locality">Hawaii</span></span>.
+    Author of Programming Elm and Conference Speaker.
+  </p>
+  
+  <a href="http://twitter.com/elpapapollo" class="author-social" target="_blank"><i class="fa fa-fw fa-twitter-square"></i> Twitter</a>
+  
+  
+  <a href="http://linkedin.com/in/jfairbank" class="author-social" target="_blank"><i class="fa fa-fw fa-linkedin-square"></i> LinkedIn</a>
+  <a href="http://instagram.com/elpapapollo" class="author-social" target="_blank"><i class="fa fa-fw fa-instagram"></i> Instagram</a>
+  
+  <a href="http://github.com/jfairbank" class="author-social" target="_blank"><i class="fa fa-fw fa-github"></i> Github</a>
+  
+  
+  
+  
+  
+  
+  
+  
+</div>
+        </div>
+        <p class="byline"><strong>Solving the Boolean Identity Crisis: Part 1</strong> was published on <time datetime="2019-05-20T00:00:00-10:00">May 20, 2019</time>.</p>
+      </footer>
+    </div><!-- /.article-wrap -->
+    <div class="related-articles">
+      <h4>You might also enjoy <small class="pull-right">(<a href="//blog.jeremyfairbank.com/posts/">View all posts</a>)</small></h4>
+      <ul>
+      
+        <li><a href="//blog.jeremyfairbank.com/elm/solving-the-boolean-identity-crisis-part-2/" title="Solving the Boolean Identity Crisis: Part 2">Solving the Boolean Identity Crisis: Part 2</a></li>
+      
+        <li><a href="//blog.jeremyfairbank.com/javascript/functional-javascript-streams-2/" title="Functional JavaScript Part 2: Streams">Functional JavaScript Part 2: Streams</a></li>
+      
+        <li><a href="//blog.jeremyfairbank.com/javascript/javascript-es7-function-bind-syntax/" title="JavaScript ES7 Function Bind Syntax">JavaScript ES7 Function Bind Syntax</a></li>
+      
+      </ul>
+      <hr />
+    </div><!-- /.related-articles -->
+  
+    <section id="disqus_thread"></section><!-- /#disqus_thread -->
+  
+  </article>
+</div><!-- /#main -->
+
+<div class="footer-wrap">
+  <footer>
+    <span>&copy; 2014 - 2019 Jeremy Fairbank. Powered by <a href="http://jekyllrb.com" rel="nofollow">Jekyll</a> using the <a href="http://mademistakes.com/minimal-mistakes/" rel="nofollow">Minimal Mistakes</a> theme.</span>
+  </footer>
+</div><!-- /.footer-wrap -->
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<script>window.jQuery || document.write('<script src="//blog.jeremyfairbank.com/assets/js/vendor/jquery-1.9.1.min.js"><\/script>')</script>
+<script src="//blog.jeremyfairbank.com/assets/js/scripts.min.js"></script>
+
+<!-- Google Analytics -->
+<script>
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-52148605-1', 'auto');
+ga('require', 'linkid', 'linkid.js');
+ga('require', 'displayfeatures');
+ga('send', 'pageview');
+</script>
+<!-- End Google Analytics -->
+
+
+  <script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+    var disqus_shortname = 'jeremyfairbankblog'; // required: replace example with your forum shortname
+
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function () {
+        var s = document.createElement('script'); s.async = true;
+        s.type = 'text/javascript';
+        s.src = '//' + disqus_shortname + '.disqus.com/count.js';
+        (document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
+    }());
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>	        
+
+</body>
+</html>

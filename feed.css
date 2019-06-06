@@ -1,0 +1,29 @@
+.blog-feed {
+    list-style: none;
+    text-align: center;
+}
+.blog-feed__post {
+    margin-bottom: 12px;
+}
+.blog-feed__post:last-child {
+    margin-bottom: 0;
+}
+.blog-feed__post__content {
+    border-bottom: 1px solid #ccc;
+    display: inline-block;
+    padding-bottom: 12px;
+}
+.blog-feed__post__link {
+    font-size: 18px;
+    line-height: 26px;
+}
+.blog-feed__post:last-child .blog-feed__post__content {
+    border: 0 none;
+    padding: 0;
+}
+@media screen and (min-width: 480px) {
+    .blog-feed__post__link {
+        font-size: 22px;
+        line-height: 28px;
+    }
+}

@@ -4,9 +4,29 @@ processFeed({
     
       
         {
+          "title": "Solving the Boolean Identity Crisis: Part 2",
+          "link": "//blog.jeremyfairbank.com/elm/solving-the-boolean-identity-crisis-part-2/",
+          "date": "2019-05-30 00:00:00 -1000",
+          "excerpt": ""
+        }
+        
+      
+    
+      
+        ,{
+          "title": "Solving the Boolean Identity Crisis: Part 1",
+          "link": "//blog.jeremyfairbank.com/elm/solving-the-boolean-identity-crisis-part-1/",
+          "date": "2019-05-20 00:00:00 -1000",
+          "excerpt": ""
+        }
+        
+      
+    
+      
+        ,{
           "title": "Functional JavaScript Part 2: Streams",
           "link": "//blog.jeremyfairbank.com/javascript/functional-javascript-streams-2/",
-          "date": "2015-08-07 00:00:00 -0400",
+          "date": "2015-08-07 00:00:00 -1000",
           "excerpt": ""
         }
         
@@ -16,7 +36,7 @@ processFeed({
         ,{
           "title": "JavaScript ES7 Function Bind Syntax",
           "link": "//blog.jeremyfairbank.com/javascript/javascript-es7-function-bind-syntax/",
-          "date": "2015-05-30 00:00:00 -0400",
+          "date": "2015-05-30 00:00:00 -1000",
           "excerpt": ""
         }
         
@@ -26,7 +46,7 @@ processFeed({
         ,{
           "title": "Functional JavaScript Part 1: Lists",
           "link": "//blog.jeremyfairbank.com/javascript/functional-javascript-lists-1/",
-          "date": "2015-01-17 00:00:00 -0500",
+          "date": "2015-01-17 00:00:00 -1000",
           "excerpt": ""
         }
         
@@ -36,7 +56,7 @@ processFeed({
         ,{
           "title": "Polymer Web Components with Marionette.js",
           "link": "//blog.jeremyfairbank.com/javascript/polymer-web-components-with-marionette-js/",
-          "date": "2015-01-03 00:00:00 -0500",
+          "date": "2015-01-03 00:00:00 -1000",
           "excerpt": ""
         }
         
@@ -46,7 +66,7 @@ processFeed({
         ,{
           "title": "Open Source You",
           "link": "//blog.jeremyfairbank.com/programming/open-source-you/",
-          "date": "2014-12-31 00:00:00 -0500",
+          "date": "2014-12-31 00:00:00 -1000",
           "excerpt": ""
         }
         
@@ -56,7 +76,7 @@ processFeed({
         ,{
           "title": "Components with Backbone.js and Marionette.js",
           "link": "//blog.jeremyfairbank.com/javascript/components-with-backbone-js-and-marionette-js/",
-          "date": "2014-06-25 00:00:00 -0400",
+          "date": "2014-06-25 00:00:00 -1000",
           "excerpt": ""
         }
         
@@ -66,7 +86,7 @@ processFeed({
         ,{
           "title": "First Post: Ensuring Remote Data is Available in JavaScript",
           "link": "//blog.jeremyfairbank.com/javascript/first-post-ensuring-remote-data-is-available/",
-          "date": "2014-06-21 00:00:00 -0400",
+          "date": "2014-06-21 00:00:00 -1000",
           "excerpt": ""
         }
         
