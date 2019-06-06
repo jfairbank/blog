@@ -3,6 +3,9 @@ body {
 	font-family: $base-font;
 	color: $text-color;
 }
+em a {
+  text-decoration: underline;
+}
 .navigation-wrapper {
 	@include container;
 	padding: 2em 0 1em;
