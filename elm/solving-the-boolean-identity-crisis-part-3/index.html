@@ -1,0 +1,531 @@
+<!doctype html>
+<!--[if lt IE 7]><html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="en"> <![endif]-->
+<!--[if (IE 7)&!(IEMobile)]><html class="no-js lt-ie9 lt-ie8" lang="en"><![endif]-->
+<!--[if (IE 8)&!(IEMobile)]><html class="no-js lt-ie9" lang="en"><![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en"><!--<![endif]-->
+<head>
+<meta charset="utf-8">
+<title>Solving the Boolean Identity Crisis: Part 3 &#8211; Jeremy Fairbank Blog</title>
+<meta name="description" content="See how boolean properties cause bugs from invalid state configurations. Then, learn how to collapse boolean properties into a single property with a custom type.">
+<meta name="keywords" content="elm">
+
+
+
+<!-- Twitter Cards -->
+<meta name="twitter:title" content="Solving the Boolean Identity Crisis: Part 3">
+<meta name="twitter:description" content="See how boolean properties cause bugs from invalid state configurations. Then, learn how to collapse boolean properties into a single property with a custom type.">
+<meta name="twitter:site" content="@elpapapollo">
+<meta name="twitter:creator" content="@elpapapollo">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="//blog.jeremyfairbank.com/images/bio-photo-1.jpg">
+<!-- Open Graph -->
+<meta property="og:locale" content="en_US">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Solving the Boolean Identity Crisis: Part 3">
+<meta property="og:description" content="See how boolean properties cause bugs from invalid state configurations. Then, learn how to collapse boolean properties into a single property with a custom type.">
+<meta property="og:url" content="//blog.jeremyfairbank.com/elm/solving-the-boolean-identity-crisis-part-3/">
+<meta property="og:site_name" content="Jeremy Fairbank Blog">
+<meta property="og:image" content="//blog.jeremyfairbank.com/images/bio-photo-1.jpg">
+
+
+
+
+
+<link rel="canonical" href="https://programming-elm.com/blog/2019-06-17-solving-the-boolean-identity-crisis-part-3">
+<link href="//blog.jeremyfairbank.com/feed.xml" type="application/atom+xml" rel="alternate" title="Jeremy Fairbank Blog Feed">
+
+
+<!-- http://t.co/dKP3o1e -->
+<meta name="HandheldFriendly" content="True">
+<meta name="MobileOptimized" content="320">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!-- For all browsers -->
+<link href='/stylesheets/all-1c0f6d20e18f50700b8d02bad173217e.css' media='all' rel='stylesheet' type='text/css'>
+<link rel="stylesheet" href="//blog.jeremyfairbank.com/assets/css/main.css">
+
+<meta http-equiv="cleartype" content="on">
+
+<!-- HTML5 Shiv and Media Query Support -->
+<!--[if lt IE 9]>
+	<script src="//blog.jeremyfairbank.com/assets/js/vendor/html5shiv.min.js"></script>
+	<script src="//blog.jeremyfairbank.com/assets/js/vendor/respond.min.js"></script>
+<![endif]-->
+
+<!-- Modernizr -->
+<script src="//blog.jeremyfairbank.com/assets/js/vendor/modernizr-2.7.1.custom.min.js"></script>
+
+<link href='//fonts.googleapis.com/css?family=PT+Sans+Narrow:400,700%7CPT+Serif:400,700,400italic' rel='stylesheet' type='text/css'>
+
+<!-- Icons -->
+<!-- 16x16 -->
+<link rel="shortcut icon" href="//blog.jeremyfairbank.com/favicon.ico">
+<!-- 32x32 -->
+<link rel="shortcut icon" href="//blog.jeremyfairbank.com/favicon.png">
+<!-- 57x57 (precomposed) for iPhone 3GS, pre-2011 iPod Touch and older Android devices -->
+<link rel="apple-touch-icon-precomposed" href="//blog.jeremyfairbank.com/images/apple-touch-icon-precomposed.png">
+<!-- 72x72 (precomposed) for 1st generation iPad, iPad 2 and iPad mini -->
+<link rel="apple-touch-icon-precomposed" sizes="72x72" href="//blog.jeremyfairbank.com/images/apple-touch-icon-72x72-precomposed.png">
+<!-- 114x114 (precomposed) for iPhone 4, 4S, 5 and post-2011 iPod Touch -->
+<link rel="apple-touch-icon-precomposed" sizes="114x114" href="//blog.jeremyfairbank.com/images/apple-touch-icon-114x114-precomposed.png">
+<!-- 144x144 (precomposed) for iPad 3rd and 4th generation -->
+<link rel="apple-touch-icon-precomposed" sizes="144x144" href="//blog.jeremyfairbank.com/images/apple-touch-icon-144x144-precomposed.png">
+</head>
+
+<body class="post">
+
+<!--[if lt IE 9]><div class="browser-upgrade alert alert-info">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</div><![endif]-->
+
+<div class="navigation-wrapper">
+	<div class="site-name">
+		<a href="//blog.jeremyfairbank.com/">Jeremy Fairbank Blog</a>
+	</div><!-- /.site-name -->
+	<div class="top-navigation">
+		<nav role="navigation" id="site-nav" class="nav">
+		    <ul>
+		        
+				    
+				        
+				    
+				    <li><a href="//blog.jeremyfairbank.com/about/" >About</a></li>
+				
+				    
+				        
+				    
+				    <li><a href="//blog.jeremyfairbank.com/posts/" >Posts</a></li>
+				
+				    
+				        
+				    
+				    <li><a href="//blog.jeremyfairbank.com/conferences/" >Conferences</a></li>
+				
+				    
+				        
+				        
+				    <li><a href="http://jeremyfairbank.com" target="_blank">jeremyfairbank.com</a></li>
+				
+		    </ul>
+		</nav>
+	</div><!-- /.top-navigation -->
+</div><!-- /.navigation-wrapper -->
+
+
+
+<div id="main" role="main">
+  <div class="article-author-side">
+    <div itemscope itemtype="http://data-vocabulary.org/Person">
+  
+    <img itemprop="photo" src="//blog.jeremyfairbank.com/images/bio-photo-1.jpg" class="bio-photo" alt="Jeremy Fairbank bio photo">
+  
+  <h3 itemprop="name">Jeremy Fairbank</h3>
+  <p>
+    <span itemprop="role">Software Engineer and Consultant</span>.
+    <span itemprop="address" itemscope><span itemprop="locality">Hawaii</span></span>.
+    Author of Programming Elm and Conference Speaker.
+  </p>
+  
+  <a href="http://twitter.com/elpapapollo" class="author-social" target="_blank"><i class="fa fa-fw fa-twitter-square"></i> Twitter</a>
+  
+  
+  <a href="http://linkedin.com/in/jfairbank" class="author-social" target="_blank"><i class="fa fa-fw fa-linkedin-square"></i> LinkedIn</a>
+  <a href="http://instagram.com/elpapapollo" class="author-social" target="_blank"><i class="fa fa-fw fa-instagram"></i> Instagram</a>
+  
+  <a href="http://github.com/jfairbank" class="author-social" target="_blank"><i class="fa fa-fw fa-github"></i> Github</a>
+  
+  
+  
+  
+  
+  
+  
+  
+</div>
+  </div>
+  <article class="post">
+    
+    <div class="headline-wrap">
+      
+        <h1><a href="//blog.jeremyfairbank.com/elm/solving-the-boolean-identity-crisis-part-3/" rel="bookmark" title="Solving the Boolean Identity Crisis: Part 3">Solving the Boolean Identity Crisis: Part 3</a></h1>
+      
+    </div><!--/ .headline-wrap -->
+    <div class="article-wrap">
+      <div class="social-share">
+  <ul class="inline-list">
+    <li class="facebook">
+      <a href="https://www.facebook.com/sharer/sharer.php?u=//blog.jeremyfairbank.com/elm/solving-the-boolean-identity-crisis-part-3/" title="Share on Facebook"><span class="count"><i class="fa fa-facebook-square"></i> Share</span></a>
+    </li>
+    <li class="twitter">
+      <a href="https://twitter.com/intent/tweet?text=//blog.jeremyfairbank.com/elm/solving-the-boolean-identity-crisis-part-3/" title="Share on Twitter"><span class="count"><i class="fa fa-twitter-square"></i> Tweet</span></a>
+    </li>
+  </ul>
+</div>
+      <section id="table-of-contents" class="toc">
+  <header>
+    <h3>Contents</h3>
+  </header>
+<div id="drawer">
+<ul id="markdown-toc">
+  <li><a href="#the-problem" id="markdown-toc-the-problem">The Problem</a></li>
+  <li><a href="#prevent-invalid-state" id="markdown-toc-prevent-invalid-state">Prevent Invalid State</a></li>
+  <li><a href="#what-you-learned" id="markdown-toc-what-you-learned">What You Learned</a></li>
+  <li><a href="#further-resources" id="markdown-toc-further-resources">Further Resources</a></li>
+</ul>
+
+  </div>
+</section>
+<!-- /#table-of-contents -->
+
+<p><img src="https://programming-elm.com/img/dog-fetch.jpg" alt="Dog holding a ball in its mouth" /></p>
+
+<p><em>Originally published at <a href="https://programming-elm.com/blog/2019-06-17-solving-the-boolean-identity-crisis-part-3">https://programming-elm.com</a> on June 17, 2019.</em></p>
+
+<p>In the <a href="/blog/2019-05-30-solving-the-boolean-identity-crisis-part-2">last post</a>,
+you learned how boolean return values cause boolean blindness. Boolean blindness
+can create bugs in conditional statements by letting code access data that
+shouldn’t be available. We swapped out boolean return values with <code>Maybe</code> and a
+custom type to wrap the data in a particular type constructor and provide more
+meaningful return values. This let the compiler ensure code only accessed data
+when it was truly available.</p>
+
+<p>In this post, you will see that boolean properties in Elm records open the door
+to invalid state configurations. Boolean properties require more complex
+conditional code and more tests to prevent bugs. You will learn that custom
+types—seeing a pattern here—eliminate the need for complex code and tests
+by harnessing the power of the compiler to prevent invalid state configurations.</p>
+
+<h2 id="the-problem">The Problem</h2>
+
+<p>I begin my talk
+<a href="https://www.youtube.com/watch?v=8Af1bh-BVY8">Solving the Boolean Identity Crisis</a>
+with a problem I encountered while building applications with
+<a href="https://redux.js.org">Redux</a> and <a href="https://reactjs.org">React</a>.
+When fetching data from a server, I would track the state of fetching that data
+with multiple boolean properties. Unfortunately, I brought that pattern over to
+the Elm applications I built.</p>
+
+<p>For example, let’s say we’re building a application for tracking rescue dogs. We
+need to fetch a dog from the server. Initially, we wouldn’t have a dog, so we
+would likely have a model like this.</p>
+
+<figure class="code-highlight-figure"><div class="code-highlight"><pre class="code-highlight-pre"><div data-line="1" class="code-highlight-row numbered"><div class="code-highlight-line">type alias Model =
+</div></div><div data-line="2" class="code-highlight-row numbered"><div class="code-highlight-line">    &#x7b; dog : Maybe Dog &#x7d;</div></div></pre></div></figure>
+
+<p>That seems reasonable so far. Next, we want to display a loading spinner while
+we fetch the dog from a server. So, we could add a <code>fetching</code> property to the
+model.</p>
+
+<figure class="code-highlight-figure"><div class="code-highlight"><pre class="code-highlight-pre"><div data-line="1" class="code-highlight-row numbered"><div class="code-highlight-line">type alias Model =
+</div></div><div data-line="2" class="code-highlight-row numbered"><div class="code-highlight-line">    &#x7b; dog : Maybe Dog
+</div></div><div data-line="3" class="code-highlight-row numbered"><div class="code-highlight-line">    , fetching : Bool
+</div></div><div data-line="4" class="code-highlight-row numbered"><div class="code-highlight-line">    &#x7d;</div></div></pre></div></figure>
+
+<p>When <code>fetching</code> is <code>True</code>, we will display the spinner. When <code>fetching</code> is <code>False</code>,
+we will display nothing.</p>
+
+<p>Once we have the dog, fetching should be <code>False</code>, but we want to display the
+dog. We could add a <code>success</code> boolean property to indicate we have the dog.</p>
+
+<figure class="code-highlight-figure"><div class="code-highlight"><pre class="code-highlight-pre"><div data-line="1" class="code-highlight-row numbered"><div class="code-highlight-line">type alias Model =
+</div></div><div data-line="2" class="code-highlight-row numbered"><div class="code-highlight-line">    &#x7b; dog : Maybe Dog
+</div></div><div data-line="3" class="code-highlight-row numbered"><div class="code-highlight-line">    , fetching : Bool
+</div></div><div data-line="4" class="code-highlight-row numbered"><div class="code-highlight-line">    , success : Bool
+</div></div><div data-line="5" class="code-highlight-row numbered"><div class="code-highlight-line">    &#x7d;</div></div></pre></div></figure>
+
+<p>Now, if success is <code>True</code>, we display the dog. Otherwise, if it’s <code>False</code> and
+fetching is <code>False</code>, then we’re back in a “ready to fetch” state and should
+display nothing. (Alternatively, we could look at a combination of <code>fetching</code>
+and if <code>dog</code> is <code>Just</code> or <code>Nothing</code> to decide what state we’re in.)</p>
+
+<p>All seems well, but the dog could not exist on the server or we could encounter
+other server errors. We need to know if the request failed and handle any errors
+appropriately. Well, we could add an <code>error</code> boolean property along with an
+<code>errorMessage</code> property.</p>
+
+<figure class="code-highlight-figure"><div class="code-highlight"><pre class="code-highlight-pre"><div data-line="1" class="code-highlight-row numbered"><div class="code-highlight-line">type alias Model =
+</div></div><div data-line="2" class="code-highlight-row numbered"><div class="code-highlight-line">    &#x7b; dog : Maybe Dog
+</div></div><div data-line="3" class="code-highlight-row numbered"><div class="code-highlight-line">    , fetching : Bool
+</div></div><div data-line="4" class="code-highlight-row numbered"><div class="code-highlight-line">    , success : Bool
+</div></div><div data-line="5" class="code-highlight-row numbered"><div class="code-highlight-line">    , error : Bool
+</div></div><div data-line="6" class="code-highlight-row numbered"><div class="code-highlight-line">    , errorMessage : String
+</div></div><div data-line="7" class="code-highlight-row numbered"><div class="code-highlight-line">    &#x7d;</div></div></pre></div></figure>
+
+<p>If error is <code>True</code>, then we can display the <code>errorMessage</code>. Otherwise, we’ll need to
+examine the other boolean properties to determine what to do.</p>
+
+<p>If we were to handle this in the <code>view</code> function, it might look like this.</p>
+
+<figure class="code-highlight-figure"><div class="code-highlight"><pre class="code-highlight-pre"><div data-line="1" class="code-highlight-row numbered"><div class="code-highlight-line">view : Model -&gt; Html Msg
+</div></div><div data-line="2" class="code-highlight-row numbered"><div class="code-highlight-line">view model =
+</div></div><div data-line="3" class="code-highlight-row numbered"><div class="code-highlight-line">    if model.error then
+</div></div><div data-line="4" class="code-highlight-row numbered"><div class="code-highlight-line">        viewError model.errorMessage
+</div></div><div data-line="5" class="code-highlight-row numbered"><div class="code-highlight-line"> </div></div><div data-line="6" class="code-highlight-row numbered"><div class="code-highlight-line">    else if model.fetching then
+</div></div><div data-line="7" class="code-highlight-row numbered"><div class="code-highlight-line">        viewSpinner
+</div></div><div data-line="8" class="code-highlight-row numbered"><div class="code-highlight-line"> </div></div><div data-line="9" class="code-highlight-row numbered"><div class="code-highlight-line">    else if model.success then
+</div></div><div data-line="10" class="code-highlight-row numbered"><div class="code-highlight-line">        viewDog model.dog
+</div></div><div data-line="11" class="code-highlight-row numbered"><div class="code-highlight-line"> </div></div><div data-line="12" class="code-highlight-row numbered"><div class="code-highlight-line">    else
+</div></div><div data-line="13" class="code-highlight-row numbered"><div class="code-highlight-line">        viewSearchForm</div></div></pre></div></figure>
+
+<p>The <code>view</code> function has a couple of issues.</p>
+
+<ol>
+  <li>It suffers from
+<a href="/blog/2019-05-30-solving-the-boolean-identity-crisis-part-2">boolean blindness</a>.
+We depend on certain boolean properties to be true before attempting to
+access data. Nothing stops us from accessing data in other branches such as
+<code>model.dog</code> or <code>model.errorMessage</code>. (Granted, if we tried to access
+<code>model.dog</code>, we’d still have the safety of <code>Maybe</code>.)</li>
+  <li>It requires more thorough automated testing to ensure we handle all cases
+properly. We could leave out all the <code>else if</code> branches and the code would
+still compile even if it was incorrect.</li>
+</ol>
+
+<p>Also, our model can arrive at incorrect configurations like this.</p>
+
+<figure class="code-highlight-figure"><div class="code-highlight"><pre class="code-highlight-pre"><div data-line="1" class="code-highlight-row numbered"><div class="code-highlight-line">&#x7b; dog = Just &#x7b; name = "Tucker" &#x7d;
+</div></div><div data-line="2" class="code-highlight-row numbered"><div class="code-highlight-line">, fetching = True
+</div></div><div data-line="3" class="code-highlight-row numbered"><div class="code-highlight-line">, success = True
+</div></div><div data-line="4" class="code-highlight-row numbered"><div class="code-highlight-line">, error = True
+</div></div><div data-line="5" class="code-highlight-row numbered"><div class="code-highlight-line">, errorMessage = "Uh oh!"
+</div></div><div data-line="6" class="code-highlight-row numbered"><div class="code-highlight-line">&#x7d;</div></div></pre></div></figure>
+
+<p>All boolean properties are true, we have a dog, and we have an <code>errorMessage</code>.
+We’re hard-pressed to determine what state we’re really in. We have no choice
+but to depend on the arbitrary ordering of the if-else conditionals in <code>view</code> to
+make that decision. Of course, we’ll need a strong test suite to ensure we can’t
+configure the model like this.</p>
+
+<h2 id="prevent-invalid-state">Prevent Invalid State</h2>
+
+<p>I finally realized the problem with how I represented my data. I thought the
+states of fetching data (ready, fetching, success, and error) were separate from
+one another. Really, they are different <em>state values</em> of the same overall
+state. That sounds like a
+<a href="https://en.wikipedia.org/wiki/Finite-state_machine">state machine</a>.</p>
+
+<p>A state machine can only be in one state value at a time. My record
+representation forbid that by letting multiple state values be <code>True</code>. Elm
+has an awesome type system and compiler. We should leverage them as much as
+possible to prevent invalid state configurations by essentially creating a
+state machine.</p>
+
+<p>We could introduce a new custom type.</p>
+
+<figure class="code-highlight-figure"><div class="code-highlight"><pre class="code-highlight-pre"><div data-line="1" class="code-highlight-row numbered"><div class="code-highlight-line">type RemoteDoggo
+</div></div><div data-line="2" class="code-highlight-row numbered"><div class="code-highlight-line">    = Ready
+</div></div><div data-line="3" class="code-highlight-row numbered"><div class="code-highlight-line">    | Fetching
+</div></div><div data-line="4" class="code-highlight-row numbered"><div class="code-highlight-line">    | Success Dog
+</div></div><div data-line="5" class="code-highlight-row numbered"><div class="code-highlight-line">    | Error String</div></div></pre></div></figure>
+
+<p>The <code>RemoteDoggo</code> type has four constructors that map to each possible state,
+<code>Ready</code>, <code>Fetching</code>, <code>Success</code>, and <code>Error</code>. We wrap a <code>Dog</code> with the <code>Success</code>
+constructor and wrap a <code>String</code> error message with the <code>Error</code> constructor.
+Then, we can update the model to look like this.</p>
+
+<figure class="code-highlight-figure"><div class="code-highlight"><pre class="code-highlight-pre"><div data-line="1" class="code-highlight-row numbered"><div class="code-highlight-line">type alias Model =
+</div></div><div data-line="2" class="code-highlight-row numbered"><div class="code-highlight-line">    &#x7b; dog : RemoteDoggo &#x7d;</div></div></pre></div></figure>
+
+<p>We remove all but the <code>dog</code> property and change the <code>dog</code> property to the
+<code>RemoteDoggo</code> type. We can now transform the <code>view</code> function into this.</p>
+
+<figure class="code-highlight-figure"><div class="code-highlight"><pre class="code-highlight-pre"><div data-line="1" class="code-highlight-row numbered"><div class="code-highlight-line">view model =
+</div></div><div data-line="2" class="code-highlight-row numbered"><div class="code-highlight-line">    case model.dog of
+</div></div><div data-line="3" class="code-highlight-row numbered"><div class="code-highlight-line">        Ready -&gt;
+</div></div><div data-line="4" class="code-highlight-row numbered"><div class="code-highlight-line">            viewSearchForm
+</div></div><div data-line="5" class="code-highlight-row numbered"><div class="code-highlight-line"> </div></div><div data-line="6" class="code-highlight-row numbered"><div class="code-highlight-line">        Fetching -&gt;
+</div></div><div data-line="7" class="code-highlight-row numbered"><div class="code-highlight-line">            viewSpinner
+</div></div><div data-line="8" class="code-highlight-row numbered"><div class="code-highlight-line"> </div></div><div data-line="9" class="code-highlight-row numbered"><div class="code-highlight-line">        Success dog -&gt;
+</div></div><div data-line="10" class="code-highlight-row numbered"><div class="code-highlight-line">            viewDog dog
+</div></div><div data-line="11" class="code-highlight-row numbered"><div class="code-highlight-line"> </div></div><div data-line="12" class="code-highlight-row numbered"><div class="code-highlight-line">        Error error -&gt;
+</div></div><div data-line="13" class="code-highlight-row numbered"><div class="code-highlight-line">            viewError error</div></div></pre></div></figure>
+
+<p>Instead of worrying about the order of boolean properties, we pattern match on
+the <code>dog</code> property with a <code>case</code> expression. We map each constructor to the
+appropriate view helper function.</p>
+
+<p>Our code has gained a few benefits here by this change.</p>
+
+<!-- <ol> -->
+<!--   <li>The code makes the states explicit with the `RemoteDoggo` type.</li> -->
+<!--   <li>We eliminated boolean blindness. We can only access the dog in `Success` and the error message in `Error`.</li> -->
+<!--   <li> -->
+<!--     <p> -->
+<!--       We have compiler enforced UI states. If we forget to handle one of the `RemoteDoggo` values, then our code won't compile. -->
+<!--     </p> -->
+<!--   </li> -->
+<!-- </ol> -->
+
+<ol>
+  <li>The code makes the states explicit with the <code>RemoteDoggo</code> type.</li>
+  <li>We eliminated boolean blindness. We can only access the dog in <code>Success</code> and 
+the error message in <code>Error</code>.</li>
+  <li>We have compiler enforced UI states. If we forget to handle one of the
+<code>RemoteDoggo</code> values, then our code won’t compile.</li>
+</ol>
+
+<p>This code:</p>
+
+<figure class="code-highlight-figure"><div class="code-highlight"><pre class="code-highlight-pre"><div data-line="1" class="code-highlight-row numbered"><div class="code-highlight-line">view model =
+</div></div><div data-line="2" class="code-highlight-row numbered"><div class="code-highlight-line">   case model.dog of
+</div></div><div data-line="3" class="code-highlight-row numbered"><div class="code-highlight-line">       Ready -&gt;
+</div></div><div data-line="4" class="code-highlight-row numbered"><div class="code-highlight-line">           viewSearchForm
+</div></div><div data-line="5" class="code-highlight-row numbered"><div class="code-highlight-line"> </div></div><div data-line="6" class="code-highlight-row numbered"><div class="code-highlight-line">       Fetching -&gt;
+</div></div><div data-line="7" class="code-highlight-row numbered"><div class="code-highlight-line">           viewSpinner
+</div></div><div data-line="8" class="code-highlight-row numbered"><div class="code-highlight-line"> </div></div><div data-line="9" class="code-highlight-row numbered"><div class="code-highlight-line">       Success dog -&gt;
+</div></div><div data-line="10" class="code-highlight-row numbered"><div class="code-highlight-line">           viewDog dog
+</div></div><div data-line="11" class="code-highlight-row numbered"><div class="code-highlight-line"> </div></div><div data-line="12" class="code-highlight-row numbered"><div class="code-highlight-line">       -- forgetting to handle errors</div></div></pre></div></figure>
+
+<p>Will produce this compiler error:</p>
+
+<figure class="code-highlight-figure"><div class="code-highlight"><pre class="code-highlight-pre"><div data-line="1" class="code-highlight-row numbered"><div class="code-highlight-line">This `case` does not have branches for all possibilities:
+</div></div><div data-line="2" class="code-highlight-row numbered"><div class="code-highlight-line"> </div></div><div data-line="3" class="code-highlight-row numbered"><div class="code-highlight-line">|&gt;    case model.dog of
+</div></div><div data-line="4" class="code-highlight-row numbered"><div class="code-highlight-line">|&gt;        Ready -&gt;
+</div></div><div data-line="5" class="code-highlight-row numbered"><div class="code-highlight-line">|&gt;            viewSearchForm
+</div></div><div data-line="6" class="code-highlight-row numbered"><div class="code-highlight-line">|&gt;
+</div></div><div data-line="7" class="code-highlight-row numbered"><div class="code-highlight-line">|&gt;        Fetching -&gt;
+</div></div><div data-line="8" class="code-highlight-row numbered"><div class="code-highlight-line">|&gt;            viewSpinner
+</div></div><div data-line="9" class="code-highlight-row numbered"><div class="code-highlight-line">|&gt;
+</div></div><div data-line="10" class="code-highlight-row numbered"><div class="code-highlight-line">|&gt;        Success dog -&gt;
+</div></div><div data-line="11" class="code-highlight-row numbered"><div class="code-highlight-line">|&gt;            viewDog dog
+</div></div><div data-line="12" class="code-highlight-row numbered"><div class="code-highlight-line"> </div></div><div data-line="13" class="code-highlight-row numbered"><div class="code-highlight-line">Missing possibilities include:
+</div></div><div data-line="14" class="code-highlight-row numbered"><div class="code-highlight-line"> </div></div><div data-line="15" class="code-highlight-row numbered"><div class="code-highlight-line">   Error _</div></div></pre></div></figure>
+
+<p>Now our code is clearer and safer thanks to custom types.</p>
+
+<h2 id="what-you-learned">What You Learned</h2>
+
+<p>In this post, you learned that boolean properties can cause invalid state
+configurations, which create bugs that the compiler can’t catch. Boolean
+properties lead to complex if-else expressions with arbitrary ordering that are
+hard to follow. You saw that by reducing the boolean properties down to one
+property with a custom type you can write more explicit code with compiler
+safety. If you have some code with multiple boolean properties like this, try
+refactoring to a custom type to make your code clearer and safer.</p>
+
+<h2 id="further-resources">Further Resources</h2>
+
+<p>For more info on how to use Elm’s type system to prevent invalid state
+configurations, watch Richard Feldman’s talk <a href="https://www.youtube.com/watch?v=IcgmSRJHu_8">Making Impossible States
+Impossible</a>.</p>
+
+<p>For a more general type similar to <code>RemoteDoggo</code>, check out the
+<a href="https://package.elm-lang.org/packages/krisajenkins/remotedata/latest">krisajenkins/remotedata</a>
+package.</p>
+
+<p>To learn more about how to build Elm applications effectively, grab a copy of my
+book <a href="https://programming-elm.com">Programming Elm</a> from
+<a href="https://pragprog.com/book/jfelm/programming-elm">The Pragmatic Programmers</a>.</p>
+
+      <div class="social-share">
+  <ul class="inline-list">
+    <li class="facebook">
+      <a href="https://www.facebook.com/sharer/sharer.php?u=//blog.jeremyfairbank.com/elm/solving-the-boolean-identity-crisis-part-3/" title="Share on Facebook"><span class="count"><i class="fa fa-facebook-square"></i> Share</span></a>
+    </li>
+    <li class="twitter">
+      <a href="https://twitter.com/intent/tweet?text=//blog.jeremyfairbank.com/elm/solving-the-boolean-identity-crisis-part-3/" title="Share on Twitter"><span class="count"><i class="fa fa-twitter-square"></i> Tweet</span></a>
+    </li>
+  </ul>
+</div>
+      
+      <hr />
+      <footer role="contentinfo">
+        <div class="article-author-bottom">
+          <div itemscope itemtype="http://data-vocabulary.org/Person">
+  
+    <img itemprop="photo" src="//blog.jeremyfairbank.com/images/bio-photo-1.jpg" class="bio-photo" alt="Jeremy Fairbank bio photo">
+  
+  <h3 itemprop="name">Jeremy Fairbank</h3>
+  <p>
+    <span itemprop="role">Software Engineer and Consultant</span>.
+    <span itemprop="address" itemscope><span itemprop="locality">Hawaii</span></span>.
+    Author of Programming Elm and Conference Speaker.
+  </p>
+  
+  <a href="http://twitter.com/elpapapollo" class="author-social" target="_blank"><i class="fa fa-fw fa-twitter-square"></i> Twitter</a>
+  
+  
+  <a href="http://linkedin.com/in/jfairbank" class="author-social" target="_blank"><i class="fa fa-fw fa-linkedin-square"></i> LinkedIn</a>
+  <a href="http://instagram.com/elpapapollo" class="author-social" target="_blank"><i class="fa fa-fw fa-instagram"></i> Instagram</a>
+  
+  <a href="http://github.com/jfairbank" class="author-social" target="_blank"><i class="fa fa-fw fa-github"></i> Github</a>
+  
+  
+  
+  
+  
+  
+  
+  
+</div>
+        </div>
+        <p class="byline"><strong>Solving the Boolean Identity Crisis: Part 3</strong> was published on <time datetime="2019-06-17T00:00:00-10:00">June 17, 2019</time>.</p>
+      </footer>
+    </div><!-- /.article-wrap -->
+    <div class="related-articles">
+      <h4>You might also enjoy <small class="pull-right">(<a href="//blog.jeremyfairbank.com/posts/">View all posts</a>)</small></h4>
+      <ul>
+      
+        <li><a href="//blog.jeremyfairbank.com/elm/solving-the-boolean-identity-crisis-part-2/" title="Solving the Boolean Identity Crisis: Part 2">Solving the Boolean Identity Crisis: Part 2</a></li>
+      
+        <li><a href="//blog.jeremyfairbank.com/elm/solving-the-boolean-identity-crisis-part-1/" title="Solving the Boolean Identity Crisis: Part 1">Solving the Boolean Identity Crisis: Part 1</a></li>
+      
+        <li><a href="//blog.jeremyfairbank.com/javascript/functional-javascript-streams-2/" title="Functional JavaScript Part 2: Streams">Functional JavaScript Part 2: Streams</a></li>
+      
+      </ul>
+      <hr />
+    </div><!-- /.related-articles -->
+  
+    <section id="disqus_thread"></section><!-- /#disqus_thread -->
+  
+  </article>
+</div><!-- /#main -->
+
+<div class="footer-wrap">
+  <footer>
+    <span>&copy; 2014 - 2019 Jeremy Fairbank. Powered by <a href="http://jekyllrb.com" rel="nofollow">Jekyll</a> using the <a href="http://mademistakes.com/minimal-mistakes/" rel="nofollow">Minimal Mistakes</a> theme.</span>
+  </footer>
+</div><!-- /.footer-wrap -->
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<script>window.jQuery || document.write('<script src="//blog.jeremyfairbank.com/assets/js/vendor/jquery-1.9.1.min.js"><\/script>')</script>
+<script src="//blog.jeremyfairbank.com/assets/js/scripts.min.js"></script>
+
+<!-- Google Analytics -->
+<script>
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-52148605-1', 'auto');
+ga('require', 'linkid', 'linkid.js');
+ga('require', 'displayfeatures');
+ga('send', 'pageview');
+</script>
+<!-- End Google Analytics -->
+
+
+  <script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+    var disqus_shortname = 'jeremyfairbankblog'; // required: replace example with your forum shortname
+
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function () {
+        var s = document.createElement('script'); s.async = true;
+        s.type = 'text/javascript';
+        s.src = '//' + disqus_shortname + '.disqus.com/count.js';
+        (document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
+    }());
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>	        
+
+</body>
+</html>
