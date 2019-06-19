@@ -4,6 +4,16 @@ processFeed({
     
       
         {
+          "title": "Solving the Boolean Identity Crisis: Part 3",
+          "link": "//blog.jeremyfairbank.com/elm/solving-the-boolean-identity-crisis-part-3/",
+          "date": "2019-06-17 00:00:00 -1000",
+          "excerpt": ""
+        }
+        
+      
+    
+      
+        ,{
           "title": "Solving the Boolean Identity Crisis: Part 2",
           "link": "//blog.jeremyfairbank.com/elm/solving-the-boolean-identity-crisis-part-2/",
           "date": "2019-05-30 00:00:00 -1000",

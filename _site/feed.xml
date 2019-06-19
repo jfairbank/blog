@@ -4,13 +4,286 @@
 <generator uri="https://github.com/jekyll/jekyll">Jekyll</generator>
 <link rel="self" type="application/atom+xml" href="//blog.jeremyfairbank.com/feed.xml" />
 <link rel="alternate" type="text/html" href="//blog.jeremyfairbank.com" />
-<updated>2019-06-05T16:06:29-10:00</updated>
+<updated>2019-06-18T22:15:59-10:00</updated>
 <id>//blog.jeremyfairbank.com/</id>
 <author>
   <name>Jeremy Fairbank</name>
   <uri>//blog.jeremyfairbank.com/</uri>
   
 </author>
+
+
+  
+
+<entry>
+  <title type="html"><![CDATA[Solving the Boolean Identity Crisis: Part 3]]></title>
+  <link rel="alternate" type="text/html" href="//blog.jeremyfairbank.com/elm/solving-the-boolean-identity-crisis-part-3/" />
+  <id>//blog.jeremyfairbank.com/elm/solving-the-boolean-identity-crisis-part-3</id>
+  <published>2019-06-17T00:00:00-10:00</published>
+  <updated>2019-06-17T00:00:00-10:00</updated>
+  <author>
+    <name>Jeremy Fairbank</name>
+    <uri>//blog.jeremyfairbank.com</uri>
+    
+  </author>
+  <content type="html">&lt;section id=&quot;table-of-contents&quot; class=&quot;toc&quot;&gt;
+  &lt;header&gt;
+    &lt;h3&gt;Contents&lt;/h3&gt;
+  &lt;/header&gt;
+&lt;div id=&quot;drawer&quot;&gt;
+&lt;ul id=&quot;markdown-toc&quot;&gt;
+  &lt;li&gt;&lt;a href=&quot;#the-problem&quot; id=&quot;markdown-toc-the-problem&quot;&gt;The Problem&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#prevent-invalid-state&quot; id=&quot;markdown-toc-prevent-invalid-state&quot;&gt;Prevent Invalid State&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#what-you-learned&quot; id=&quot;markdown-toc-what-you-learned&quot;&gt;What You Learned&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#further-resources&quot; id=&quot;markdown-toc-further-resources&quot;&gt;Further Resources&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+  &lt;/div&gt;
+&lt;/section&gt;
+&lt;!-- /#table-of-contents --&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://programming-elm.com/img/dog-fetch.jpg&quot; alt=&quot;Dog holding a ball in its mouth&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;Originally published at &lt;a href=&quot;https://programming-elm.com/blog/2019-06-17-solving-the-boolean-identity-crisis-part-3&quot;&gt;https://programming-elm.com&lt;/a&gt; on June 17, 2019.&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;In the &lt;a href=&quot;/blog/2019-05-30-solving-the-boolean-identity-crisis-part-2&quot;&gt;last post&lt;/a&gt;,
+you learned how boolean return values cause boolean blindness. Boolean blindness
+can create bugs in conditional statements by letting code access data that
+shouldn’t be available. We swapped out boolean return values with &lt;code&gt;Maybe&lt;/code&gt; and a
+custom type to wrap the data in a particular type constructor and provide more
+meaningful return values. This let the compiler ensure code only accessed data
+when it was truly available.&lt;/p&gt;
+
+&lt;p&gt;In this post, you will see that boolean properties in Elm records open the door
+to invalid state configurations. Boolean properties require more complex
+conditional code and more tests to prevent bugs. You will learn that custom
+types—seeing a pattern here—eliminate the need for complex code and tests
+by harnessing the power of the compiler to prevent invalid state configurations.&lt;/p&gt;
+
+&lt;h2 id=&quot;the-problem&quot;&gt;The Problem&lt;/h2&gt;
+
+&lt;p&gt;I begin my talk
+&lt;a href=&quot;https://www.youtube.com/watch?v=8Af1bh-BVY8&quot;&gt;Solving the Boolean Identity Crisis&lt;/a&gt;
+with a problem I encountered while building applications with
+&lt;a href=&quot;https://redux.js.org&quot;&gt;Redux&lt;/a&gt; and &lt;a href=&quot;https://reactjs.org&quot;&gt;React&lt;/a&gt;.
+When fetching data from a server, I would track the state of fetching that data
+with multiple boolean properties. Unfortunately, I brought that pattern over to
+the Elm applications I built.&lt;/p&gt;
+
+&lt;p&gt;For example, let’s say we’re building a application for tracking rescue dogs. We
+need to fetch a dog from the server. Initially, we wouldn’t have a dog, so we
+would likely have a model like this.&lt;/p&gt;
+
+&lt;figure class=&quot;code-highlight-figure&quot;&gt;&lt;div class=&quot;code-highlight&quot;&gt;&lt;pre class=&quot;code-highlight-pre&quot;&gt;&lt;div data-line=&quot;1&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;type alias Model =
+&lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;2&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;    &amp;#x7b; dog : Maybe Dog &amp;#x7d;&lt;/div&gt;&lt;/div&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/figure&gt;
+
+&lt;p&gt;That seems reasonable so far. Next, we want to display a loading spinner while
+we fetch the dog from a server. So, we could add a &lt;code&gt;fetching&lt;/code&gt; property to the
+model.&lt;/p&gt;
+
+&lt;figure class=&quot;code-highlight-figure&quot;&gt;&lt;div class=&quot;code-highlight&quot;&gt;&lt;pre class=&quot;code-highlight-pre&quot;&gt;&lt;div data-line=&quot;1&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;type alias Model =
+&lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;2&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;    &amp;#x7b; dog : Maybe Dog
+&lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;3&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;    , fetching : Bool
+&lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;4&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;    &amp;#x7d;&lt;/div&gt;&lt;/div&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/figure&gt;
+
+&lt;p&gt;When &lt;code&gt;fetching&lt;/code&gt; is &lt;code&gt;True&lt;/code&gt;, we will display the spinner. When &lt;code&gt;fetching&lt;/code&gt; is &lt;code&gt;False&lt;/code&gt;,
+we will display nothing.&lt;/p&gt;
+
+&lt;p&gt;Once we have the dog, fetching should be &lt;code&gt;False&lt;/code&gt;, but we want to display the
+dog. We could add a &lt;code&gt;success&lt;/code&gt; boolean property to indicate we have the dog.&lt;/p&gt;
+
+&lt;figure class=&quot;code-highlight-figure&quot;&gt;&lt;div class=&quot;code-highlight&quot;&gt;&lt;pre class=&quot;code-highlight-pre&quot;&gt;&lt;div data-line=&quot;1&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;type alias Model =
+&lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;2&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;    &amp;#x7b; dog : Maybe Dog
+&lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;3&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;    , fetching : Bool
+&lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;4&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;    , success : Bool
+&lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;5&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;    &amp;#x7d;&lt;/div&gt;&lt;/div&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/figure&gt;
+
+&lt;p&gt;Now, if success is &lt;code&gt;True&lt;/code&gt;, we display the dog. Otherwise, if it’s &lt;code&gt;False&lt;/code&gt; and
+fetching is &lt;code&gt;False&lt;/code&gt;, then we’re back in a “ready to fetch” state and should
+display nothing. (Alternatively, we could look at a combination of &lt;code&gt;fetching&lt;/code&gt;
+and if &lt;code&gt;dog&lt;/code&gt; is &lt;code&gt;Just&lt;/code&gt; or &lt;code&gt;Nothing&lt;/code&gt; to decide what state we’re in.)&lt;/p&gt;
+
+&lt;p&gt;All seems well, but the dog could not exist on the server or we could encounter
+other server errors. We need to know if the request failed and handle any errors
+appropriately. Well, we could add an &lt;code&gt;error&lt;/code&gt; boolean property along with an
+&lt;code&gt;errorMessage&lt;/code&gt; property.&lt;/p&gt;
+
+&lt;figure class=&quot;code-highlight-figure&quot;&gt;&lt;div class=&quot;code-highlight&quot;&gt;&lt;pre class=&quot;code-highlight-pre&quot;&gt;&lt;div data-line=&quot;1&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;type alias Model =
+&lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;2&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;    &amp;#x7b; dog : Maybe Dog
+&lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;3&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;    , fetching : Bool
+&lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;4&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;    , success : Bool
+&lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;5&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;    , error : Bool
+&lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;6&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;    , errorMessage : String
+&lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;7&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;    &amp;#x7d;&lt;/div&gt;&lt;/div&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/figure&gt;
+
+&lt;p&gt;If error is &lt;code&gt;True&lt;/code&gt;, then we can display the &lt;code&gt;errorMessage&lt;/code&gt;. Otherwise, we’ll need to
+examine the other boolean properties to determine what to do.&lt;/p&gt;
+
+&lt;p&gt;If we were to handle this in the &lt;code&gt;view&lt;/code&gt; function, it might look like this.&lt;/p&gt;
+
+&lt;figure class=&quot;code-highlight-figure&quot;&gt;&lt;div class=&quot;code-highlight&quot;&gt;&lt;pre class=&quot;code-highlight-pre&quot;&gt;&lt;div data-line=&quot;1&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;view : Model -&amp;gt; Html Msg
+&lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;2&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;view model =
+&lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;3&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;    if model.error then
+&lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;4&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;        viewError model.errorMessage
+&lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;5&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt; &lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;6&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;    else if model.fetching then
+&lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;7&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;        viewSpinner
+&lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;8&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt; &lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;9&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;    else if model.success then
+&lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;10&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;        viewDog model.dog
+&lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;11&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt; &lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;12&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;    else
+&lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;13&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;        viewSearchForm&lt;/div&gt;&lt;/div&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/figure&gt;
+
+&lt;p&gt;The &lt;code&gt;view&lt;/code&gt; function has a couple of issues.&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;It suffers from
+&lt;a href=&quot;/blog/2019-05-30-solving-the-boolean-identity-crisis-part-2&quot;&gt;boolean blindness&lt;/a&gt;.
+We depend on certain boolean properties to be true before attempting to
+access data. Nothing stops us from accessing data in other branches such as
+&lt;code&gt;model.dog&lt;/code&gt; or &lt;code&gt;model.errorMessage&lt;/code&gt;. (Granted, if we tried to access
+&lt;code&gt;model.dog&lt;/code&gt;, we’d still have the safety of &lt;code&gt;Maybe&lt;/code&gt;.)&lt;/li&gt;
+  &lt;li&gt;It requires more thorough automated testing to ensure we handle all cases
+properly. We could leave out all the &lt;code&gt;else if&lt;/code&gt; branches and the code would
+still compile even if it was incorrect.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;Also, our model can arrive at incorrect configurations like this.&lt;/p&gt;
+
+&lt;figure class=&quot;code-highlight-figure&quot;&gt;&lt;div class=&quot;code-highlight&quot;&gt;&lt;pre class=&quot;code-highlight-pre&quot;&gt;&lt;div data-line=&quot;1&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;&amp;#x7b; dog = Just &amp;#x7b; name = &quot;Tucker&quot; &amp;#x7d;
+&lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;2&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;, fetching = True
+&lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;3&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;, success = True
+&lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;4&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;, error = True
+&lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;5&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;, errorMessage = &quot;Uh oh!&quot;
+&lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;6&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;&amp;#x7d;&lt;/div&gt;&lt;/div&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/figure&gt;
+
+&lt;p&gt;All boolean properties are true, we have a dog, and we have an &lt;code&gt;errorMessage&lt;/code&gt;.
+We’re hard-pressed to determine what state we’re really in. We have no choice
+but to depend on the arbitrary ordering of the if-else conditionals in &lt;code&gt;view&lt;/code&gt; to
+make that decision. Of course, we’ll need a strong test suite to ensure we can’t
+configure the model like this.&lt;/p&gt;
+
+&lt;h2 id=&quot;prevent-invalid-state&quot;&gt;Prevent Invalid State&lt;/h2&gt;
+
+&lt;p&gt;I finally realized the problem with how I represented my data. I thought the
+states of fetching data (ready, fetching, success, and error) were separate from
+one another. Really, they are different &lt;em&gt;state values&lt;/em&gt; of the same overall
+state. That sounds like a
+&lt;a href=&quot;https://en.wikipedia.org/wiki/Finite-state_machine&quot;&gt;state machine&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;A state machine can only be in one state value at a time. My record
+representation forbid that by letting multiple state values be &lt;code&gt;True&lt;/code&gt;. Elm
+has an awesome type system and compiler. We should leverage them as much as
+possible to prevent invalid state configurations by essentially creating a
+state machine.&lt;/p&gt;
+
+&lt;p&gt;We could introduce a new custom type.&lt;/p&gt;
+
+&lt;figure class=&quot;code-highlight-figure&quot;&gt;&lt;div class=&quot;code-highlight&quot;&gt;&lt;pre class=&quot;code-highlight-pre&quot;&gt;&lt;div data-line=&quot;1&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;type RemoteDoggo
+&lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;2&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;    = Ready
+&lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;3&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;    | Fetching
+&lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;4&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;    | Success Dog
+&lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;5&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;    | Error String&lt;/div&gt;&lt;/div&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/figure&gt;
+
+&lt;p&gt;The &lt;code&gt;RemoteDoggo&lt;/code&gt; type has four constructors that map to each possible state,
+&lt;code&gt;Ready&lt;/code&gt;, &lt;code&gt;Fetching&lt;/code&gt;, &lt;code&gt;Success&lt;/code&gt;, and &lt;code&gt;Error&lt;/code&gt;. We wrap a &lt;code&gt;Dog&lt;/code&gt; with the &lt;code&gt;Success&lt;/code&gt;
+constructor and wrap a &lt;code&gt;String&lt;/code&gt; error message with the &lt;code&gt;Error&lt;/code&gt; constructor.
+Then, we can update the model to look like this.&lt;/p&gt;
+
+&lt;figure class=&quot;code-highlight-figure&quot;&gt;&lt;div class=&quot;code-highlight&quot;&gt;&lt;pre class=&quot;code-highlight-pre&quot;&gt;&lt;div data-line=&quot;1&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;type alias Model =
+&lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;2&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;    &amp;#x7b; dog : RemoteDoggo &amp;#x7d;&lt;/div&gt;&lt;/div&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/figure&gt;
+
+&lt;p&gt;We remove all but the &lt;code&gt;dog&lt;/code&gt; property and change the &lt;code&gt;dog&lt;/code&gt; property to the
+&lt;code&gt;RemoteDoggo&lt;/code&gt; type. We can now transform the &lt;code&gt;view&lt;/code&gt; function into this.&lt;/p&gt;
+
+&lt;figure class=&quot;code-highlight-figure&quot;&gt;&lt;div class=&quot;code-highlight&quot;&gt;&lt;pre class=&quot;code-highlight-pre&quot;&gt;&lt;div data-line=&quot;1&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;view model =
+&lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;2&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;    case model.dog of
+&lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;3&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;        Ready -&amp;gt;
+&lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;4&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;            viewSearchForm
+&lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;5&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt; &lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;6&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;        Fetching -&amp;gt;
+&lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;7&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;            viewSpinner
+&lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;8&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt; &lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;9&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;        Success dog -&amp;gt;
+&lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;10&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;            viewDog dog
+&lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;11&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt; &lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;12&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;        Error error -&amp;gt;
+&lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;13&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;            viewError error&lt;/div&gt;&lt;/div&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/figure&gt;
+
+&lt;p&gt;Instead of worrying about the order of boolean properties, we pattern match on
+the &lt;code&gt;dog&lt;/code&gt; property with a &lt;code&gt;case&lt;/code&gt; expression. We map each constructor to the
+appropriate view helper function.&lt;/p&gt;
+
+&lt;p&gt;Our code has gained a few benefits here by this change.&lt;/p&gt;
+
+&lt;!-- &lt;ol&gt; --&gt;
+&lt;!--   &lt;li&gt;The code makes the states explicit with the `RemoteDoggo` type.&lt;/li&gt; --&gt;
+&lt;!--   &lt;li&gt;We eliminated boolean blindness. We can only access the dog in `Success` and the error message in `Error`.&lt;/li&gt; --&gt;
+&lt;!--   &lt;li&gt; --&gt;
+&lt;!--     &lt;p&gt; --&gt;
+&lt;!--       We have compiler enforced UI states. If we forget to handle one of the `RemoteDoggo` values, then our code won&#39;t compile. --&gt;
+&lt;!--     &lt;/p&gt; --&gt;
+&lt;!--   &lt;/li&gt; --&gt;
+&lt;!-- &lt;/ol&gt; --&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;The code makes the states explicit with the &lt;code&gt;RemoteDoggo&lt;/code&gt; type.&lt;/li&gt;
+  &lt;li&gt;We eliminated boolean blindness. We can only access the dog in &lt;code&gt;Success&lt;/code&gt; and 
+the error message in &lt;code&gt;Error&lt;/code&gt;.&lt;/li&gt;
+  &lt;li&gt;We have compiler enforced UI states. If we forget to handle one of the
+&lt;code&gt;RemoteDoggo&lt;/code&gt; values, then our code won’t compile.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;This code:&lt;/p&gt;
+
+&lt;figure class=&quot;code-highlight-figure&quot;&gt;&lt;div class=&quot;code-highlight&quot;&gt;&lt;pre class=&quot;code-highlight-pre&quot;&gt;&lt;div data-line=&quot;1&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;view model =
+&lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;2&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;   case model.dog of
+&lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;3&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;       Ready -&amp;gt;
+&lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;4&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;           viewSearchForm
+&lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;5&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt; &lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;6&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;       Fetching -&amp;gt;
+&lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;7&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;           viewSpinner
+&lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;8&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt; &lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;9&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;       Success dog -&amp;gt;
+&lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;10&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;           viewDog dog
+&lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;11&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt; &lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;12&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;       -- forgetting to handle errors&lt;/div&gt;&lt;/div&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/figure&gt;
+
+&lt;p&gt;Will produce this compiler error:&lt;/p&gt;
+
+&lt;figure class=&quot;code-highlight-figure&quot;&gt;&lt;div class=&quot;code-highlight&quot;&gt;&lt;pre class=&quot;code-highlight-pre&quot;&gt;&lt;div data-line=&quot;1&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;This `case` does not have branches for all possibilities:
+&lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;2&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt; &lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;3&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;|&amp;gt;    case model.dog of
+&lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;4&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;|&amp;gt;        Ready -&amp;gt;
+&lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;5&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;|&amp;gt;            viewSearchForm
+&lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;6&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;|&amp;gt;
+&lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;7&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;|&amp;gt;        Fetching -&amp;gt;
+&lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;8&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;|&amp;gt;            viewSpinner
+&lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;9&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;|&amp;gt;
+&lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;10&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;|&amp;gt;        Success dog -&amp;gt;
+&lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;11&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;|&amp;gt;            viewDog dog
+&lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;12&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt; &lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;13&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;Missing possibilities include:
+&lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;14&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt; &lt;/div&gt;&lt;/div&gt;&lt;div data-line=&quot;15&quot; class=&quot;code-highlight-row numbered&quot;&gt;&lt;div class=&quot;code-highlight-line&quot;&gt;   Error _&lt;/div&gt;&lt;/div&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/figure&gt;
+
+&lt;p&gt;Now our code is clearer and safer thanks to custom types.&lt;/p&gt;
+
+&lt;h2 id=&quot;what-you-learned&quot;&gt;What You Learned&lt;/h2&gt;
+
+&lt;p&gt;In this post, you learned that boolean properties can cause invalid state
+configurations, which create bugs that the compiler can’t catch. Boolean
+properties lead to complex if-else expressions with arbitrary ordering that are
+hard to follow. You saw that by reducing the boolean properties down to one
+property with a custom type you can write more explicit code with compiler
+safety. If you have some code with multiple boolean properties like this, try
+refactoring to a custom type to make your code clearer and safer.&lt;/p&gt;
+
+&lt;h2 id=&quot;further-resources&quot;&gt;Further Resources&lt;/h2&gt;
+
+&lt;p&gt;For more info on how to use Elm’s type system to prevent invalid state
+configurations, watch Richard Feldman’s talk &lt;a href=&quot;https://www.youtube.com/watch?v=IcgmSRJHu_8&quot;&gt;Making Impossible States
+Impossible&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;For a more general type similar to &lt;code&gt;RemoteDoggo&lt;/code&gt;, check out the
+&lt;a href=&quot;https://package.elm-lang.org/packages/krisajenkins/remotedata/latest&quot;&gt;krisajenkins/remotedata&lt;/a&gt;
+package.&lt;/p&gt;
+
+&lt;p&gt;To learn more about how to build Elm applications effectively, grab a copy of my
+book &lt;a href=&quot;https://programming-elm.com&quot;&gt;Programming Elm&lt;/a&gt; from
+&lt;a href=&quot;https://pragprog.com/book/jfelm/programming-elm&quot;&gt;The Pragmatic Programmers&lt;/a&gt;.&lt;/p&gt;
+
+  &lt;p&gt;&lt;a href=&quot;//blog.jeremyfairbank.com/elm/solving-the-boolean-identity-crisis-part-3/&quot;&gt;Solving the Boolean Identity Crisis: Part 3&lt;/a&gt; was originally published by Jeremy Fairbank at &lt;a href=&quot;//blog.jeremyfairbank.com&quot;&gt;Jeremy Fairbank Blog&lt;/a&gt; on June 17, 2019.&lt;/p&gt;</content>
+</entry>
 
 
   
