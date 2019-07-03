@@ -4,7 +4,7 @@
 <generator uri="https://github.com/jekyll/jekyll">Jekyll</generator>
 <link rel="self" type="application/atom+xml" href="//blog.jeremyfairbank.com/feed.xml" />
 <link rel="alternate" type="text/html" href="//blog.jeremyfairbank.com" />
-<updated>2019-06-18T22:15:59-10:00</updated>
+<updated>2019-07-03T13:38:52-04:00</updated>
 <id>//blog.jeremyfairbank.com/</id>
 <author>
   <name>Jeremy Fairbank</name>
@@ -16,11 +16,99 @@
   
 
 <entry>
+  <title type="html"><![CDATA[Programming Elm Now in Print]]></title>
+  <link rel="alternate" type="text/html" href="//blog.jeremyfairbank.com/elm/programming-elm-now-in-print/" />
+  <id>//blog.jeremyfairbank.com/elm/programming-elm-now-in-print</id>
+  <published>2019-07-03T00:00:00-04:00</published>
+  <updated>2019-07-03T00:00:00-04:00</updated>
+  <author>
+    <name>Jeremy Fairbank</name>
+    <uri>//blog.jeremyfairbank.com</uri>
+    
+  </author>
+  <content type="html">&lt;section id=&quot;table-of-contents&quot; class=&quot;toc&quot;&gt;
+  &lt;header&gt;
+    &lt;h3&gt;Contents&lt;/h3&gt;
+  &lt;/header&gt;
+&lt;div id=&quot;drawer&quot;&gt;
+&lt;ul id=&quot;markdown-toc&quot;&gt;
+  &lt;li&gt;&lt;a href=&quot;#why-elm&quot; id=&quot;markdown-toc-why-elm&quot;&gt;Why Elm?&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#whats-in-the-book&quot; id=&quot;markdown-toc-whats-in-the-book&quot;&gt;What’s in the Book?&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#get-your-copy&quot; id=&quot;markdown-toc-get-your-copy&quot;&gt;Get Your Copy&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+  &lt;/div&gt;
+&lt;/section&gt;
+&lt;!-- /#table-of-contents --&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://programming-elm.com/img/typewriter.jpg&quot; alt=&quot;Person using typewriter with a cup of coffee to the side&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;Originally published at &lt;a href=&quot;https://programming-elm.com/blog/2019-07-03-programming-elm-now-in-print&quot;&gt;https://programming-elm.com&lt;/a&gt; on July 3, 2019.&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;After 2 years, 2 months, and 29 days of waking early, sacrificing weekends, and rewriting for Elm 0.19, I can proudly say that &lt;a href=&quot;https://programming-elm.com&quot;&gt;&lt;em&gt;Programming Elm&lt;/em&gt;&lt;/a&gt; is now available in print! Writing this book presented a challenging, but rewarding journey that taught me a ton about writing and teaching.&lt;/p&gt;
+
+&lt;p&gt;If you’re a front-end developer tired of the JavaScript framework churn or want to build more resilient and maintainable applications, then you need to learn Elm. I have tailored &lt;a href=&quot;https://programming-elm.com&quot;&gt;&lt;em&gt;Programming Elm&lt;/em&gt;&lt;/a&gt; for front-end developers new to Elm who want to quickly learn how to build maintainable applications with it. You’ll start with basics such as Elm’s syntax and creating functions and advance all the way to building a single-page application.&lt;/p&gt;
+
+&lt;h2 id=&quot;why-elm&quot;&gt;Why Elm?&lt;/h2&gt;
+
+&lt;p&gt;More and more front-end developers are choosing Elm to build applications for benefits such as:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;em&gt;No runtime exceptions in practice:&lt;/em&gt; Elm’s compiler catches problems early to prevent exceptions at runtime for your users.&lt;/li&gt;
+  &lt;li&gt;&lt;em&gt;No &lt;code&gt;null&lt;/code&gt; or &lt;code&gt;undefined&lt;/code&gt; errors:&lt;/em&gt; Elm offers more versatile types for representing &lt;code&gt;null&lt;/code&gt;. The compiler also ensures you handle all possible nulls in your application.&lt;/li&gt;
+  &lt;li&gt;&lt;em&gt;No JavaScript fatigue:&lt;/em&gt; You don’t have to choose and wire up different frameworks and libraries to build an application. Elm has a built-in framework for creating applications, the Elm Architecture.&lt;/li&gt;
+  &lt;li&gt;&lt;em&gt;Predictable code:&lt;/em&gt; All Elm code is free from side effects, so you can trust your functions to always produce the same result based on their arguments.&lt;/li&gt;
+  &lt;li&gt;&lt;em&gt;Immutable data types:&lt;/em&gt; You don’t have to worry about your code or third-party code changing data unexpectedly and causing bugs. Your data will be consistent and safe.&lt;/li&gt;
+  &lt;li&gt;&lt;em&gt;Strong static types:&lt;/em&gt; Elm’s compiler uses static types to ensure you call functions with the right types of arguments. You won’t run into subtle type-coercion bugs.&lt;/li&gt;
+  &lt;li&gt;&lt;em&gt;Custom types:&lt;/em&gt; Elm’s custom types let you create entirely new types for clearly modeling your business domain. Powerful pattern matching prevents undefined situations by ensuring you handle your custom types consistently.&lt;/li&gt;
+  &lt;li&gt;&lt;em&gt;Advanced tools:&lt;/em&gt; Elm’s &lt;code&gt;Debug&lt;/code&gt; module makes it easy to inspect data to catch bugs, and add placeholders to your code until you’re ready to implement it. Third-party tools such as create-elm-app let you quickly bootstrap Elm applications and offer powerful development servers for immediate development feedback.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;whats-in-the-book&quot;&gt;What’s in the Book?&lt;/h2&gt;
+
+&lt;p&gt;The first five chapters of this book focus on how to build applications. You will create a photo sharing application called Picshare and add new functionality in each chapter.&lt;/p&gt;
+
+&lt;p&gt;Chapter 1 introduces you to Elm, explains some of the basics of functional programming, and lets you create a basic Picshare application.&lt;/p&gt;
+
+&lt;p&gt;Chapter 2 explains Elm’s framework for building applications, the Elm Architecture. You’ll use the Elm Architecture to manage state and events in the Picshare application.&lt;/p&gt;
+
+&lt;p&gt;Chapter 3 expands on the Picshare application.  You’ll learn patterns for refactoring code and how to add new features to the Picshare application.&lt;/p&gt;
+
+&lt;p&gt;Chapter 4 lets you create a more realistic Picshare application. Front-end applications typically need to communicate with servers to be useful. You’ll learn how to call APIs and safely decode JSON into static types.&lt;/p&gt;
+
+&lt;p&gt;Chapter 5 takes Picshare’s interactivity further. You’ll use Elm subscriptions with WebSockets to receive updates in real time.&lt;/p&gt;
+
+&lt;p&gt;The next six chapters focus on advanced patterns for scaling, debugging,
+integrating, and maintaining Elm applications.&lt;/p&gt;
+
+&lt;p&gt;Chapter 6 addresses the problem of scaling complex applications containing lots of code. You’ll use patterns such as reusable helper functions, extensible records, and message wrappers to refactor an application into a more maintainable state.&lt;/p&gt;
+
+&lt;p&gt;Chapter 7 introduces Elm’s tooling. Although Elm’s compiler prevents tons of bugs through static types, bugs can still occur from logic errors. You’ll use Elm’s &lt;code&gt;Debug&lt;/code&gt; module to debug values at runtime. You’ll also bundle and deploy an application with powerful third-party tools.&lt;/p&gt;
+
+&lt;p&gt;Chapter 8 covers interacting with JavaScript code, which is important for accessing impure APIs or migrating existing JavaScript applications to Elm. You’ll learn how to add a new feature with Elm to an existing JavaScript application.&lt;/p&gt;
+
+&lt;p&gt;Chapter 9 introduces testing to ensure your code is correct. You’ll use elm-test to create a module with test-driven development, test properties of your code with fuzz testing, and test an Elm application with elm-html-test.&lt;/p&gt;
+
+&lt;p&gt;Chapter 10 teaches you how to build modern single-page applications with Elm. You’ll learn how to handle routes and coordinate different page components.&lt;/p&gt;
+
+&lt;p&gt;Chapter 11 concludes with speeding up your code. You’ll learn about common performance issues, how to measure performance, and how to optimize applications with efficient algorithms, lazy design patterns, and the &lt;code&gt;Html.Lazy&lt;/code&gt; module.&lt;/p&gt;
+
+&lt;h2 id=&quot;get-your-copy&quot;&gt;Get Your Copy&lt;/h2&gt;
+
+&lt;p&gt;So, what are you waiting for? Say goodbye to runtime exceptions and unmaintainable code. Learn how to build safe and maintainable front-end applications. Grab a copy of &lt;a href=&quot;https://programming-elm.com&quot;&gt;&lt;em&gt;Programming Elm&lt;/em&gt;&lt;/a&gt; from &lt;a href=&quot;https://pragprog.com/book/jfelm/programming-elm&quot;&gt;The Pragmatic Programmers&lt;/a&gt; today.&lt;/p&gt;
+
+  &lt;p&gt;&lt;a href=&quot;//blog.jeremyfairbank.com/elm/programming-elm-now-in-print/&quot;&gt;Programming Elm Now in Print&lt;/a&gt; was originally published by Jeremy Fairbank at &lt;a href=&quot;//blog.jeremyfairbank.com&quot;&gt;Jeremy Fairbank Blog&lt;/a&gt; on July 03, 2019.&lt;/p&gt;</content>
+</entry>
+
+
+  
+
+<entry>
   <title type="html"><![CDATA[Solving the Boolean Identity Crisis: Part 3]]></title>
   <link rel="alternate" type="text/html" href="//blog.jeremyfairbank.com/elm/solving-the-boolean-identity-crisis-part-3/" />
   <id>//blog.jeremyfairbank.com/elm/solving-the-boolean-identity-crisis-part-3</id>
-  <published>2019-06-17T00:00:00-10:00</published>
-  <updated>2019-06-17T00:00:00-10:00</updated>
+  <published>2019-06-17T00:00:00-04:00</published>
+  <updated>2019-06-17T00:00:00-04:00</updated>
   <author>
     <name>Jeremy Fairbank</name>
     <uri>//blog.jeremyfairbank.com</uri>
@@ -292,8 +380,8 @@ book &lt;a href=&quot;https://programming-elm.com&quot;&gt;Programming Elm&lt;/a
   <title type="html"><![CDATA[Solving the Boolean Identity Crisis: Part 2]]></title>
   <link rel="alternate" type="text/html" href="//blog.jeremyfairbank.com/elm/solving-the-boolean-identity-crisis-part-2/" />
   <id>//blog.jeremyfairbank.com/elm/solving-the-boolean-identity-crisis-part-2</id>
-  <published>2019-05-30T00:00:00-10:00</published>
-  <updated>2019-05-30T00:00:00-10:00</updated>
+  <published>2019-05-30T00:00:00-04:00</published>
+  <updated>2019-05-30T00:00:00-04:00</updated>
   <author>
     <name>Jeremy Fairbank</name>
     <uri>//blog.jeremyfairbank.com</uri>
@@ -528,8 +616,8 @@ book &lt;a href=&quot;https://programming-elm.com&quot;&gt;Programming Elm&lt;/a
   <title type="html"><![CDATA[Solving the Boolean Identity Crisis: Part 1]]></title>
   <link rel="alternate" type="text/html" href="//blog.jeremyfairbank.com/elm/solving-the-boolean-identity-crisis-part-1/" />
   <id>//blog.jeremyfairbank.com/elm/solving-the-boolean-identity-crisis-part-1</id>
-  <published>2019-05-20T00:00:00-10:00</published>
-  <updated>2019-05-20T00:00:00-10:00</updated>
+  <published>2019-05-20T00:00:00-04:00</published>
+  <updated>2019-05-20T00:00:00-04:00</updated>
   <author>
     <name>Jeremy Fairbank</name>
     <uri>//blog.jeremyfairbank.com</uri>
@@ -716,8 +804,8 @@ book &lt;a href=&quot;https://programming-elm.com&quot;&gt;Programming Elm&lt;/a
   <title type="html"><![CDATA[Functional JavaScript Part 2: Streams]]></title>
   <link rel="alternate" type="text/html" href="//blog.jeremyfairbank.com/javascript/functional-javascript-streams-2/" />
   <id>//blog.jeremyfairbank.com/javascript/functional-javascript-streams-2</id>
-  <published>2015-08-07T00:00:00-10:00</published>
-  <updated>2015-08-07T00:00:00-10:00</updated>
+  <published>2015-08-07T00:00:00-04:00</published>
+  <updated>2015-08-07T00:00:00-04:00</updated>
   <author>
     <name>Jeremy Fairbank</name>
     <uri>//blog.jeremyfairbank.com</uri>
@@ -1107,8 +1195,8 @@ tool in the bag of functional and JavaScript programmers.&lt;/p&gt;
   <title type="html"><![CDATA[JavaScript ES7 Function Bind Syntax]]></title>
   <link rel="alternate" type="text/html" href="//blog.jeremyfairbank.com/javascript/javascript-es7-function-bind-syntax/" />
   <id>//blog.jeremyfairbank.com/javascript/javascript-es7-function-bind-syntax</id>
-  <published>2015-05-30T00:00:00-10:00</published>
-  <updated>2015-05-30T00:00:00-10:00</updated>
+  <published>2015-05-30T00:00:00-04:00</published>
+  <updated>2015-05-30T00:00:00-04:00</updated>
   <author>
     <name>Jeremy Fairbank</name>
     <uri>//blog.jeremyfairbank.com</uri>
@@ -1401,8 +1489,8 @@ the door for writing cleaner and more expressive JavaScript.&lt;/p&gt;
   <title type="html"><![CDATA[Functional JavaScript Part 1: Lists]]></title>
   <link rel="alternate" type="text/html" href="//blog.jeremyfairbank.com/javascript/functional-javascript-lists-1/" />
   <id>//blog.jeremyfairbank.com/javascript/functional-javascript-lists-1</id>
-  <published>2015-01-17T00:00:00-10:00</published>
-  <updated>2015-01-17T00:00:00-10:00</updated>
+  <published>2015-01-17T00:00:00-05:00</published>
+  <updated>2015-01-17T00:00:00-05:00</updated>
   <author>
     <name>Jeremy Fairbank</name>
     <uri>//blog.jeremyfairbank.com</uri>
@@ -1842,8 +1930,8 @@ the concepts of functional programming in future posts.&lt;/p&gt;
   <title type="html"><![CDATA[Polymer Web Components with Marionette.js]]></title>
   <link rel="alternate" type="text/html" href="//blog.jeremyfairbank.com/javascript/polymer-web-components-with-marionette-js/" />
   <id>//blog.jeremyfairbank.com/javascript/polymer-web-components-with-marionette-js</id>
-  <published>2015-01-03T00:00:00-10:00</published>
-  <updated>2015-01-03T00:00:00-10:00</updated>
+  <published>2015-01-03T00:00:00-05:00</published>
+  <updated>2015-01-03T00:00:00-05:00</updated>
   <author>
     <name>Jeremy Fairbank</name>
     <uri>//blog.jeremyfairbank.com</uri>
@@ -2250,8 +2338,8 @@ and the caliber of speakers was spectacular.
   <title type="html"><![CDATA[Open Source You]]></title>
   <link rel="alternate" type="text/html" href="//blog.jeremyfairbank.com/programming/open-source-you/" />
   <id>//blog.jeremyfairbank.com/programming/open-source-you</id>
-  <published>2014-12-31T00:00:00-10:00</published>
-  <updated>2014-12-31T00:00:00-10:00</updated>
+  <published>2014-12-31T00:00:00-05:00</published>
+  <updated>2014-12-31T00:00:00-05:00</updated>
   <author>
     <name>Jeremy Fairbank</name>
     <uri>//blog.jeremyfairbank.com</uri>
@@ -2399,8 +2487,8 @@ a few articles that I found useful in formulating my ideas:&lt;/p&gt;
   <title type="html"><![CDATA[Components with Backbone.js and Marionette.js]]></title>
   <link rel="alternate" type="text/html" href="//blog.jeremyfairbank.com/javascript/components-with-backbone-js-and-marionette-js/" />
   <id>//blog.jeremyfairbank.com/javascript/components-with-backbone-js-and-marionette-js</id>
-  <published>2014-06-25T00:00:00-10:00</published>
-  <updated>2014-06-25T00:00:00-10:00</updated>
+  <published>2014-06-25T00:00:00-04:00</published>
+  <updated>2014-06-25T00:00:00-04:00</updated>
   <author>
     <name>Jeremy Fairbank</name>
     <uri>//blog.jeremyfairbank.com</uri>
@@ -2849,8 +2937,8 @@ a few articles that I found useful in formulating my ideas:&lt;/p&gt;
   <title type="html"><![CDATA[First Post: Ensuring Remote Data is Available in JavaScript]]></title>
   <link rel="alternate" type="text/html" href="//blog.jeremyfairbank.com/javascript/first-post-ensuring-remote-data-is-available/" />
   <id>//blog.jeremyfairbank.com/javascript/first-post-ensuring-remote-data-is-available</id>
-  <published>2014-06-21T00:00:00-10:00</published>
-  <updated>2014-06-21T00:00:00-10:00</updated>
+  <published>2014-06-21T00:00:00-04:00</published>
+  <updated>2014-06-21T00:00:00-04:00</updated>
   <author>
     <name>Jeremy Fairbank</name>
     <uri>//blog.jeremyfairbank.com</uri>
